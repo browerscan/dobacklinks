@@ -97,6 +97,7 @@ out
 # OpenNext Cloudflare build output
 .worker-next
 .wrangler
+.open-next
 
 # Nuxt.js build / generate output
 .nuxt
