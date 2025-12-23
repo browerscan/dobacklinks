@@ -6,9 +6,12 @@
     "name": "WeNext",
     "repository": "https://github.com/wenextdev/nexty-directory"
   },
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "next build --webpack",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "analyze": "ANALYZE=true next build",
@@ -25,10 +28,10 @@
     "db:import-sites:dry-run": "tsx scripts/import-sites.ts --dry-run",
     "db:update-logo-urls": "NODE_ENV=development tsx scripts/update-logo-urls.ts",
     "screenshots:capture": "npx dotenv -e .env.local -- pnpm tsx scripts/batch-capture-screenshots.ts",
-    "cloudflare:build": "next build",
-    "cloudflare:dev": "pnpm cloudflare:build && wrangler dev",
-    "cloudflare:preview": "pnpm cloudflare:build && wrangler dev --remote",
-    "cloudflare:deploy": "pnpm cloudflare:build && wrangler pages deploy .next"
+    "cloudflare:build": "next build && npx @cloudflare/next-on-pages",
+    "cloudflare:dev": "pnpm cloudflare:build && wrangler pages dev .worker-next",
+    "cloudflare:preview": "pnpm cloudflare:build && wrangler pages dev .worker-next --remote",
+    "cloudflare:deploy": "pnpm cloudflare:build && wrangler pages deploy .worker-next --project-name=dobacklinks"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.2.6",

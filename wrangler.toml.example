@@ -1,4 +1,4 @@
-#:schema node_modules/@cloudflare/workers-types/experimental/index.d.ts
+#:schema node_modules/wrangler/config-schema.json
 name = "dobacklinks"
 compatibility_date = "2024-12-18"
 compatibility_flags = ["nodejs_compat"]

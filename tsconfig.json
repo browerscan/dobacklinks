@@ -36,6 +36,7 @@
     "vitest.setup.ts",
     "**/__tests__/**",
     "**/*.test.ts",
-    "**/*.test.tsx"
+    "**/*.test.tsx",
+    "**/*.edge.ts"
   ]
 }

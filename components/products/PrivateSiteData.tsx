@@ -10,8 +10,12 @@ import {
 } from "lucide-react";
 import { ObfuscatedEmailLink } from "@/lib/utils/ObfuscatedEmailLink";
 import Link from "next/link";
+import { ValueForMoneyIndicator } from "@/components/products/ValueForMoneyIndicator";
+import { EnhancedSampleUrls } from "@/components/products/EnhancedSampleUrls";
 
 interface Product {
+  name: string;
+  url: string;
   priceRange: string | null;
   turnaroundTime: string | null;
   contactEmail: string | null;
@@ -22,6 +26,11 @@ interface Product {
   contentPlacementPrice?: number | string | null;
   writingPlacementPrice?: number | string | null;
   specialTopicPrice?: number | string | null;
+  // Metrics for ValueForMoneyIndicator
+  dr?: number | null;
+  da?: number | null;
+  spamScore?: number | null;
+  monthlyVisits?: number | null;
 }
 
 interface PrivateSiteDataProps {
@@ -31,6 +40,11 @@ interface PrivateSiteDataProps {
 export function PrivateSiteData({ product }: PrivateSiteDataProps) {
   return (
     <div className="space-y-6">
+      {/* Value for Money Indicator */}
+      {product.dr != null && product.priceRange && (
+        <ValueForMoneyIndicator product={product} />
+      )}
+
       {/* Pricing Information */}
       <Card className="border-primary/20 bg-primary/5">
         <CardHeader>
@@ -166,34 +180,13 @@ export function PrivateSiteData({ product }: PrivateSiteDataProps) {
         </Card>
       )}
 
-      {/* Sample URLs */}
+      {/* Enhanced Sample URLs */}
       {Array.isArray(product.sampleUrls) && product.sampleUrls.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              Sample Posts
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {product.sampleUrls
-                .slice(0, 5)
-                .map((url: string, index: number) => (
-                  <Link
-                    key={index}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-blue-600 hover:underline truncate group"
-                  >
-                    <ExternalLink className="w-3 h-3 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <span className="truncate">{url}</span>
-                  </Link>
-                ))}
-            </div>
-          </CardContent>
-        </Card>
+        <EnhancedSampleUrls
+          sampleUrls={product.sampleUrls}
+          siteName={product.name}
+          siteUrl={product.url}
+        />
       )}
     </div>
   );

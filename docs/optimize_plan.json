@@ -1,0 +1,146 @@
+{
+  "summary": "Current Cloudflare Pages/Workers (Edge) deployment is likely to fail due to Node-only runtime assumptions: Postgres TCP driver (postgres-js), native addons (sharp), and filesystem usage (fs + writes to public/) being used from Next runtime code. Config also has Cloudflare/Next mismatches (Node version not pinned, deprecated Next config option, broken wrangler schema reference) and several heavyweight deps that risk oversized bundles/cold starts.",
+  "issues": [
+    {
+      "id": "node-version-not-pinned",
+      "severity": "high",
+      "category": "compatibility",
+      "problem": "Next.js 16 requires Node >= 20.9.0, but package.json does not declare an engines constraint; Cloudflare build may use an older Node version and fail builds.",
+      "evidence": [
+        "package.json (no engines field)",
+        "next dependency is 16.0.10 (requires node >=20.9.0)"
+      ],
+      "recommendation": "Add \"engines\": {\"node\": \">=20.9.0\"} and ensure Cloudflare Pages build uses Node 20.9+ (via Pages build settings/env)."
+    },
+    {
+      "id": "postgres-tcp-driver-on-edge",
+      "severity": "critical",
+      "category": "compatibility",
+      "problem": "Database connection uses postgres-js (TCP sockets). Cloudflare Workers/Pages runtime typically cannot open raw TCP connections to Postgres; this will break DB access.",
+      "evidence": [
+        "package.json includes \"postgres\" and \"pg\"",
+        "lib/db/config.ts imports drizzle-orm/postgres-js + postgres and instantiates postgres()"
+      ],
+      "recommendation": "Switch to an Edge-compatible DB approach: Neon HTTP (drizzle-orm/neon-http + @neondatabase/serverless), Supabase HTTP, Cloudflare D1, or Cloudflare Hyperdrive (if available) instead of direct TCP."
+    },
+    {
+      "id": "sharp-native-addon-in-runtime",
+      "severity": "critical",
+      "category": "compatibility",
+      "problem": "sharp (native addon) is imported by runtime code paths (OpenGraph image generation and screenshot thumbnail processing). Native addons do not run in Cloudflare Workers.",
+      "evidence": [
+        "package.json includes \"sharp\"",
+        "lib/smartImageConverter.ts imports sharp (used by app/(basic-layout)/product/[slug]/opengraph-image.tsx)",
+        "lib/services/screenshot-storage.ts imports sharp"
+      ],
+      "recommendation": "Remove sharp from any code that ships to Workers: use Cloudflare Image Resizing (fetch cf.image), store/serve PNG/JPEG inputs, pre-generate assets during build, or move image processing to a separate Node service."
+    },
+    {
+      "id": "filesystem-usage-in-runtime",
+      "severity": "critical",
+      "category": "compatibility",
+      "problem": "Next runtime imports Node fs/path and attempts to read/write local files. Workers has no writable filesystem; importing fs may fail at module evaluation.",
+      "evidence": [
+        "lib/getBlogs.ts imports fs/path and is used by app/sitemap.ts and blog pages",
+        "lib/services/screenshot-storage.ts dynamically imports fs/promises + writes under public/"
+      ],
+      "recommendation": "Eliminate fs from any runtime path: read blog content from DB/KV/R2, or keep markdown-only code strictly build-time; store screenshots/thumbnails in R2/KV/Images instead of writing to public/ at runtime."
+    },
+    {
+      "id": "puppeteer-in-next-runtime-config",
+      "severity": "high",
+      "category": "compatibility",
+      "problem": "Next config marks puppeteer as a server external package and package.json installs full puppeteer; puppeteer is not compatible with Workers and is extremely large, risking bundle limits/cold starts.",
+      "evidence": [
+        "next.config.mjs sets experimental.serverComponentsExternalPackages: [\"puppeteer\"]",
+        "package.json includes \"puppeteer\""
+      ],
+      "recommendation": "Remove puppeteer from Next runtime. If browser automation is required on Cloudflare, use Browser Rendering with the proper binding + Cloudflare-supported puppeteer client/shim (not full puppeteer), and isolate it from Next request paths."
+    },
+    {
+      "id": "deprecated-next-config-option",
+      "severity": "medium",
+      "category": "compatibility",
+      "problem": "Next config uses experimental.serverComponentsExternalPackages, which has been moved to serverExternalPackages in newer Next versions; this can cause warnings and unexpected bundling behavior.",
+      "evidence": [
+        "next.config.mjs uses experimental.serverComponentsExternalPackages"
+      ],
+      "recommendation": "Move to top-level serverExternalPackages (or delete entirely if not needed) and keep the server bundle free of non-edge-compatible packages."
+    },
+    {
+      "id": "wrangler-schema-reference-broken",
+      "severity": "low",
+      "category": "config-quality",
+      "problem": "wrangler.toml schema directive points to @cloudflare/workers-types/experimental, but @cloudflare/workers-types is not installed; editor tooling/schema validation will be broken.",
+      "evidence": [
+        "wrangler.toml first line references node_modules/@cloudflare/workers-types/experimental/index.d.ts",
+        "package.json does not include @cloudflare/workers-types"
+      ],
+      "recommendation": "Change the schema reference to wrangler's config schema (node_modules/wrangler/config-schema.json) or add @cloudflare/workers-types (and point to the correct schema/type file)."
+    },
+    {
+      "id": "nodejs-compat-performance-tax",
+      "severity": "medium",
+      "category": "performance",
+      "problem": "nodejs_compat is enabled and several Node-style dependencies are present; this increases bundle size and startup cost. Some routes also explicitly declare runtime=\"nodejs\" which encourages Node-only patterns that won’t fully work on Workers.",
+      "evidence": [
+        "wrangler.toml compatibility_flags includes nodejs_compat",
+        "multiple routes export const runtime = \"nodejs\"",
+        "package.json includes heavy server deps (postgres, puppeteer, sharp, aws-sdk)"
+      ],
+      "recommendation": "Refactor runtime code to Web APIs (fetch/WebCrypto/streams), remove Node-only packages from runtime, and then consider removing nodejs_compat to improve cold-start and reduce worker bundle size."
+    }
+  ],
+  "targets": [
+    {
+      "file": "lib/db/config.ts",
+      "fix": "Replace postgres-js TCP client with an Edge-compatible driver (e.g., drizzle-orm/neon-http + @neondatabase/serverless) or Cloudflare D1/Hyperdrive; avoid importing postgres/pg in code shipped to Workers."
+    },
+    {
+      "file": "lib/db/index.ts",
+      "fix": "Ensure DB initialization uses the Edge-compatible driver and does not throw during module init in environments where DATABASE_URL is unset (avoid breaking non-DB pages/edge routes)."
+    },
+    {
+      "file": "lib/smartImageConverter.ts",
+      "fix": "Remove sharp usage; for .webp logos, use Cloudflare Image Resizing to request PNG/JPEG (or require stored logos to be PNG/JPEG) and return a safe src for next/og."
+    },
+    {
+      "file": "app/(basic-layout)/product/[slug]/opengraph-image.tsx",
+      "fix": "Stop relying on sharp-based conversion for logo rendering; use an Edge-safe logo source (pre-converted URL, Cloudflare resizing, or fallback icon) and consider explicitly setting runtime to \"edge\"."
+    },
+    {
+      "file": "lib/getBlogs.ts",
+      "fix": "Remove top-level fs/path imports from runtime module; fetch posts from server actions/DB only on Cloudflare, or split local-markdown logic into a build-only module loaded via dynamic import in build contexts."
+    },
+    {
+      "file": "app/sitemap.ts",
+      "fix": "Avoid importing any fs-based blog helpers; generate sitemap entries from DB/actions only (or make sitemap fully static at build time without runtime DB/fs)."
+    },
+    {
+      "file": "lib/services/screenshot-storage.ts",
+      "fix": "Remove sharp + filesystem writes; store screenshots/thumbnails in R2/KV (or Cloudflare Images) and serve via public URL. Do not attempt to write under public/ at runtime."
+    },
+    {
+      "file": "next.config.mjs",
+      "fix": "Remove/replace puppeteer externalization and migrate deprecated serverComponentsExternalPackages to serverExternalPackages only if absolutely necessary."
+    }
+  ],
+  "config_changes": [
+    {
+      "file": "package.json",
+      "change": "Add \"engines\": {\"node\": \">=20.9.0\"}. After removing runtime sharp/postgres/puppeteer usage, move those to devDependencies (or remove) to keep the Worker bundle small."
+    },
+    {
+      "file": "next.config.mjs",
+      "change": "Replace experimental.serverComponentsExternalPackages with top-level serverExternalPackages (or remove). Do not include puppeteer; keep server bundle edge-safe. Consider setting images.unoptimized=true (or a Cloudflare-specific image loader) if Next image optimization causes runtime issues on Pages."
+    },
+    {
+      "file": "wrangler.toml",
+      "change": "Fix #schema to wrangler's config schema (node_modules/wrangler/config-schema.json) or install @cloudflare/workers-types and point to a valid file. Optionally bump compatibility_date after testing. Add R2/KV/Hyperdrive/Browser Rendering bindings if required by the refactor."
+    },
+    {
+      "file": "tsconfig.json",
+      "change": "No required change for Next itself; if adding Workers-only code, prefer a separate tsconfig (e.g., tsconfig.worker.json) that includes @cloudflare/workers-types to avoid DOM/Node type conflicts."
+    }
+  ]
+}

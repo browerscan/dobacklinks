@@ -1,17 +1,24 @@
-import { withSentryConfig } from "@sentry/nextjs";
 import withBundleAnalyzer from "@next/bundle-analyzer";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Cloudflare Pages deployment - no standalone needed
   // output: "standalone",
-  turbopack: {
-    root: __dirname,
-  },
+
+  // Performance optimizations
+  swcMinify: true,
+  reactStrictMode: true,
+  poweredByHeader: false,
+
+  // Optimize package imports for better tree-shaking
+  optimizePackageImports: [
+    "lucide-react",
+    "@radix-ui/react-icons",
+    "recharts",
+    "framer-motion",
+    "@tanstack/react-table",
+  ],
+
   async headers() {
     return [
       {
@@ -68,8 +75,9 @@ const nextConfig = {
     },
   ],
   images: {
+    // Cloudflare Pages: unoptimized by default unless explicitly enabled
     unoptimized:
-      process.env.NEXT_PUBLIC_OPTIMIZED_IMAGES &&
+      process.env.CF_PAGES === "1" ||
       process.env.NEXT_PUBLIC_OPTIMIZED_IMAGES === "false",
     remotePatterns: [
       {
@@ -109,31 +117,4 @@ if (
   process.env.NEXTY_WELCOME_SHOWN = "true";
 }
 
-// Wrap with Sentry and Bundle Analyzer
-const config = withBundleAnalyzerWrapper(nextConfig);
-
-// Sentry configuration options
-const sentryWebpackPluginOptions = {
-  // Suppress all Sentry CLI output
-  silent: true,
-
-  // Only upload source maps in production
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-
-  // Disable source map upload in development
-  disableServerWebpackPlugin: process.env.NODE_ENV !== "production",
-  disableClientWebpackPlugin: process.env.NODE_ENV !== "production",
-
-  // Hide source maps from generated client bundles
-  hideSourceMaps: true,
-
-  // Automatically tree-shake Sentry logger statements
-  disableLogger: true,
-
-  // Enable automatic release creation
-  automaticVercelMonitors: true,
-};
-
-export default withSentryConfig(config, sentryWebpackPluginOptions);
+export default withBundleAnalyzerWrapper(nextConfig);

@@ -11,6 +11,10 @@ import { QuickLinks } from "@/components/products/QuickLinks";
 import { HireMeCTA } from "@/components/cta/HireMeCTA";
 import { ImagePreview } from "@/components/shared/ImagePreview";
 import { ProductViewTracker } from "@/components/analytics/ProductViewTracker";
+import { QualityScoreBadge } from "@/components/products/QualityScoreBadge";
+import { DomainInfoCard } from "@/components/products/DomainInfoCard";
+import { ValueForMoneyIndicator } from "@/components/products/ValueForMoneyIndicator";
+import { EnhancedSampleUrls } from "@/components/products/EnhancedSampleUrls";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -364,6 +368,12 @@ export async function ProductDetailContent({
             <div className="space-y-6">
               {/* SimilarWeb Traffic Metrics */}
               <SimilarWebMetrics product={product} />
+
+              {/* Quality Score Badge */}
+              <QualityScoreBadge product={product} />
+
+              {/* Domain Information Card */}
+              <DomainInfoCard product={product} />
 
               {/* Hire Me CTA */}
               <HireMeCTA
