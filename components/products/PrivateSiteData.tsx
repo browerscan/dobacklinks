@@ -182,11 +182,7 @@ export function PrivateSiteData({ product }: PrivateSiteDataProps) {
 
       {/* Enhanced Sample URLs */}
       {Array.isArray(product.sampleUrls) && product.sampleUrls.length > 0 && (
-        <EnhancedSampleUrls
-          sampleUrls={product.sampleUrls}
-          siteName={product.name}
-          siteUrl={product.url}
-        />
+        <EnhancedSampleUrls product={product} />
       )}
     </div>
   );
