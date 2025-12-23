@@ -48,7 +48,7 @@ jobs:
           NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '' }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET || '' }}
           NEXT_PUBLIC_GITHUB_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GITHUB_CLIENT_ID || '' }}
-          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET || '' }}
+          GH_CLIENT_SECRET: ${{ secrets.GH_CLIENT_SECRET || '' }}
 
           # SimilarWeb API
           SIMILARWEB_API_URL: ${{ secrets.SIMILARWEB_API_URL }}
