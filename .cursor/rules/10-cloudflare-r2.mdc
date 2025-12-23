@@ -1,0 +1,28 @@
+---
+description: Cloudflare R2 usage
+globs:
+alwaysApply: false
+---
+
+- Use helpers in `lib/cloudflare/r2.ts`:
+  - `serverUploadFile({ data, contentType, path?, key })` — uploads and returns `{ url, key }`.
+  - `deleteFile(key)` — deletes by key.
+  - `listR2Objects({ prefix?, continuationToken?, pageSize? })` — paginated listing.
+  - `generateR2Key({ fileName, path?, prefix? })` — generates unique keys.
+- Required env: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL`.
+- Do not use client-side SDK for uploads. Route all uploads through server actions or route handlers.
+- Validate input file type/size when accepting uploads (see avatar constraints in `lib/validations.ts`).
+- Ensure `next.config.mjs` `images.remotePatterns` includes `R2_PUBLIC_URL` hostname (already configured).
+
+Server Actions (`actions/r2-resources/index.ts`):
+- Listing: use `listR2Files({ categoryPrefix, filterPrefix?, continuationToken?, pageSize? })` which wraps `listR2Objects` and returns files plus `nextContinuationToken` via `actionResponse`.
+- Deleting: use `deleteR2File({ key })` which sanitizes the key and calls `deleteFile`.
+- Presigned uploads: prefer `generateAdminPresignedUploadUrl` for admins and `generateUserPresignedUploadUrl` for authenticated users; both delegate to `generatePresignedUploadUrl` which generates a key with `generateR2Key` and returns `{ presignedUrl, key, publicObjectUrl }`.
+- AuthN/AuthZ: `isAdmin()` is required for admin endpoints; `getSession()` is used for user endpoints. Never trust client-provided user IDs.
+- Validation: all inputs must go through zod schemas in the action file; return `actionResponse.badRequest` on validation errors.
+
+Preferred usage:
+- Client-originated uploads (browser/mobile): Prefer presigned URL flow (use `generateUserPresignedUploadUrl` or `generateAdminPresignedUploadUrl`) so the client PUTs directly to R2. Do not use AWS SDK on the client.
+- Server-side-only uploads (server already has the file data, e.g., AI output, image transforms, imports): Prefer `serverUploadFile(...)` to avoid the presign hop.
+- Selection rule of thumb: If the file is created/held by the client and may be large → presigned. If the server produces/holds the bytes → `serverUploadFile`.
+- Always: validate contentType/size, generate keys with `generateR2Key`, persist `{ key, publicObjectUrl }`, never trust client-provided keys or paths, and enforce auth checks (`isAdmin()`/`getSession()`).

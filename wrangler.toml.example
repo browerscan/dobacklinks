@@ -1,0 +1,25 @@
+#:schema node_modules/@cloudflare/workers-types/experimental/index.d.ts
+name = "dobacklinks"
+compatibility_date = "2024-12-18"
+compatibility_flags = ["nodejs_compat"]
+
+# Pages configuration
+pages_build_output_dir = ".worker-next"
+
+# Account ID - Get from: https://dash.cloudflare.com -> Right sidebar
+# Set via environment variable: CLOUDFLARE_ACCOUNT_ID
+# Or uncomment below (NOT recommended for committed code):
+# account_id = "your-account-id-here"
+
+# Environment variables for production
+[vars]
+NEXT_PUBLIC_SITE_URL = "https://dobacklinks.com"
+
+# Observability
+[observability]
+enabled = true
+
+# Build configuration
+[build]
+command = "pnpm cloudflare:build"
+cwd = "."

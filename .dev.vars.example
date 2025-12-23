@@ -1,0 +1,77 @@
+# Cloudflare Workers Local Development Environment Variables
+# Copy this file to .dev.vars and fill in your values
+# .dev.vars is automatically loaded by wrangler dev (DO NOT commit .dev.vars!)
+
+# ============================================================================
+# DATABASE
+# ============================================================================
+DATABASE_URL=postgresql://postgres:postgres@93.127.133.204:54322/postgres
+
+# ============================================================================
+# AUTHENTICATION
+# ============================================================================
+BETTER_AUTH_SECRET=your-secret-here-generate-with-openssl-rand-base64-32
+BETTER_AUTH_URL=http://localhost:8787
+
+# OAuth Providers
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+NEXT_PUBLIC_GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+
+# Cloudflare Turnstile (Captcha)
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=your-turnstile-site-key
+TURNSTILE_SECRET_KEY=your-turnstile-secret-key
+
+# ============================================================================
+# SITE CONFIGURATION
+# ============================================================================
+NEXT_PUBLIC_SITE_URL=http://localhost:8787
+NEXT_PUBLIC_SITE_NAME=DoBacklinks
+NODE_ENV=development
+
+# ============================================================================
+# EMAIL (Resend)
+# ============================================================================
+RESEND_API_KEY=your-resend-api-key
+ADMIN_EMAIL=outreach@dobacklinks.com
+
+# ============================================================================
+# STORAGE (Cloudflare R2)
+# ============================================================================
+R2_ACCOUNT_ID=your-cloudflare-account-id
+R2_ACCESS_KEY_ID=your-r2-access-key-id
+R2_SECRET_ACCESS_KEY=your-r2-secret-access-key
+R2_PUBLIC_URL=https://your-r2-public-domain.com
+R2_BUCKET_NAME=your-bucket-name
+
+# ============================================================================
+# RATE LIMITING (Upstash Redis)
+# ============================================================================
+UPSTASH_REDIS_REST_URL=your-upstash-redis-url
+UPSTASH_REDIS_REST_TOKEN=your-upstash-redis-token
+
+# ============================================================================
+# SIMILARWEB API
+# ============================================================================
+SIMILARWEB_API_URL=http://93.127.133.204:3000/api/v1
+SIMILARWEB_API_KEY=your-similarweb-api-key
+
+# ============================================================================
+# CRON JOBS
+# ============================================================================
+CRON_SECRET=your-cron-secret-generate-with-openssl-rand-hex-32
+
+# ============================================================================
+# MONITORING (Sentry)
+# ============================================================================
+SENTRY_ORG=your-sentry-org
+SENTRY_PROJECT=your-sentry-project
+SENTRY_AUTH_TOKEN=your-sentry-auth-token
+NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
+
+# ============================================================================
+# BUILD OPTIONS
+# ============================================================================
+NEXT_PUBLIC_OPTIMIZED_IMAGES=false
+ANALYZE=false

@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  :root {
+    --main: 258 69% 42%; /* #5b21b6 */
+    --main-foreground: 0 0% 100%; /* #ffffff */
+    --main-hover: #4c1d95;
+
+    --main-gradient-from: #6366f1;
+    --main-gradient-to: #8b5cf6;
+
+    --color-1: 0 100% 63%;
+
+    --color-2: 270 100% 63%;
+
+    --color-3: 210 100% 63%;
+
+    --color-4: 195 100% 63%;
+
+    --color-5: 90 100% 63%;
+  }
+
+  .dark {
+    --main: 267 56% 58%; /* #7c3aed */
+    --main-foreground: 0 0% 100%; /* #ffffff */
+    --main-hover: #6d28d9;
+
+    --main-gradient-from: #7c3aed;
+    --main-gradient-to: #a855f7;
+  }
+}
+@layer components {
+  .highlight-text {
+    /* background: linear-gradient(
+      to right,
+      var(--main-gradient-from),
+      var(--main-gradient-to)
+    );
+    @apply bg-clip-text text-transparent; */
+    @apply text-primary dark:text-primary-foreground;
+  }
+
+  .highlight-bg {
+    /* background: linear-gradient(
+      to right,
+      var(--main-gradient-from),
+      var(--main-gradient-to)
+    ); */
+    @apply bg-primary;
+  }
+
+  .dark .highlight-bg {
+    /* background: linear-gradient(
+      to right,
+      var(--main-gradient-from),
+      var(--main-gradient-to)
+    ); */
+    @apply bg-primary;
+  }
+
+  .highlight-button {
+    @apply text-white dark:text-white px-8 py-3 rounded-lg font-medium text-center shadow-lg transition-all duration-200;
+    /* background: linear-gradient(
+      to right,
+      var(--main-gradient-from),
+      var(--main-gradient-to)
+    ); */
+    @apply bg-primary dark:bg-primary;
+  }
+
+  .card {
+    @apply transition-all duration-300 border border-gray-200 dark:border-gray-700;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--main);
+  }
+
+  .card:hover {
+    box-shadow:
+      0 10px 25px -5px rgba(79, 70, 229, 0.15),
+      0 10px 10px -5px rgba(79, 70, 229, 0.08);
+  }
+
+  .dark .card:hover {
+    box-shadow:
+      0 10px 25px -5px rgba(99, 102, 241, 0.2),
+      0 10px 10px -5px rgba(99, 102, 241, 0.1);
+    border-color: var(--main);
+  }
+
+  .theme {
+    --animate-rainbow: rainbow var(--speed, 2s) infinite linear;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@theme inline {
+  @keyframes rainbow {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 200%;
+    }
+  }
+}

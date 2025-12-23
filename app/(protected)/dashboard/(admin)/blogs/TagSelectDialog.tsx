@@ -1,0 +1,223 @@
+"use client";
+
+import { createTagAction } from "@/actions/blogs/tags";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tag } from "@/types/blog";
+import { Loader2, PlusCircle, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+export type FormTag = {
+  id: string;
+  name: string;
+};
+
+interface TagSelectDialogProps {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  selectedTags: FormTag[];
+  onTagsChange: (tags: FormTag[]) => void;
+  initialAvailableTags: Tag[];
+  isLoadingInitialTags: boolean;
+}
+
+export function TagSelectDialog({
+  isOpen,
+  onOpenChange,
+  selectedTags,
+  onTagsChange,
+  initialAvailableTags,
+  isLoadingInitialTags,
+}: TagSelectDialogProps) {
+  const [currentAvailableTags, setCurrentAvailableTags] =
+    useState<Tag[]>(initialAvailableTags);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+
+  useEffect(() => {
+    setCurrentAvailableTags(initialAvailableTags);
+  }, [initialAvailableTags]);
+
+  const handleSelectTag = (tag: Tag) => {
+    const formTag: FormTag = {
+      id: tag.id,
+      name: tag.name,
+    };
+    if (!selectedTags.some((t) => t.id === formTag.id)) {
+      onTagsChange([...selectedTags, formTag]);
+    }
+  };
+
+  const handleDeselectTag = (tagId: string) => {
+    onTagsChange(selectedTags.filter((t) => t.id !== tagId));
+  };
+
+  const handleCreateTag = async () => {
+    if (!searchTerm.trim()) return;
+    const newTagName = searchTerm.trim();
+
+    if (
+      currentAvailableTags.some(
+        (tag) => tag.name.toLowerCase() === newTagName.toLowerCase(),
+      )
+    ) {
+      toast.info(`Tag "${newTagName}" already exists.`);
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      const result = await createTagAction({
+        name: newTagName,
+      });
+      if (result.success && result.data?.tag) {
+        toast.success(`Tag "${result.data.tag.name}" created successfully.`);
+        setCurrentAvailableTags((prev) => [result.data?.tag!, ...prev]);
+        handleSelectTag(result.data.tag);
+        setSearchTerm("");
+      } else {
+        toast.error("Failed to create tag.", { description: result.error });
+      }
+    } catch (error) {
+      toast.error("Failed to create tag.");
+      console.error("Failed to create tag:", error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const selectableTags = currentAvailableTags
+    .filter((tag) =>
+      searchTerm.trim() === ""
+        ? true
+        : tag.name.toLowerCase().includes(searchTerm.trim().toLowerCase()),
+    )
+    .filter((tag) => !selectedTags.some((selected) => selected.id === tag.id));
+
+  const newTagCandidateName = searchTerm.trim();
+  const canPotentiallyCreateTag =
+    newTagCandidateName &&
+    !currentAvailableTags.some(
+      (tag) => tag.name.toLowerCase() === newTagCandidateName.toLowerCase(),
+    );
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[600px] flex flex-col max-h-[80vh]">
+        <DialogHeader>
+          <DialogTitle>Select Tags</DialogTitle>
+          <DialogDescription>
+            Select up to 5 tags for your post.
+          </DialogDescription>
+        </DialogHeader>
+
+        {selectedTags.length > 0 && (
+          <div className="border-b pb-4 mb-4">
+            <p className="text-sm font-medium mb-2">Selected Tags</p>
+            <div className="flex flex-wrap gap-2">
+              {selectedTags.map((tag) => (
+                <Badge key={tag.id} variant="secondary">
+                  {tag.name}
+                  <button
+                    type="button"
+                    className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    onClick={() => handleDeselectTag(tag.id)}
+                    aria-label={`Remove ${tag.name}`}
+                  >
+                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {isLoadingInitialTags ? (
+          <div className="flex flex-grow justify-center items-center p-4 min-h-[150px]">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <span className="ml-2">Loading tags...</span>
+          </div>
+        ) : (
+          <>
+            <Command className="flex-grow overflow-hidden">
+              <div className="flex items-center border-b px-3">
+                <CommandInput
+                  placeholder="Search for tags..."
+                  value={searchTerm}
+                  onValueChange={setSearchTerm}
+                  className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 border-none focus:ring-0"
+                />
+              </div>
+
+              <ScrollArea className="flex-grow h-[calc(80vh-250px)]">
+                <CommandList className="max-h-fit">
+                  <CommandEmpty>No results found.</CommandEmpty>
+
+                  <CommandGroup>
+                    {selectableTags.map((tag) => (
+                      <CommandItem
+                        key={tag.id}
+                        value={`${tag.name}-${tag.id}`}
+                        onSelect={() => handleSelectTag(tag)}
+                        className="cursor-pointer"
+                      >
+                        {tag.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+
+                  {canPotentiallyCreateTag && (
+                    <CommandGroup heading="Create New Tag">
+                      <CommandItem
+                        key={`create-${newTagCandidateName}`}
+                        value={`create-${newTagCandidateName}`}
+                        onSelect={handleCreateTag}
+                        className="cursor-pointer text-emerald-600 dark:text-emerald-400"
+                        disabled={isCreating}
+                      >
+                        {isCreating ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Creating...
+                          </>
+                        ) : (
+                          <>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Create &quot;{newTagCandidateName}&quot;
+                          </>
+                        )}
+                      </CommandItem>
+                    </CommandGroup>
+                  )}
+                </CommandList>
+              </ScrollArea>
+            </Command>
+          </>
+        )}
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Close
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
