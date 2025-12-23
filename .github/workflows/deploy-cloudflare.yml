@@ -65,6 +65,11 @@ jobs:
 
         run: pnpm build
 
+      - name: Clean .next cache for deployment
+        run: |
+          rm -rf .next/cache
+          find .next -name "*.pack" -size +25M -delete 2>/dev/null || true
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
