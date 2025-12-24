@@ -1,0 +1,19 @@
+# Ignore large screenshot files - served from R2 CDN
+public/screenshots/thumbnails
+public/screenshots
+
+# Development files
+.env.local
+.env.*.local
+
+# IDE
+.idea
+.vscode
+
+# Docs (not needed in production)
+docs/
+*.md
+!README.md
+
+# Scripts
+scripts/
