@@ -63,7 +63,7 @@ export default function EditBlogClient() {
 
     if (result.success) {
       toast.success("Blog post updated successfully!");
-      router.push(`/dashboard/blogs`);
+      router.push(`/dashboard/blog`);
       router.refresh();
     } else {
       toast.error("Error updating blog post", {
@@ -87,7 +87,7 @@ export default function EditBlogClient() {
         <p className="text-muted-foreground">
           The requested post could not be found
         </p>
-        <Button onClick={() => router.push(`/dashboard/blogs`)}>
+        <Button onClick={() => router.push(`/dashboard/blog`)}>
           Back to List
         </Button>
       </div>

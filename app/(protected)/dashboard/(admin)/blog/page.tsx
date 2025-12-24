@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return constructMetadata({
     title: "Blogs",
     description: "Manage your blog posts.",
-    path: `/dashboard/blogs`,
+    path: `/dashboard/blog`,
   });
 }
 

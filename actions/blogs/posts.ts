@@ -1,6 +1,6 @@
 "use server";
 
-import { postActionSchema } from "@/app/(protected)/dashboard/(admin)/blogs/schema";
+import { postActionSchema } from "@/app/(protected)/dashboard/(admin)/blog/schema";
 import { actionResponse } from "@/lib/action-response";
 import { getSession, isAdmin } from "@/lib/auth/server";
 import { db } from "@/lib/db";
@@ -277,8 +277,8 @@ export async function createPostAction({
     }
 
     if (postData.status === "published") {
-      revalidatePath(`/blogs`);
-      revalidatePath(`/blogs/${postData.slug}`);
+      revalidatePath(`/blog`);
+      revalidatePath(`/blog/${postData.slug}`);
     }
 
     return actionResponse.success({ postId: postId });
@@ -366,11 +366,11 @@ export async function updatePostAction({
       await db.insert(postTagsSchema).values(newTagAssociations);
     }
 
-    revalidatePath(`/blogs`);
-    revalidatePath(`/blogs/${currentPost.slug}`);
+    revalidatePath(`/blog`);
+    revalidatePath(`/blog/${currentPost.slug}`);
 
     if (postUpdateData.status === "published") {
-      revalidatePath(`/blogs/${postUpdateData.slug}`);
+      revalidatePath(`/blog/${postUpdateData.slug}`);
     }
 
     return actionResponse.success({ postId: postId });
@@ -418,8 +418,8 @@ export async function deletePostAction({
     await db.delete(postsSchema).where(eq(postsSchema.id, postId));
 
     if (postDetails?.slug) {
-      revalidatePath(`/blogs`);
-      revalidatePath(`/blogs/${postDetails.slug}`);
+      revalidatePath(`/blog`);
+      revalidatePath(`/blog/${postDetails.slug}`);
     }
 
     return actionResponse.success({ postId: postId });

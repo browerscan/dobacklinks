@@ -35,7 +35,8 @@ const CLOUDFLARE_ACCOUNT_ID = getEnvValue("CLOUDFLARE_ACCOUNT_ID");
 const R2_BUCKET_NAME = getEnvValue("R2_BUCKET_NAME") || "dobacklinks";
 
 // Default settings
-const DEFAULT_SCREENSHOTS_DIR = "public/screenshots/thumbnails";
+const DEFAULT_SCREENSHOTS_DIR =
+  "/Volumes/SSD/dev/links/dobacklinks/dobacklinks-screenshots/thumbnails";
 
 // Parse command line args
 const args = process.argv.slice(2);

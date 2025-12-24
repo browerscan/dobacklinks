@@ -71,7 +71,7 @@ export default function CreateBlogClient() {
 
     if (result.success && result.data?.postId) {
       toast.success("Blog post created successfully!");
-      router.push(`/dashboard/blogs`);
+      router.push(`/dashboard/blog`);
     } else {
       toast.error("Error creating blog post", {
         description: result.error || "Failed to create the blog post",

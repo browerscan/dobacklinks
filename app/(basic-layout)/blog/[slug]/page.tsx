@@ -34,12 +34,12 @@ export async function generateMetadata({
       title: "404",
       description: "Page not found",
       noIndex: true,
-      path: `/blogs/${slug}`,
+      path: `/blog/${slug}`,
     });
   }
 
   const metadataPath = post.slug.startsWith("/") ? post.slug : `/${post.slug}`;
-  const fullPath = `/blogs${metadataPath}`;
+  const fullPath = `/blog${metadataPath}`;
 
   return constructMetadata({
     title: post.title,
@@ -66,7 +66,7 @@ export default async function BlogPage({ params }: { params: Params }) {
 
   if (errorCode) {
     showRestrictionMessageInsteadOfContent = true;
-    const redirectUrl = `/blogs/${slug}`;
+    const redirectUrl = `/blog/${slug}`;
 
     if (errorCode === "unauthorized") {
       messageTitle = "Access Restricted";
@@ -203,7 +203,7 @@ export default async function BlogPage({ params }: { params: Params }) {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": `${siteConfig.url}/blogs/${slug}`,
+              "@id": `${siteConfig.url}/blog/${slug}`,
             },
             keywords: tagsArray.length > 0 ? tagsArray.join(", ") : undefined,
           }),
@@ -217,7 +217,7 @@ export default async function BlogPage({ params }: { params: Params }) {
           actionText={actionText}
           actionLink={actionLink}
           backText={"Back to Blog List"}
-          backLink={`/blogs`}
+          backLink={`/blog`}
         />
       ) : (
         <article className="prose dark:prose-invert lg:prose-lg prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-img:rounded-xl prose-img:shadow-md max-w-none">

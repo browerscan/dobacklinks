@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { postActionSchema } from "@/app/(protected)/dashboard/(admin)/blogs/schema";
+import { postActionSchema } from "@/app/(protected)/dashboard/(admin)/blog/schema";
 import {
   verifyHMACSignature,
   extractHMACSignature,
@@ -209,9 +209,9 @@ export async function POST(request: NextRequest) {
 
     // 6. Revalidate paths if published
     if (postData.status === "published") {
-      revalidatePath(`/blogs`);
-      revalidatePath(`/blogs/${postSlug}`);
-      console.log(`✅ [/api/blogs] Revalidated paths for published post`);
+      revalidatePath(`/blog`);
+      revalidatePath(`/blog/${postSlug}`);
+      console.log(`✅ [/api/blog] Revalidated paths for published post`);
     }
 
     console.log(

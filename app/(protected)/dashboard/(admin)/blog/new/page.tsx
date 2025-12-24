@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
     page: "CreateBlog",
     title: "Create Blog Post",
     description: "Create a new blog post",
-    path: `/dashboard/blogs/new`,
+    path: `/dashboard/blog/new`,
   });
 }
 

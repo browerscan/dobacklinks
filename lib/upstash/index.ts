@@ -24,6 +24,21 @@ interface RateLimitConfig {
 }
 
 /**
+ * Fallback behavior when Redis is unavailable
+ */
+export enum RedisFallbackMode {
+  /** Allow all requests (current behavior - less secure) */
+  ALLOW_ALL = "allow_all",
+  /** Block all requests (most secure - may impact availability) */
+  BLOCK_ALL = "block_all",
+  /** Use in-memory rate limiting as fallback (balanced approach) */
+  MEMORY_FALLBACK = "memory_fallback",
+}
+
+// In-memory fallback store (per-process, not distributed)
+const memoryStore = new Map<string, { count: number; resetTime: number }>();
+
+/**
  * Get or create a rate limiter
  * @param config Rate limit configuration
  * @returns Ratelimit instance or null (if Redis is disabled)
@@ -72,22 +87,96 @@ export function getRateLimiter(config: RateLimitConfig): Ratelimit | null {
 }
 
 /**
+ * In-memory rate limiter fallback
+ * WARNING: This is per-process only and not distributed across multiple server instances
+ * Use only as a fallback when Redis is unavailable
+ */
+function checkMemoryRateLimit(
+  identifier: string,
+  config: RateLimitConfig,
+): boolean {
+  const now = Date.now();
+  const [amount, duration] = config.window.split(" ");
+
+  let windowMs: number;
+  switch (duration) {
+    case "s":
+      windowMs = parseInt(amount) * 1000;
+      break;
+    case "m":
+      windowMs = parseInt(amount) * 60 * 1000;
+      break;
+    case "h":
+      windowMs = parseInt(amount) * 60 * 60 * 1000;
+      break;
+    case "d":
+      windowMs = parseInt(amount) * 24 * 60 * 60 * 1000;
+      break;
+    default:
+      throw new Error(`Invalid duration: ${duration}. Use s, m, h, or d.`);
+  }
+
+  const key = `${config.prefix}:${identifier}`;
+  const record = memoryStore.get(key);
+
+  // Clean up expired records
+  if (record && now > record.resetTime) {
+    memoryStore.delete(key);
+  }
+
+  const current = memoryStore.get(key);
+  if (!current) {
+    memoryStore.set(key, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+
+  if (current.count >= config.maxRequests) {
+    return false;
+  }
+
+  current.count += 1;
+  return true;
+}
+
+/**
  * Check if the rate limit is exceeded
  * @param identifier Identifier (e.g. IP address)
  * @param config Rate limit configuration
+ * @param fallbackMode Behavior when Redis is unavailable (default: ALLOW_ALL)
  * @returns Whether the request is allowed
  */
 export async function checkRateLimit(
   identifier: string,
   config: RateLimitConfig,
+  fallbackMode: RedisFallbackMode = RedisFallbackMode.ALLOW_ALL,
 ): Promise<boolean> {
   const limiter = getRateLimiter(config);
-  if (!limiter) {
-    return true;
+
+  // Redis is available - use it
+  if (limiter) {
+    const { success } = await limiter.limit(identifier);
+    return success;
   }
 
-  const { success } = await limiter.limit(identifier);
-  return success;
+  // Redis is unavailable - use fallback strategy
+  switch (fallbackMode) {
+    case RedisFallbackMode.BLOCK_ALL:
+      console.warn(
+        `[RateLimit] Redis unavailable - blocking request to ${config.prefix}`,
+      );
+      return false;
+
+    case RedisFallbackMode.MEMORY_FALLBACK:
+      console.warn(
+        `[RateLimit] Redis unavailable - using in-memory fallback for ${config.prefix}`,
+      );
+      return checkMemoryRateLimit(identifier, config);
+
+    case RedisFallbackMode.ALLOW_ALL:
+    default:
+      // Legacy behavior - allow all requests when Redis is down
+      return true;
+  }
 }
 
 /**

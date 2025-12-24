@@ -2,8 +2,16 @@ import { db } from "@/lib/db";
 import { products, productCategories, categories } from "@/lib/db/schema";
 import { and, desc, eq, ilike, or, sql, asc } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, getClientIPFromRequest } from "@/lib/upstash";
 
 export const dynamic = "force-dynamic";
+
+// Rate limit: 60 requests per minute per IP
+const RATE_LIMIT_CONFIG = {
+  prefix: "search-api",
+  maxRequests: 60,
+  window: "1 m",
+};
 
 interface SearchParams {
   q?: string;
@@ -20,6 +28,20 @@ interface SearchParams {
 
 export async function GET(request: NextRequest) {
   try {
+    // Rate limiting check
+    const clientIP = getClientIPFromRequest(request);
+    const isAllowed = await checkRateLimit(clientIP, RATE_LIMIT_CONFIG);
+
+    if (!isAllowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Rate limit exceeded. Please try again later.",
+        },
+        { status: 429 },
+      );
+    }
+
     const searchParams = request.nextUrl.searchParams;
 
     const params: SearchParams = {

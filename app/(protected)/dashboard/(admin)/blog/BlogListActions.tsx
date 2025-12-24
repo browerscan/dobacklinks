@@ -58,7 +58,7 @@ export function BlogListActions({ post }: BlogListActionsProps) {
   };
 
   const handleDuplicate = () => {
-    router.push(`/dashboard/blogs/new?duplicatePostId=${post.id}`);
+    router.push(`/dashboard/blog/new?duplicatePostId=${post.id}`);
   };
 
   return (
@@ -74,7 +74,7 @@ export function BlogListActions({ post }: BlogListActionsProps) {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem asChild>
             <Link
-              href={`/dashboard/blogs/${post.id}/edit`}
+              href={`/dashboard/blog/${post.id}/edit`}
               title="Edit"
               prefetch={false}
             >

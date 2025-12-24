@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Link Building & Guest Posting Blog - Real SEO Strategies That Work",
     description:
       "No BS link building advice from SEO pros who run 9,700+ guest post sites. Learn outreach strategies, guest posting tactics, and SEO tips that actually work in 2025. Simple. Actionable. Proven.",
-    path: `/blogs`,
+    path: `/blog`,
   });
 }
 

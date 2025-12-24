@@ -55,7 +55,7 @@ export default function NotFound() {
                   <Link href="/services">Services</Link>
                 </Button>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href="/blogs">
+                  <Link href="/blog">
                     <BookOpen className="w-3 h-3 mr-1" />
                     Blog
                   </Link>

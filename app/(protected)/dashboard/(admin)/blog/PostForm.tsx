@@ -2,7 +2,7 @@
 
 import { type PostWithTags } from "@/actions/blogs/posts";
 import { generateAdminPresignedUploadUrl } from "@/actions/r2-resources";
-import { basePostSchema } from "@/app/(protected)/dashboard/(admin)/blogs/schema";
+import { basePostSchema } from "@/app/(protected)/dashboard/(admin)/blog/schema";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {

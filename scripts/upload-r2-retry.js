@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 稳定的 R2 批量上传 - 低并发，带重试
+ * 简单重试上传 - 直接上传，409 错误跳过
  */
 const https = require("https");
 const fs = require("fs");
@@ -21,35 +21,32 @@ const SCREENSHOTS_DIR =
   "/Volumes/SSD/dev/links/dobacklinks/dobacklinks-screenshots/thumbnails";
 const R2_PREFIX = "screenshots/thumbnails/";
 
-console.log("📤 稳定批量上传到 R2 (低并发模式)");
+console.log("📤 R2 重试上传 (自动跳过已存在文件)");
 console.log("=".repeat(60));
 
-// 获取所有文件
-const files = [];
+// 获取所有本地文件
+const localFiles = [];
 function walkDir(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      walkDir(fullPath);
-    } else if (entry.name.endsWith(".webp")) {
-      files.push(fullPath);
+    if (entry.name.endsWith(".webp")) {
+      localFiles.push(entry.name);
     }
   }
 }
 walkDir(SCREENSHOTS_DIR);
 
-console.log(`📁 总共 ${files.length} 个文件\n`);
+console.log(`📁 本地文件: ${localFiles.length} 个\n`);
 
 let uploaded = 0;
 let skipped = 0;
 let failed = 0;
 const startTime = Date.now();
 
-function uploadFile(filePath) {
+function uploadFile(fileName) {
   return new Promise((resolve) => {
-    const relPath = path.relative(SCREENSHOTS_DIR, filePath);
-    const key = R2_PREFIX + relPath.replace(/\\/g, "/");
+    const key = R2_PREFIX + fileName;
+    const filePath = path.join(SCREENSHOTS_DIR, fileName);
     const fileContent = fs.readFileSync(filePath);
 
     const options = {
@@ -72,7 +69,6 @@ function uploadFile(filePath) {
           uploaded++;
           resolve(true);
         } else if (res.statusCode === 409) {
-          // 文件已存在
           skipped++;
           resolve(true);
         } else {
@@ -98,45 +94,43 @@ function uploadFile(filePath) {
   });
 }
 
-// 低并发上传 (每批5个)
-const CONCURRENT = 5;
-const DELAY_MS = 100;
+async function retryUpload() {
+  const CONCURRENT = 5;
+  const DELAY_MS = 100;
 
-async function batchUpload() {
-  for (let i = 0; i < files.length; i += CONCURRENT) {
+  for (let i = 0; i < localFiles.length; i += CONCURRENT) {
     const batch = [];
-    const end = Math.min(i + CONCURRENT, files.length);
+    const end = Math.min(i + CONCURRENT, localFiles.length);
 
     for (let j = i; j < end; j++) {
-      batch.push(uploadFile(files[j]));
+      batch.push(uploadFile(localFiles[j]));
     }
 
     await Promise.all(batch);
 
-    // 添加延迟避免限流
-    if (i + CONCURRENT < files.length) {
+    if (i + CONCURRENT < localFiles.length) {
       await new Promise((r) => setTimeout(r, DELAY_MS));
     }
 
-    const progress = end;
+    const totalProcessed = uploaded + skipped + failed;
     const elapsed = (Date.now() - startTime) / 1000;
-    const rate = Math.round(progress / elapsed);
-    const eta = Math.round((files.length - progress) / rate);
+    const rate = Math.round(totalProcessed / elapsed);
+    const eta = Math.round((localFiles.length - totalProcessed) / rate);
 
     process.stdout.write(
-      `\r[${progress}/${files.length}] ✅${uploaded} ⏭️${skipped} ❌${failed} | ${rate}/s | ETA: ${Math.floor(eta / 60)}m ${eta % 60}s   `,
+      `\r[${totalProcessed}/${localFiles.length}] ✅${uploaded} ⏭️${skipped} ❌${failed} | ${rate}/s | ETA: ${Math.floor(eta / 60)}m ${eta % 60}s   `,
     );
   }
 
   console.log("\n");
   console.log("=".repeat(60));
   console.log("✅ 上传完成!");
-  console.log(`   总计: ${files.length}`);
-  console.log(`   成功: ${uploaded}`);
-  console.log(`   跳过: ${skipped}`);
+  console.log(`   本地文件: ${localFiles.length}`);
+  console.log(`   新上传: ${uploaded}`);
+  console.log(`   已存在跳过: ${skipped}`);
   console.log(`   失败: ${failed}`);
-  console.log(`   耗时: ${Math.round((Date.now() - startTime) / 1000)}秒`);
+  console.log(`   总耗时: ${Math.round((Date.now() - startTime) / 1000)}秒`);
   console.log("=".repeat(60));
 }
 
-batchUpload().catch(console.error);
+retryUpload().catch(console.error);

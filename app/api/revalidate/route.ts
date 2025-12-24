@@ -1,28 +1,70 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
+import {
+  verifyHMACSignature,
+  extractHMACSignature,
+} from "@/lib/security/hmac-auth";
+import { env } from "@/lib/env";
 
 /**
- * On-demand revalidation API
+ * On-demand revalidation API with HMAC authentication
  *
  * Usage:
  * POST /api/revalidate
- * Headers: { "Authorization": "Bearer YOUR_REVALIDATE_SECRET" }
+ * Headers: {
+ *   "Authorization": "HMAC <signature>",
+ *   "X-Timestamp": "<unix_timestamp_ms>"
+ * }
  * Body: { "path": "/sites/example-com" } or { "tag": "products" }
+ *
+ * Signature generation:
+ * canonicalString = "POST|/api/revalidate|<timestamp>|<body_json>"
+ * signature = HMAC-SHA256(canonicalString, CRON_SECRET)
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verify the secret token
+    // Extract signature and timestamp from headers
     const authHeader = request.headers.get("authorization");
-    const token = authHeader?.replace("Bearer ", "");
+    const signature = extractHMACSignature(authHeader);
+    const timestampHeader = request.headers.get("x-timestamp");
+    const timestamp = timestampHeader ? parseInt(timestampHeader, 10) : NaN;
 
-    if (!token || token !== process.env.REVALIDATE_SECRET) {
+    // Verify HMAC signature
+    if (!signature || isNaN(timestamp)) {
       return NextResponse.json(
-        { success: false, error: "Unauthorized" },
+        {
+          success: false,
+          error: "Missing authentication headers",
+        },
         { status: 401 },
       );
     }
 
+    // Read body for signature verification
     const body = await request.json();
+    const bodyString = JSON.stringify(body);
+
+    // Verify signature using CRON_SECRET
+    const { valid, error } = verifyHMACSignature(
+      signature,
+      {
+        method: "POST",
+        path: "/api/revalidate",
+        timestamp,
+        body: bodyString,
+      },
+      env.CRON_SECRET,
+      { maxAgeSeconds: 300 }, // 5 minutes
+    );
+
+    if (!valid) {
+      console.error("[Revalidate API] HMAC verification failed:", error);
+      return NextResponse.json(
+        { success: false, error: "Unauthorized", details: error },
+        { status: 401 },
+      );
+    }
+
     const { path, tag } = body;
 
     if (!path && !tag) {

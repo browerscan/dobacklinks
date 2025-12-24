@@ -66,7 +66,7 @@ const footerLinks: FooterLink[] = [
       {
         id: "blog",
         name: "Blog",
-        href: "/blogs",
+        href: "/blog",
       },
     ],
   },

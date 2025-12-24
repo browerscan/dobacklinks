@@ -27,7 +27,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
 
   return (
     <Link
-      href={`/blogs/${post.slug}`}
+      href={`/blog/${post.slug}`}
       title={post.title}
       prefetch={false}
       className="group block"

@@ -42,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as ChangeFrequency,
     },
     {
-      path: "/blogs",
+      path: "/blog",
       priority: 0.8,
       changeFrequency: "daily" as ChangeFrequency,
     },
@@ -71,10 +71,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   localPosts
     .filter((post) => post.slug && post.status !== "draft")
     .forEach((post) => {
-      const slugPart = post.slug.replace(/^\//, "").replace(/^blogs\//, "");
+      const slugPart = post.slug.replace(/^\//, "").replace(/^blog\//, "");
       if (slugPart) {
         allBlogSitemapEntries.push({
-          url: `${siteUrl}/blogs/${slugPart}`,
+          url: `${siteUrl}/blog/${slugPart}`,
           lastModified:
             post.metadata?.updatedAt || post.publishedAt || new Date(),
           changeFrequency: "daily" as ChangeFrequency,
@@ -89,10 +89,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
   if (serverResult.success && serverResult.data?.posts) {
     serverResult.data.posts.forEach((post) => {
-      const slugPart = post.slug?.replace(/^\//, "").replace(/^blogs\//, "");
+      const slugPart = post.slug?.replace(/^\//, "").replace(/^blog\//, "");
       if (slugPart) {
         allBlogSitemapEntries.push({
-          url: `${siteUrl}/blogs/${slugPart}`,
+          url: `${siteUrl}/blog/${slugPart}`,
           lastModified: post.publishedAt || new Date(),
           changeFrequency: "daily" as ChangeFrequency,
           priority: 0.7,

@@ -143,7 +143,7 @@ export function PostsDataTable<TData, TValue>({
           <TagManagementDrawer />
           <Button asChild className="highlight-bg text-white">
             <Link
-              href="/dashboard/blogs/new"
+              href="/dashboard/blog/new"
               title="Create New Blog"
               prefetch={false}
             >

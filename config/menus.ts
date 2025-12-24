@@ -46,7 +46,7 @@ export const adminMenus: Menu[] = [
   },
   {
     name: "Blogs",
-    href: "/dashboard/blogs",
+    href: "/dashboard/blog",
     icon: "BookText",
   },
 ];

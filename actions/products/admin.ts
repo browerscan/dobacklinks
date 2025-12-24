@@ -376,7 +376,8 @@ export async function createProductAsAdminAction(
       });
 
       if (existingProduct) {
-        const randomSuffix = Math.floor(Math.random() * 10000);
+        // Use cryptographically secure random suffix instead of Math.random()
+        const randomSuffix = crypto.randomUUID().split("-")[0];
         slug = `${slug}-${randomSuffix}`;
       }
 

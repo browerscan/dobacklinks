@@ -98,6 +98,19 @@ const isBuildTime =
   !!process.env.VERCEL_ENV;
 
 /**
+ * Generate a random build-time placeholder
+ * Uses crypto.randomBytes for better security than Math.random()
+ */
+function generateBuildTimePlaceholder(prefix: string, length: number): string {
+  if (typeof crypto === "undefined" || !crypto.randomBytes) {
+    // Fallback for environments where crypto is not available
+    return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
+  }
+  const randomBytes = require("crypto").randomBytes(length);
+  return `${prefix}-${randomBytes.toString("hex")}`;
+}
+
+/**
  * Parse and validate environment variables
  * @throws {ZodError} if validation fails (only in runtime, not during build)
  */
@@ -105,14 +118,16 @@ function parseEnv(): Env {
   // During build time, provide safe defaults for required fields
   if (isBuildTime) {
     const buildTimeEnv: Env = {
-      // Required fields - provide build-time placeholders
+      // Required fields - use cryptographically random build-time placeholders
       DATABASE_URL:
-        process.env.DATABASE_URL || "postgresql://localhost:5432/placeholder",
+        process.env.DATABASE_URL ||
+        generateBuildTimePlaceholder("build-db-placeholder", 16),
       BETTER_AUTH_SECRET:
         process.env.BETTER_AUTH_SECRET ||
-        "build-time-secret-placeholder-min-32-chars",
+        generateBuildTimePlaceholder("build-auth-secret", 32),
       CRON_SECRET:
-        process.env.CRON_SECRET || "build-time-cron-secret-placeholder-32",
+        process.env.CRON_SECRET ||
+        generateBuildTimePlaceholder("build-cron-secret", 32),
 
       // Optional fields - pass through if present
       BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
@@ -174,7 +189,33 @@ function parseEnv(): Env {
 
   // Runtime: strict validation
   try {
-    return envSchema.parse(process.env);
+    const parsedEnv = envSchema.parse(process.env);
+
+    // Security check: Ensure we're not using build-time placeholders in production
+    if (parsedEnv.NODE_ENV === "production") {
+      const DANGER_PATTERNS = [
+        "build-db-placeholder",
+        "build-auth-secret",
+        "build-cron-secret",
+        "placeholder-min-32-chars",
+        "cron-secret-placeholder",
+      ];
+
+      for (const pattern of DANGER_PATTERNS) {
+        if (
+          parsedEnv.DATABASE_URL?.includes(pattern) ||
+          parsedEnv.BETTER_AUTH_SECRET?.includes(pattern) ||
+          parsedEnv.CRON_SECRET?.includes(pattern)
+        ) {
+          throw new Error(
+            `CRITICAL: Build-time placeholder detected in production environment variables. ` +
+              `Pattern: ${pattern}. This is a security risk and must be fixed immediately.`,
+          );
+        }
+      }
+    }
+
+    return parsedEnv;
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error("❌ Environment variable validation failed:");
