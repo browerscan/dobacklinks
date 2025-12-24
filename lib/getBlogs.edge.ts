@@ -21,7 +21,9 @@ import dayjs from "dayjs";
 // ============================================================================
 function mapServerPostToBlogPost(serverPost: PublicPostWithContent): BlogPost;
 function mapServerPostToBlogPost(serverPost: PublicPost): BlogPost;
-function mapServerPostToBlogPost(serverPost: PublicPostWithContent | PublicPost): BlogPost {
+function mapServerPostToBlogPost(
+  serverPost: PublicPostWithContent | PublicPost,
+): BlogPost {
   return {
     title: serverPost.title,
     description: serverPost.description ?? "",

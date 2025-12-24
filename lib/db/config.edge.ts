@@ -21,7 +21,10 @@ interface DBConfig {
 // Detect runtime environment
 function detectRuntime() {
   // @ts-ignore - Cloudflare Workers global
-  if (typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers") {
+  if (
+    typeof navigator !== "undefined" &&
+    navigator.userAgent === "Cloudflare-Workers"
+  ) {
     return "cloudflare-workers";
   }
   if (process.env.VERCEL_ENV) return "vercel";
@@ -51,13 +54,15 @@ export function createDatabaseEdge(config: DBConfig) {
 
   // Cloudflare Workers without Hyperdrive - use Neon HTTP
   if (runtime === "cloudflare-workers") {
-    console.warn("⚠️ Hyperdrive not configured, using Neon HTTP (requires Neon database)");
+    console.warn(
+      "⚠️ Hyperdrive not configured, using Neon HTTP (requires Neon database)",
+    );
 
     // Check if using Neon
     if (!config.connectionString.includes("neon")) {
       throw new Error(
         "Cloudflare Workers requires either Hyperdrive binding or Neon database. " +
-        "Please configure Hyperdrive in wrangler.toml or migrate to Neon."
+          "Please configure Hyperdrive in wrangler.toml or migrate to Neon.",
       );
     }
 
@@ -71,22 +76,28 @@ export function createDatabaseEdge(config: DBConfig) {
   console.log("🚀 Using postgres-js (TCP connection)");
   const postgres = require("postgres");
 
-  const platformConfig = runtime === "nodejs" ? {
-    max: config.maxConnections || 30,
-    prepare: true,
-    idle_timeout: 600,
-    connect_timeout: 30,
-  } : {
-    max: 1,
-    prepare: false,
-    idle_timeout: 0,
-    connect_timeout: 10,
-  };
+  const platformConfig =
+    runtime === "nodejs"
+      ? {
+          max: config.maxConnections || 30,
+          prepare: true,
+          idle_timeout: 600,
+          connect_timeout: 30,
+        }
+      : {
+          max: 1,
+          prepare: false,
+          idle_timeout: 0,
+          connect_timeout: 10,
+        };
 
   const client = postgres(config.connectionString, {
     ...platformConfig,
-    ssl: config.connectionString.includes("supabase") ||
-         config.connectionString.includes("neon") ? "require" : false,
+    ssl:
+      config.connectionString.includes("supabase") ||
+      config.connectionString.includes("neon")
+        ? "require"
+        : false,
     debug: config.debug ?? process.env.NODE_ENV === "development",
   });
 

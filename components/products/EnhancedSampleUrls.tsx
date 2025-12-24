@@ -137,7 +137,7 @@ export function EnhancedSampleUrls({ product }: EnhancedSampleUrlsProps) {
                             {
                               month: "short",
                               year: "numeric",
-                            }
+                            },
                           )}
                         </Badge>
                       )}

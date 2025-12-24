@@ -3,6 +3,7 @@
 ## 🔧 常用命令
 
 ### Hyperdrive
+
 ```bash
 # 创建
 wrangler hyperdrive create dobacklinks-db \
@@ -16,6 +17,7 @@ wrangler hyperdrive delete <id>
 ```
 
 ### R2存储
+
 ```bash
 # 创建bucket
 wrangler r2 bucket create dobacklinks-screenshots
@@ -28,6 +30,7 @@ wrangler r2 object put dobacklinks-screenshots/test.jpg --file=./test.jpg
 ```
 
 ### 构建和部署
+
 ```bash
 # 完整流程
 pnpm build && npx @cloudflare/next-on-pages && wrangler pages dev .worker-next
@@ -40,6 +43,7 @@ pnpm cloudflare:deploy  # 部署
 ```
 
 ### 调试
+
 ```bash
 # 实时日志
 wrangler tail
@@ -55,12 +59,12 @@ wrangler pages project list
 
 ## 📝 文件导入映射表
 
-| 原文件 | Edge版本 | 何时使用 |
-|-------|---------|---------|
-| `@/lib/db` | `@/lib/db/index.edge` | API路由需要Edge runtime |
-| `@/lib/smartImageConverter` | `@/lib/smartImageConverter.edge` | OG图片生成,需要Edge |
-| `@/lib/services/screenshot-storage` | `@/lib/services/screenshot-storage.edge` | 截图功能,需要R2 |
-| `@/lib/getBlogs` | `@/lib/getBlogs.edge` | 博客页面,需要Edge |
+| 原文件                              | Edge版本                                 | 何时使用                |
+| ----------------------------------- | ---------------------------------------- | ----------------------- |
+| `@/lib/db`                          | `@/lib/db/index.edge`                    | API路由需要Edge runtime |
+| `@/lib/smartImageConverter`         | `@/lib/smartImageConverter.edge`         | OG图片生成,需要Edge     |
+| `@/lib/services/screenshot-storage` | `@/lib/services/screenshot-storage.edge` | 截图功能,需要R2         |
+| `@/lib/getBlogs`                    | `@/lib/getBlogs.edge`                    | 博客页面,需要Edge       |
 
 ---
 
@@ -73,6 +77,7 @@ export const runtime = "edge";
 ```
 
 示例:
+
 ```typescript
 // app/api/example/route.ts
 import { getDatabase } from "@/lib/db/index.edge";
@@ -90,16 +95,19 @@ export async function GET(request: Request, context: any) {
 ## 🔐 环境变量
 
 ### 必需
+
 ```env
 DATABASE_URL=your_database_connection_string  # 数据库连接
 ```
 
 ### Cloudflare Pages Dashboard设置
+
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
 - 其他Next.js环境变量
 
 ### 可选 (如使用)
+
 ```env
 R2_PUBLIC_URL=https://pub-xxx.r2.dev  # R2公共URL
 ```
@@ -133,13 +141,13 @@ R2_PUBLIC_URL=https://pub-xxx.r2.dev  # R2公共URL
 
 ## 🆘 问题速查
 
-| 错误 | 原因 | 解决 |
-|-----|------|------|
-| `postgres is not a function` | TCP连接不可用 | 配置Hyperdrive |
-| `sharp is not defined` | 原生模块 | 使用`.edge`版本 |
-| `fs is not defined` | 无文件系统 | 使用`.edge`版本 |
-| `R2 bucket not configured` | 缺少R2配置 | 配置R2或禁用功能 |
-| `DATABASE_URL is not set` | 环境变量缺失 | 检查Cloudflare Dashboard |
+| 错误                         | 原因          | 解决                     |
+| ---------------------------- | ------------- | ------------------------ |
+| `postgres is not a function` | TCP连接不可用 | 配置Hyperdrive           |
+| `sharp is not defined`       | 原生模块      | 使用`.edge`版本          |
+| `fs is not defined`          | 无文件系统    | 使用`.edge`版本          |
+| `R2 bucket not configured`   | 缺少R2配置    | 配置R2或禁用功能         |
+| `DATABASE_URL is not set`    | 环境变量缺失  | 检查Cloudflare Dashboard |
 
 ---
 

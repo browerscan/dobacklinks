@@ -12,7 +12,8 @@ export function GatedSearch() {
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold mb-4">Advanced Search & Filters</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Search and filter through 9,700+ guest post sites with advanced criteria
+          Search and filter through 9,700+ guest post sites with advanced
+          criteria
         </p>
       </div>
 
@@ -34,7 +35,8 @@ export function GatedSearch() {
                 Sign in to unlock advanced search
               </h2>
               <p className="text-muted-foreground max-w-md mx-auto">
-                Create a free account to access powerful search and filtering tools for finding the perfect guest post sites.
+                Create a free account to access powerful search and filtering
+                tools for finding the perfect guest post sites.
               </p>
             </div>
 
@@ -43,7 +45,9 @@ export function GatedSearch() {
               <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
                 <Search className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-sm mb-1">Full-Text Search</h3>
+                  <h3 className="font-semibold text-sm mb-1">
+                    Full-Text Search
+                  </h3>
                   <p className="text-xs text-muted-foreground">
                     Search by site name, niche, or any keyword
                   </p>
@@ -53,7 +57,9 @@ export function GatedSearch() {
               <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
                 <Filter className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-sm mb-1">Advanced Filters</h3>
+                  <h3 className="font-semibold text-sm mb-1">
+                    Advanced Filters
+                  </h3>
                   <p className="text-xs text-muted-foreground">
                     Filter by DR, DA, traffic, niche, link type, and more
                   </p>
@@ -84,9 +90,7 @@ export function GatedSearch() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
               <Button asChild size="lg">
-                <Link href="/login?returnUrl=/search">
-                  Sign In to Search
-                </Link>
+                <Link href="/login?returnUrl=/search">Sign In to Search</Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
                 <Link href="/">Browse All Sites</Link>
@@ -125,7 +129,10 @@ export function GatedSearch() {
       <div className="max-w-4xl mx-auto mt-8 text-center">
         <p className="text-sm text-muted-foreground">
           Looking for help with outreach?{" "}
-          <Link href="/services" className="text-primary hover:underline font-medium">
+          <Link
+            href="/services"
+            className="text-primary hover:underline font-medium"
+          >
             Hire our personal outreach service
           </Link>
         </p>

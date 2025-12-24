@@ -21,7 +21,9 @@ const CRON_SECRET = process.env.CRON_SECRET;
 
 if (!CRON_SECRET) {
   console.error("❌ Error: CRON_SECRET environment variable is required");
-  console.error("💡 Set it in .env.local or run: CRON_SECRET=your_secret pnpm tsx scripts/publish-blog-posts.ts");
+  console.error(
+    "💡 Set it in .env.local or run: CRON_SECRET=your_secret pnpm tsx scripts/publish-blog-posts.ts",
+  );
   process.exit(1);
 }
 
@@ -88,7 +90,9 @@ async function createBlogPost(postData: any) {
     } else {
       console.error(`   ❌ Error: HTTP ${response.status}`);
       console.error(`   Response:`, JSON.stringify(result, null, 2));
-      throw new Error(`Failed to publish: ${result.error || response.statusText}`);
+      throw new Error(
+        `Failed to publish: ${result.error || response.statusText}`,
+      );
     }
   } catch (error) {
     console.error(`   ❌ Request failed:`, error);
@@ -108,16 +112,16 @@ function extractTitle(content: string): string {
  * Extract description from markdown (first paragraph after title)
  */
 function extractDescription(content: string): string {
-  const lines = content.split('\n');
+  const lines = content.split("\n");
   let foundTitle = false;
 
   for (const line of lines) {
-    if (line.startsWith('#')) {
+    if (line.startsWith("#")) {
       foundTitle = true;
       continue;
     }
 
-    if (foundTitle && line.trim() && !line.startsWith('#')) {
+    if (foundTitle && line.trim() && !line.startsWith("#")) {
       return line.trim().substring(0, 160);
     }
   }
@@ -131,8 +135,8 @@ function extractDescription(content: string): string {
 function generateSlug(title: string): string {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
     .substring(0, 100);
 }
 
@@ -207,7 +211,6 @@ async function main() {
       const result = await createBlogPost(postData);
       results.push({ file: post.file, success: true, result });
       published++;
-
     } catch (error) {
       console.error(`   �� Failed to publish ${post.file}:`, error);
       results.push({ file: post.file, success: false, error });

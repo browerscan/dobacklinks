@@ -25,6 +25,7 @@ You can trigger a manual deployment from GitHub Actions → Deploy to Cloudflare
 ### Environment Variables
 
 Production environment variables are configured in Cloudflare Dashboard:
+
 - Go to: Cloudflare Dashboard → Pages → dobacklinks → Settings → Environment Variables
 - Add all required env vars from `.env.local.template`
 

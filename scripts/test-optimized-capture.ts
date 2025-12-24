@@ -49,7 +49,9 @@ async function main() {
   console.log(`   Captured: ${result.stats.captured}`);
   console.log(`   Failed: ${result.stats.failed}`);
   console.log(`   Duration: ${duration.toFixed(1)}s`);
-  console.log(`   Speed: ${(result.stats.captured / duration * 60).toFixed(1)} captures/minute`);
+  console.log(
+    `   Speed: ${((result.stats.captured / duration) * 60).toFixed(1)} captures/minute`,
+  );
 
   if (result.failedDomains && result.failedDomains.length > 0) {
     console.log("\n❌ Failed domains:");
@@ -60,8 +62,12 @@ async function main() {
 
   console.log("\n💡 Performance Comparison:");
   console.log(`   Old speed: ~0.9 captures/minute`);
-  console.log(`   New speed: ${(result.stats.captured / duration * 60).toFixed(1)} captures/minute`);
-  console.log(`   Improvement: ${((result.stats.captured / duration * 60 / 0.9 - 1) * 100).toFixed(0)}% faster`);
+  console.log(
+    `   New speed: ${((result.stats.captured / duration) * 60).toFixed(1)} captures/minute`,
+  );
+  console.log(
+    `   Improvement: ${((((result.stats.captured / duration) * 60) / 0.9 - 1) * 100).toFixed(0)}% faster`,
+  );
   console.log("═".repeat(80));
 }
 

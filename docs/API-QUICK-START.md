@@ -83,7 +83,7 @@ async function createPost(postData: any) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `HMAC ${signature}`,
+      Authorization: `HMAC ${signature}`,
       "X-Timestamp": timestamp.toString(),
     },
     body: body,
@@ -260,6 +260,7 @@ if (result.success) {
 ### Q: 401 Authentication failed
 
 **A:** 检查：
+
 1. `CRON_SECRET` 是否正确
 2. 时间戳是否在 5 分钟内
 3. 签名生成是否正确
@@ -271,6 +272,7 @@ if (result.success) {
 ### Q: 400 Invalid input data
 
 **A:** 检查请求体是否符合 schema 要求：
+
 - `title` 至少 3 个字符
 - `slug` 至少 3 个字符
 - `status` 必须是 `draft`、`published` 或 `archived`

@@ -14,7 +14,8 @@ function isEdgeRuntime(): boolean {
     // @ts-ignore - EdgeRuntime is a global in edge runtime
     typeof EdgeRuntime !== "undefined" ||
     // @ts-ignore - navigator exists in Workers
-    (typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers")
+    (typeof navigator !== "undefined" &&
+      navigator.userAgent === "Cloudflare-Workers")
   );
 }
 
@@ -24,7 +25,9 @@ function isEdgeRuntime(): boolean {
  * @param imageUrl - Image URL to convert
  * @returns Converted image URL or data URI
  */
-export const smartImageConverter = async (imageUrl: string): Promise<string> => {
+export const smartImageConverter = async (
+  imageUrl: string,
+): Promise<string> => {
   const isWebpExt = imageUrl.toLowerCase().endsWith(".webp");
 
   // If not webp, return as-is
@@ -46,10 +49,15 @@ export const smartImageConverter = async (imageUrl: string): Promise<string> => 
 
       // Option 2: next/og supports webp natively, just return the URL
       // This is the simplest and most performant approach
-      console.log("⚡ Edge runtime: returning webp URL (next/og supports webp)");
+      console.log(
+        "⚡ Edge runtime: returning webp URL (next/og supports webp)",
+      );
       return imageUrl;
     } catch (error) {
-      console.warn("⚠️ Image conversion failed in edge runtime, returning original:", error);
+      console.warn(
+        "⚠️ Image conversion failed in edge runtime, returning original:",
+        error,
+      );
       return imageUrl;
     }
   }
@@ -81,7 +89,9 @@ export const smartImageConverter = async (imageUrl: string): Promise<string> => 
  * Optimized version: Skip conversion since next/og supports webp
  * This is the recommended approach for Edge runtime
  */
-export const smartImageConverterSimple = async (imageUrl: string): Promise<string> => {
+export const smartImageConverterSimple = async (
+  imageUrl: string,
+): Promise<string> => {
   // next/og supports webp, png, jpeg natively
   // No conversion needed!
   return imageUrl;

@@ -30,14 +30,14 @@ function getConnectionString(): string {
     if (typeof EdgeRuntime !== "undefined") {
       throw new Error(
         "DATABASE_URL is not set in Edge runtime. " +
-        "Please configure it in your Cloudflare Pages environment variables."
+          "Please configure it in your Cloudflare Pages environment variables.",
       );
     }
 
     // In development, provide helpful message
     console.warn(
       "⚠️ DATABASE_URL is not set. Database features will be disabled. " +
-      "Set DATABASE_URL in .env.local for local development."
+        "Set DATABASE_URL in .env.local for local development.",
     );
 
     // Return empty string to allow app to start (for pages without DB)

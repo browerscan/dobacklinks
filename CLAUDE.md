@@ -418,7 +418,13 @@ Programmatically create blog posts via REST API with HMAC authentication.
 Uses `CRON_SECRET` for HMAC signature generation:
 
 ```typescript
-const signature = generateHMACSignature("POST", "/api/blogs", timestamp, body, CRON_SECRET);
+const signature = generateHMACSignature(
+  "POST",
+  "/api/blogs",
+  timestamp,
+  body,
+  CRON_SECRET,
+);
 
 // Headers:
 // Authorization: HMAC <signature>
@@ -433,8 +439,8 @@ const signature = generateHMACSignature("POST", "/api/blogs", timestamp, body, C
   "slug": "my-blog-post",
   "content": "# Content here...",
   "description": "Post description",
-  "status": "published",  // "draft" | "published" | "archived"
-  "visibility": "public",  // "public" | "logged_in"
+  "status": "published", // "draft" | "published" | "archived"
+  "visibility": "public", // "public" | "logged_in"
   "featuredImageUrl": "",
   "isPinned": false,
   "tags": [{ "id": "uuid", "name": "tag-name" }]

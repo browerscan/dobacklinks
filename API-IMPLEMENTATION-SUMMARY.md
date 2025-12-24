@@ -5,6 +5,7 @@
 ## 📁 Created Files
 
 ### 1. API Endpoint
+
 - **`app/api/blogs/route.ts`** - REST API endpoint for blog post creation
   - HMAC-SHA256 authentication
   - Automatic system user creation
@@ -13,6 +14,7 @@
   - Comprehensive error handling
 
 ### 2. Test Scripts
+
 - **`scripts/test-blog-api.ts`** - TypeScript test script
   - Full HMAC signature generation
   - Example usage with detailed logging
@@ -24,6 +26,7 @@
   - Run with: `python scripts/test-blog-api.py`
 
 ### 3. Documentation
+
 - **`docs/API.md`** - Complete API reference
   - Authentication details
   - Request/response specifications
@@ -38,6 +41,7 @@
   - Security checklist
 
 ### 4. Updated Files
+
 - **`CLAUDE.md`** - Updated with API documentation
   - Added REST API section
   - Updated directory structure
@@ -71,11 +75,13 @@
 ## 🚀 Quick Start
 
 1. **Set CRON_SECRET in `.env.local`**:
+
    ```bash
    CRON_SECRET=$(openssl rand -hex 32)
    ```
 
 2. **Test locally**:
+
    ```bash
    pnpm dev
    pnpm tsx scripts/test-blog-api.ts
@@ -95,11 +101,13 @@ POST /api/blogs
 ```
 
 **Headers**:
+
 - `Authorization: HMAC <signature>`
 - `X-Timestamp: <unix_timestamp_ms>`
 - `Content-Type: application/json`
 
 **Request Body**:
+
 ```json
 {
   "title": "string (min 3 chars)",
@@ -115,6 +123,7 @@ POST /api/blogs
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -160,6 +169,7 @@ POST /api/blogs
 ## 🧪 Testing
 
 ### Local Testing
+
 ```bash
 # TypeScript
 pnpm tsx scripts/test-blog-api.ts
@@ -172,6 +182,7 @@ python scripts/test-blog-api.py
 ```
 
 ### Production Testing
+
 ```bash
 export API_URL="https://dobacklinks.com"
 export CRON_SECRET="your_production_secret"
@@ -196,12 +207,15 @@ pnpm tsx scripts/test-blog-api.ts
 ## 🤝 Integration Examples
 
 ### Automation Script (TypeScript)
+
 See `scripts/test-blog-api.ts` for full example.
 
 ### Python Integration
+
 See `scripts/test-blog-api.py` for full example.
 
 ### cURL Script
+
 See `docs/API.md` for cURL examples.
 
 ## 📞 Support

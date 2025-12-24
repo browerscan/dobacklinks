@@ -104,9 +104,13 @@ function parseEnv(): Env {
   if (isBuildTime) {
     const buildTimeEnv: Env = {
       // Required fields - provide build-time placeholders
-      DATABASE_URL: process.env.DATABASE_URL || "postgresql://localhost:5432/placeholder",
-      BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || "build-time-secret-placeholder-min-32-chars",
-      CRON_SECRET: process.env.CRON_SECRET || "build-time-cron-secret-placeholder-32",
+      DATABASE_URL:
+        process.env.DATABASE_URL || "postgresql://localhost:5432/placeholder",
+      BETTER_AUTH_SECRET:
+        process.env.BETTER_AUTH_SECRET ||
+        "build-time-secret-placeholder-min-32-chars",
+      CRON_SECRET:
+        process.env.CRON_SECRET || "build-time-cron-secret-placeholder-32",
 
       // Optional fields - pass through if present
       BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
@@ -125,13 +129,28 @@ function parseEnv(): Env {
       R2_PUBLIC_URL: process.env.R2_PUBLIC_URL,
       CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID,
       CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN,
-      CLOUDFLARE_BROWSER_RENDERING_URL: process.env.CLOUDFLARE_BROWSER_RENDERING_URL || "https://api.cloudflare.com/client/v4",
+      CLOUDFLARE_BROWSER_RENDERING_URL:
+        process.env.CLOUDFLARE_BROWSER_RENDERING_URL ||
+        "https://api.cloudflare.com/client/v4",
       // Convert string to number for numeric fields
-      SCREENSHOT_VIEWPORT_WIDTH: parseInt(process.env.SCREENSHOT_VIEWPORT_WIDTH || "1920", 10),
-      SCREENSHOT_VIEWPORT_HEIGHT: parseInt(process.env.SCREENSHOT_VIEWPORT_HEIGHT || "1080", 10),
-      SCREENSHOT_THUMBNAIL_WIDTH: parseInt(process.env.SCREENSHOT_THUMBNAIL_WIDTH || "400", 10),
-      SCREENSHOT_THUMBNAIL_HEIGHT: parseInt(process.env.SCREENSHOT_THUMBNAIL_HEIGHT || "300", 10),
-      SCREENSHOT_FORMAT: (process.env.SCREENSHOT_FORMAT as "webp" | "png" | "jpeg") || "webp",
+      SCREENSHOT_VIEWPORT_WIDTH: parseInt(
+        process.env.SCREENSHOT_VIEWPORT_WIDTH || "1920",
+        10,
+      ),
+      SCREENSHOT_VIEWPORT_HEIGHT: parseInt(
+        process.env.SCREENSHOT_VIEWPORT_HEIGHT || "1080",
+        10,
+      ),
+      SCREENSHOT_THUMBNAIL_WIDTH: parseInt(
+        process.env.SCREENSHOT_THUMBNAIL_WIDTH || "400",
+        10,
+      ),
+      SCREENSHOT_THUMBNAIL_HEIGHT: parseInt(
+        process.env.SCREENSHOT_THUMBNAIL_HEIGHT || "300",
+        10,
+      ),
+      SCREENSHOT_FORMAT:
+        (process.env.SCREENSHOT_FORMAT as "webp" | "png" | "jpeg") || "webp",
       SCREENSHOT_QUALITY: parseInt(process.env.SCREENSHOT_QUALITY || "80", 10),
       UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
       UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
@@ -139,11 +158,15 @@ function parseEnv(): Env {
       SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
       SENTRY_ORG: process.env.SENTRY_ORG,
       SENTRY_PROJECT: process.env.SENTRY_PROJECT,
-      NODE_ENV: (process.env.NODE_ENV as "development" | "production" | "test") || "development",
+      NODE_ENV:
+        (process.env.NODE_ENV as "development" | "production" | "test") ||
+        "development",
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     };
 
-    console.log("⚠️  Build mode detected - using placeholder environment variables");
+    console.log(
+      "⚠️  Build mode detected - using placeholder environment variables",
+    );
     return buildTimeEnv;
   }
 

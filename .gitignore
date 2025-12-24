@@ -143,3 +143,4 @@ dist
 .pnpm-store/
 .vercel
 public/screenshots/thumbnails/
+.env*.local

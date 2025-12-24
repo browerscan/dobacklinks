@@ -12,7 +12,7 @@ import { env } from "@/lib/env";
 // Types
 // ============================================================================
 export interface UploadResult {
-  fullUrl: string;      // 与 thumbnailUrl 相同（用于兼容）
+  fullUrl: string; // 与 thumbnailUrl 相同（用于兼容）
   thumbnailUrl: string; // 缩略图 URL
 }
 

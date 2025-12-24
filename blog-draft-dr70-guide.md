@@ -55,6 +55,7 @@ A site can have DR90 but get only 500 visitors per month—meaning it's not actu
 - **Engagement Metrics:** Bounce rate, pages per visit, average visit duration
 
 For guest posting, you ideally want sites with:
+
 - 100,000+ monthly visits (proves audience existence)
 - High percentage of organic search traffic (indicates SEO strength)
 - Low bounce rate under 60% (shows engaged readership)
@@ -99,6 +100,7 @@ Before you start filtering, clarify what you're trying to achieve:
 - **Timeline:** Do you need immediate placements or are you building a 6-month pipeline?
 
 For example, a typical SaaS startup might set goals like:
+
 - 10 DR70+ links over 3 months
 - Priority on Technology and Business niches
 - Budget: $2,000-$3,000 total ($200-$300 per link)
@@ -126,6 +128,7 @@ Select "dofollow" unless you're specifically building a natural-looking link pro
 Toggle this filter on if you want maximum authority. Google News sites are among the most trusted in our database, though they typically command higher prices.
 
 **Example Filter Combination:**
+
 - Niche: Technology, Marketing
 - Min DR: 70
 - Traffic: 100K-1M, 1M+
@@ -140,6 +143,7 @@ This combination might return 200-400 sites, which is a manageable list for manu
 Click on any site in the results to view its full detail page. Here's what to look for:
 
 **Above the Fold (Public Data):**
+
 - Site name, tagline, and category
 - Domain Rating and Domain Authority
 - Spam score
@@ -148,6 +152,7 @@ Click on any site in the results to view its full detail page. Here's what to lo
 
 **SimilarWeb Metrics Panel:**
 Scroll down to see the traffic visualization. Key questions to ask:
+
 - Is the traffic trend growing, stable, or declining?
 - What percentage comes from organic search? (Higher is better)
 - Is the geographic distribution aligned with your target market?
@@ -155,6 +160,7 @@ Scroll down to see the traffic visualization. Key questions to ask:
 
 **Login Gate:**
 At this point, you'll see a login prompt if you're not signed in. Creating a free account unlocks:
+
 - Exact pricing ranges (e.g., "$150-$250")
 - Turnaround times (e.g., "3-5 business days")
 - Direct contact email
@@ -164,6 +170,7 @@ At this point, you'll see a login prompt if you're not signed in. Creating a fre
 
 **Sample URL Review:**
 This is critical. Click through to 2-3 sample URLs to verify:
+
 - Content quality matches the site's DR/traffic reputation
 - Guest posts are properly integrated (not segregated in a "sponsored" ghetto)
 - Author bylines include backlinks
@@ -176,13 +183,14 @@ If samples show low-quality content, aggressive ad placement, or lack of social 
 
 As you evaluate sites, add promising opportunities to a spreadsheet with columns like:
 
-| Site Name | DR | Monthly Visits | Price Range | Turnaround | Contact Email | Priority | Notes |
-|-----------|----|--------------|-----------|-----------|--------------|---------|----- |
-| TechCrunch+ | 92 | 5M+ | $500-$800 | 2 weeks | editor@... | High | Google News, high engagement |
-| Business Insider | 94 | 10M+ | $600-$1000 | 3 weeks | pitch@... | High | Massive reach, strict editorial |
-| Marketing Land | 78 | 500K | $200-$300 | 1 week | submit@... | Medium | Good niche fit, fast turnaround |
+| Site Name        | DR  | Monthly Visits | Price Range | Turnaround | Contact Email | Priority | Notes                           |
+| ---------------- | --- | -------------- | ----------- | ---------- | ------------- | -------- | ------------------------------- |
+| TechCrunch+      | 92  | 5M+            | $500-$800   | 2 weeks    | editor@...    | High     | Google News, high engagement    |
+| Business Insider | 94  | 10M+           | $600-$1000  | 3 weeks    | pitch@...     | High     | Massive reach, strict editorial |
+| Marketing Land   | 78  | 500K           | $200-$300   | 1 week     | submit@...    | Medium   | Good niche fit, fast turnaround |
 
 Sort by priority based on:
+
 1. **Niche relevance** (exact match > adjacent > general business)
 2. **Traffic quality** (organic search % and engagement)
 3. **Price-to-authority ratio** (DR per dollar spent)
@@ -244,6 +252,7 @@ With this approach, expect response rates of 40-60%—far higher than cold outre
 Once you get approval, it's time to deliver content that meets editorial standards:
 
 **Content Quality Checklist:**
+
 - Original research or unique insights (not rehashed common knowledge)
 - Data citations from credible sources
 - Conversational but professional tone matching the site's style
@@ -254,6 +263,7 @@ Once you get approval, it's time to deliver content that meets editorial standar
 - Author bio that establishes credibility without being salesy
 
 **Common Rejection Reasons to Avoid:**
+
 - Content too promotional or sales-focused
 - Thin content that doesn't meet word count
 - Factual errors or unsupported claims
@@ -268,18 +278,21 @@ Submit according to their stated process (some use Google Docs, others want Word
 After your guest posts go live, tracking ROI is essential:
 
 **Immediate Tracking (Week 1):**
+
 - Verify the link is live and dofollow (use browser inspector)
 - Check that anchor text matches what was agreed
 - Monitor referral traffic in Google Analytics
 - Share on your social channels to drive initial engagement
 
 **Short-Term Tracking (Months 1-3):**
+
 - Monitor keyword rankings for target pages (expect gradual improvements)
 - Track Domain Rating changes in Ahrefs (DR updates monthly)
 - Measure increases in branded search volume
 - Calculate referral traffic value (especially from high-traffic sites)
 
 **Long-Term Tracking (Months 3-12):**
+
 - Assess overall organic traffic growth attributed to link building
 - Measure conversion rate from organic traffic (did quality improve?)
 - Track whether other sites have linked to your guest posts (secondary benefits)
@@ -300,6 +313,7 @@ Even if you attribute only 20% of that traffic increase to these specific links 
 Let's break down a real campaign we assisted with in Q4 2024.
 
 **Client Profile:**
+
 - SaaS startup in project management space
 - 6 months post-launch
 - DR: 28 (very early stage)
@@ -307,6 +321,7 @@ Let's break down a real campaign we assisted with in Q4 2024.
 - Goal: Increase visibility and compete for "best project management tools" keywords
 
 **Budget and Constraints:**
+
 - Total budget: $500
 - Timeline: 6 weeks
 - Content creation: Handled in-house (saved costs)
@@ -315,6 +330,7 @@ Let's break down a real campaign we assisted with in Q4 2024.
 **Strategy:**
 
 Instead of going for 2-3 expensive DR80+ sites, the client opted for volume with quality:
+
 - Used our directory to identify 15 DR60-70 sites
 - Filtered for "Business" and "Technology" niches
 - Focused on sites with pricing under $100 per post
@@ -329,6 +345,7 @@ Week 4-5: Created and submitted 10 unique articles (1,500-2,000 words each)
 Week 6: All 10 posts went live
 
 **Site Breakdown:**
+
 - 4 Google News approved sites (DR62-68)
 - 6 high-traffic business blogs (DR60-72)
 - All sites had 100K+ monthly traffic
@@ -362,18 +379,21 @@ By now you understand how to use the directory effectively. But there's still a 
 ### DIY Guest Posting (Using the Directory)
 
 **Best for:**
+
 - In-house SEO teams with available bandwidth
 - Agencies managing multiple client campaigns
 - Businesses with strong content creation capabilities
 - Budget-conscious startups willing to trade time for cost savings
 
 **Advantages:**
+
 - Lower cost (directory access is free, you only pay sites directly)
 - Full control over content quality and messaging
 - Build direct relationships with editors for future placements
 - Learn the process and develop internal expertise
 
 **Time Investment:**
+
 - Research and filtering: 2-3 hours per 10 sites
 - Outreach and negotiation: 1 hour per site
 - Content creation: 4-6 hours per 1,500-word article
@@ -382,6 +402,7 @@ By now you understand how to use the directory effectively. But there's still a 
 **Total:** ~15-20 hours per successful placement (accounting for rejection rates)
 
 **Realistic Costs:**
+
 - Site fees: $100-$500 per placement (depending on DR tier)
 - Internal labor: $50-150/hour (depending on who's doing the work)
 - Total cost per link: $250-$800
@@ -389,12 +410,14 @@ By now you understand how to use the directory effectively. But there's still a 
 ### Done-For-You Service
 
 **Best for:**
+
 - Businesses without in-house SEO expertise
 - High-revenue companies where founder/executive time is better spent elsewhere
 - Campaigns requiring scale (20+ placements per month)
 - Industries where editorial standards are very high (finance, health, legal)
 
 **What's Included:**
+
 - Site research and vetting beyond the directory
 - Personalized outreach with higher response rates
 - Professional content creation by niche expert writers
@@ -403,6 +426,7 @@ By now you understand how to use the directory effectively. But there's still a 
 - Performance tracking and reporting
 
 **Time Investment:**
+
 - Initial strategy call: 1 hour
 - Monthly review: 30 minutes
 - Everything else: Handled by service team
@@ -410,6 +434,7 @@ By now you understand how to use the directory effectively. But there's still a 
 **Total:** ~2 hours per month (regardless of placement volume)
 
 **Realistic Costs:**
+
 - Full service: $400-$1,200 per placement (including site fees + service fee)
 - Total cost per link: $400-$1,200
 
@@ -418,11 +443,13 @@ By now you understand how to use the directory effectively. But there's still a 
 Let's compare a 10-link campaign:
 
 **DIY Approach:**
+
 - 150-200 hours of internal time
 - $2,500-$5,000 in site fees
 - Total cost: $5,000-$8,000 (if valuing time at $50/hour)
 
 **Done-For-You:**
+
 - 20 hours of internal time (strategy and review)
 - $4,000-$12,000 all-in
 - Total cost: $5,000-$13,000
@@ -440,6 +467,7 @@ Let's compare a 10-link campaign:
 ### Hybrid Approach (Recommended for Most)
 
 Many of our clients use a hybrid model:
+
 - Use the directory to identify and secure 50% of placements (lower-cost sites, straightforward topics)
 - Hire our service for the other 50% (premium sites, technical topics, high-stakes placements)
 
@@ -464,6 +492,7 @@ A site with 80% social traffic (primarily Facebook) serves a different audience 
 ### 4. Check Publication Frequency
 
 Visit the site's blog or news section. If they haven't published anything in 3+ months, they may be inactive or understaffed, which could mean:
+
 - Slow turnaround times
 - Your guest post may be one of only a few new pieces (good for visibility, bad if site is dying)
 - Higher risk of the site going offline entirely
@@ -541,35 +570,41 @@ We're adding 200-300 new sites monthly through automated scraping, manual resear
 Ready to start using the directory? Here's a 30-day action plan:
 
 **Days 1-3: Research Phase**
+
 - Create free account at dobacklinks.com
 - Spend 2-3 hours browsing your niche category
 - Bookmark 20-30 sites that match your DR/traffic criteria
 - Review sample URLs to verify content quality
 
 **Days 4-7: Outreach Preparation**
+
 - Export your shortlist to a spreadsheet
 - Draft 3-5 pitch email templates
 - Prepare 5-10 headline ideas that align with directory sites' content
 - Set up a CRM or spreadsheet to track outreach
 
 **Days 8-14: Initial Outreach Wave**
+
 - Send personalized pitches to 20 sites
 - Track responses and follow up with non-responders after 5-7 days
 - Negotiate terms with interested editors
 - Aim to secure 5-10 confirmed placements
 
 **Days 15-21: Content Creation**
+
 - Write 3-5 guest posts (or batch-hire writers)
 - Create accompanying images/graphics
 - Proofread and run through Copyscape
 - Submit to editors for review
 
 **Days 22-28: Submission and Follow-Up**
+
 - Address any editorial feedback and resubmit
 - Confirm publication dates
 - Prepare social promotion plan for when posts go live
 
 **Days 29-30: Tracking Setup**
+
 - Add UTM parameters to all author bio links
 - Set up Google Analytics goals for referral traffic
 - Document baseline rankings for target keywords
@@ -610,4 +645,4 @@ Ready to get started?
 
 ---
 
-*About the Author: This guide was created by the dobacklinks.com team based on real campaigns we've executed for 200+ clients. Have questions about your specific situation? Email us at outreach@dobacklinks.com.*
+_About the Author: This guide was created by the dobacklinks.com team based on real campaigns we've executed for 200+ clients. Have questions about your specific situation? Email us at outreach@dobacklinks.com._

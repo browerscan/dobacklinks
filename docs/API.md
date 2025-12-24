@@ -9,11 +9,13 @@ All API endpoints use **HMAC-SHA256** authentication to ensure request integrity
 ### HMAC Signature Generation
 
 1. Create a canonical string:
+
    ```
    METHOD|PATH|TIMESTAMP|BODY
    ```
 
 2. Generate HMAC-SHA256 signature:
+
    ```typescript
    const hmac = crypto.createHmac("sha256", CRON_SECRET);
    hmac.update(canonicalString);
@@ -48,6 +50,7 @@ Create a new blog post.
 #### Request
 
 **Headers:**
+
 ```
 Authorization: HMAC <signature>
 X-Timestamp: <timestamp>
@@ -56,17 +59,17 @@ Content-Type: application/json
 
 **Body:** (JSON)
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `title` | string | Yes | Post title (min 3 characters) |
-| `slug` | string | Yes | URL-friendly slug (min 3 characters) |
-| `content` | string | No | Post content (Markdown supported) |
-| `description` | string | No | Post description/excerpt |
-| `featuredImageUrl` | string | No | URL to featured image (must be valid URL or empty string) |
-| `status` | enum | Yes | Post status: `"draft"`, `"published"`, or `"archived"` |
-| `visibility` | enum | Yes | Post visibility: `"public"` or `"logged_in"` |
-| `isPinned` | boolean | No | Pin post to top (default: `false`) |
-| `tags` | array | No | Array of tag objects: `[{ id: "uuid", name: "tag-name" }]` |
+| Field              | Type    | Required | Description                                                |
+| ------------------ | ------- | -------- | ---------------------------------------------------------- |
+| `title`            | string  | Yes      | Post title (min 3 characters)                              |
+| `slug`             | string  | Yes      | URL-friendly slug (min 3 characters)                       |
+| `content`          | string  | No       | Post content (Markdown supported)                          |
+| `description`      | string  | No       | Post description/excerpt                                   |
+| `featuredImageUrl` | string  | No       | URL to featured image (must be valid URL or empty string)  |
+| `status`           | enum    | Yes      | Post status: `"draft"`, `"published"`, or `"archived"`     |
+| `visibility`       | enum    | Yes      | Post visibility: `"public"` or `"logged_in"`               |
+| `isPinned`         | boolean | No       | Pin post to top (default: `false`)                         |
+| `tags`             | array   | No       | Array of tag objects: `[{ id: "uuid", name: "tag-name" }]` |
 
 **Example:**
 
@@ -102,12 +105,12 @@ Content-Type: application/json
 
 **Error Responses:**
 
-| Status | Description | Example |
-|--------|-------------|---------|
-| 400 | Bad Request - Invalid input data | `{ "success": false, "error": "Invalid input data", "details": {...} }` |
-| 401 | Unauthorized - Invalid/missing HMAC signature | `{ "success": false, "error": "Authentication failed: Invalid signature" }` |
-| 409 | Conflict - Slug already exists | `{ "success": false, "error": "Slug 'my-slug' already exists" }` |
-| 500 | Internal Server Error | `{ "success": false, "error": "Failed to create post", "details": "..." }` |
+| Status | Description                                   | Example                                                                     |
+| ------ | --------------------------------------------- | --------------------------------------------------------------------------- |
+| 400    | Bad Request - Invalid input data              | `{ "success": false, "error": "Invalid input data", "details": {...} }`     |
+| 401    | Unauthorized - Invalid/missing HMAC signature | `{ "success": false, "error": "Authentication failed: Invalid signature" }` |
+| 409    | Conflict - Slug already exists                | `{ "success": false, "error": "Slug 'my-slug' already exists" }`            |
+| 500    | Internal Server Error                         | `{ "success": false, "error": "Failed to create post", "details": "..." }`  |
 
 ---
 
@@ -145,7 +148,7 @@ async function createBlogPost(postData: any) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `HMAC ${signature}`,
+      Authorization: `HMAC ${signature}`,
       "X-Timestamp": timestamp.toString(),
     },
     body: body,
@@ -261,16 +264,19 @@ curl -X POST "${API_URL}${PATH}" \
 ### Local Testing
 
 1. Ensure `CRON_SECRET` is set in `.env.local`:
+
    ```bash
    CRON_SECRET=your_secret_key
    ```
 
 2. Start development server:
+
    ```bash
    pnpm dev
    ```
 
 3. Run test script:
+
    ```bash
    # TypeScript
    pnpm tsx scripts/test-blog-api.ts
@@ -342,5 +348,6 @@ if (result.success) {
 ## Support
 
 For issues or questions:
+
 - Email: outreach@dobacklinks.com
 - GitHub: [dobacklinks repository](https://github.com/yourusername/dobacklinks)

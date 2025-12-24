@@ -191,7 +191,7 @@ export function DomainInfoCard({ product }: DomainInfoCardProps) {
                         {
                           month: "short",
                           year: "numeric",
-                        }
+                        },
                       )}
                     </p>
                   )}

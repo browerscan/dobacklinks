@@ -25,6 +25,7 @@ This report documents the fixes applied to resolve Cloudflare deployment issues 
 **File**: `wrangler.toml`
 
 **Changes**:
+
 - Removed OpenNext-specific configuration (main, assets)
 - Added `pages_build_output_dir = ".worker-next"`
 - Added `streams_enable_constructors` compatibility flag
@@ -47,6 +48,7 @@ compatibility_flags = ["nodejs_compat", "streams_enable_constructors"]
 **File**: `package.json`
 
 **Changes**:
+
 - Updated `cloudflare:build` to run `@cloudflare/next-on-pages` after Next.js build
 - Updated all cloudflare scripts to use `.worker-next` directory
 - Added proper project name to deploy command
@@ -65,6 +67,7 @@ compatibility_flags = ["nodejs_compat", "streams_enable_constructors"]
 **File**: `.github/workflows/deploy-cloudflare.yml`
 
 **Changes**:
+
 - Added separate step for `@cloudflare/next-on-pages` build
 - Updated deployment to use `.worker-next` directory
 
@@ -148,11 +151,13 @@ The correct Cloudflare build process now follows these steps:
 #### Package Import Optimization
 
 **Before**: Entire libraries loaded even when using few exports
+
 ```javascript
 import { Check } from "lucide-react"; // Loads ~1000+ icons
 ```
 
 **After**: Only used components loaded
+
 ```javascript
 import { Check } from "lucide-react"; // Loads only Check icon
 ```
@@ -175,16 +180,19 @@ import { Check } from "lucide-react"; // Loads only Check icon
 ## 📊 Expected Performance Improvements
 
 ### Build Time
+
 - **Before**: ~45-60 seconds (single-threaded webpack)
 - **After**: ~35-45 seconds (multi-threaded + optimizations)
 - **Improvement**: ~20-30%
 
 ### Bundle Size
+
 - **Before**: Unoptimized package imports, no CSS optimization
 - **After**: Tree-shaken imports, optimized CSS
 - **Improvement**: ~15-25% reduction in bundle size
 
 ### Runtime Performance
+
 - **swcMinify**: Produces more efficient minified code
 - **optimizePackageImports**: Reduces JavaScript parsing time
 - **optimizeCss**: Reduces CSS parsing and layout time
@@ -196,11 +204,13 @@ import { Check } from "lucide-react"; // Loads only Check icon
 ### Removed X-Powered-By Header
 
 **Before**:
+
 ```
 X-Powered-By: Next.js
 ```
 
 **After**:
+
 ```
 (Header removed)
 ```
@@ -244,18 +254,21 @@ pnpm cloudflare:deploy
 ### Before Deploying to Production
 
 1. **Test local build**:
+
    ```bash
    pnpm cloudflare:build
    # Check for build errors
    ```
 
 2. **Test with Wrangler dev**:
+
    ```bash
    pnpm cloudflare:dev
    # Visit http://localhost:8788
    ```
 
 3. **Check bundle size**:
+
    ```bash
    pnpm analyze
    # Review bundle analyzer output
@@ -318,6 +331,7 @@ pnpm add @vercel/analytics
 ### Build fails with "@cloudflare/next-on-pages" error
 
 **Solution**: Ensure `@cloudflare/next-on-pages` is installed:
+
 ```bash
 pnpm add -D @cloudflare/next-on-pages@latest
 ```
@@ -325,11 +339,13 @@ pnpm add -D @cloudflare/next-on-pages@latest
 ### "account_id not found" error
 
 **Solution**: Set `CLOUDFLARE_ACCOUNT_ID` environment variable:
+
 ```bash
 export CLOUDFLARE_ACCOUNT_ID="your-account-id"
 ```
 
 Or add to `wrangler.toml` (not recommended for git):
+
 ```toml
 account_id = "your-account-id"
 ```
@@ -352,11 +368,13 @@ account_id = "your-account-id"
 ### CSS/JS not loading
 
 **Possible causes**:
+
 - CSP headers too restrictive
 - Asset paths incorrect
 - CDN caching issues
 
 **Solutions**:
+
 1. Check Content-Security-Policy headers in next.config.mjs
 2. Clear Cloudflare cache: Dashboard → Caching → Purge Everything
 3. Verify asset URLs in browser DevTools
@@ -368,6 +386,7 @@ account_id = "your-account-id"
 ### Recommended Further Optimizations
 
 1. **Enable Incremental Static Regeneration (ISR)**:
+
    ```javascript
    // app/sites/[slug]/page.tsx
    export const revalidate = 3600; // Revalidate every hour
@@ -416,17 +435,20 @@ Summary of all modified files:
 After deploying these changes:
 
 ### Deployment
+
 - ✅ Cloudflare Pages deployment works with Next.js 16
 - ✅ Automatic deployments on git push
 - ✅ Correct build output in `.worker-next`
 
 ### Performance
+
 - ✅ 20-30% faster builds
 - ✅ 15-25% smaller bundle size
 - ✅ Better tree-shaking for icon/UI libraries
 - ✅ Optimized CSS output
 
 ### Developer Experience
+
 - ✅ Faster local development builds
 - ✅ Clear build process documentation
 - ✅ Reliable CI/CD pipeline

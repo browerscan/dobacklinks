@@ -8,11 +8,13 @@
 ## 🎯 概览
 
 已完成：
+
 - ✅ 配置层优化（next.config.mjs, package.json, wrangler.toml）
 - ✅ 创建所有Edge兼容文件（.edge.ts版本）
 - ✅ 完整文档（优化报告 + 迁移指南）
 
 待完成：
+
 - ⚠️ 配置Cloudflare Hyperdrive或迁移到Neon
 - ⚠️ 更新现有代码导入Edge兼容版本
 - ⚠️ 配置R2存储（如使用截图功能）
@@ -69,11 +71,13 @@ DATABASE_URL=<neon-http-connection-string>
 #### 数据库访问
 
 **查找使用数据库的文件:**
+
 ```bash
 grep -r "from.*@/lib/db" --include="*.ts" --include="*.tsx" app/ actions/ lib/ | grep -v node_modules
 ```
 
 **更新导入:**
+
 ```typescript
 // 从:
 import { db } from "@/lib/db";
@@ -93,11 +97,13 @@ export async function GET(request: Request, context: any) {
 #### 图片转换
 
 **查找使用smartImageConverter的文件:**
+
 ```bash
 grep -r "smartImageConverter" --include="*.ts" --include="*.tsx" app/ lib/ | grep -v node_modules
 ```
 
 **更新导入:**
+
 ```typescript
 // 从:
 import { smartImageConverter } from "@/lib/smartImageConverter";
@@ -109,12 +115,15 @@ import { smartImageConverter } from "@/lib/smartImageConverter.edge";
 #### 截图存储 (如果使用)
 
 **步骤:**
+
 1. 创建R2 Bucket:
+
 ```bash
 wrangler r2 bucket create dobacklinks-screenshots
 ```
 
 2. 更新wrangler.toml:
+
 ```toml
 [[r2_buckets]]
 binding = "R2_SCREENSHOTS"
@@ -122,11 +131,13 @@ bucket_name = "dobacklinks-screenshots"
 ```
 
 3. 设置公共URL并更新 .env.local:
+
 ```env
 R2_PUBLIC_URL=https://pub-xxx.r2.dev
 ```
 
 4. 更新代码:
+
 ```typescript
 import { getScreenshotStorage } from "@/lib/services/screenshot-storage.edge";
 
@@ -141,11 +152,13 @@ export async function POST(request: Request, context: any) {
 #### 博客文章
 
 **查找使用getBlogs的文件:**
+
 ```bash
 grep -r "from.*@/lib/getBlogs" --include="*.ts" --include="*.tsx" app/ | grep -v node_modules
 ```
 
 **更新导入:**
+
 ```typescript
 // 从:
 import { getPosts, getPostBySlug } from "@/lib/getBlogs";
@@ -204,6 +217,7 @@ git push origin main
 部署前确认：
 
 ### 配置检查
+
 - [ ] Hyperdrive已创建并配置 (或已迁移到Neon)
 - [ ] wrangler.toml包含正确的bindings
 - [ ] 环境变量已在Cloudflare Dashboard配置
@@ -212,12 +226,14 @@ git push origin main
   - 所有其他必需的环境变量
 
 ### 代码检查
+
 - [ ] 所有数据库访问已更新为Edge版本
 - [ ] 所有sharp使用已更新为Edge版本
 - [ ] 所有fs访问已更新为Edge版本
 - [ ] API路由添加 `export const runtime = "edge"` (如需要)
 
 ### 测试检查
+
 - [ ] 本地构建成功: `pnpm build`
 - [ ] Cloudflare适配器成功: `npx @cloudflare/next-on-pages`
 - [ ] 本地Workers测试通过: `wrangler pages dev .worker-next`
@@ -231,11 +247,13 @@ git push origin main
 ## 📚 参考文档
 
 ### 本项目文档
+
 - [Cloudflare Edge优化报告](./CLOUDFLARE_EDGE_OPTIMIZATION.md)
 - [Edge迁移指南](./EDGE_MIGRATION_GUIDE.md)
 - [Codex完整审计](./optimize_plan.json)
 
 ### Cloudflare文档
+
 - [Hyperdrive文档](https://developers.cloudflare.com/hyperdrive/)
 - [R2存储文档](https://developers.cloudflare.com/r2/)
 - [Image Resizing文档](https://developers.cloudflare.com/images/image-resizing/)
@@ -243,6 +261,7 @@ git push origin main
 - [@cloudflare/next-on-pages](https://github.com/cloudflare/next-on-pages)
 
 ### 外部文档
+
 - [Neon Serverless Driver](https://neon.tech/docs/serverless/serverless-driver)
 - [Drizzle ORM文档](https://orm.drizzle.team/)
 
@@ -253,6 +272,7 @@ git push origin main
 ### 遇到问题？
 
 1. **查看日志**
+
 ```bash
 # 实时查看Workers日志
 wrangler tail
@@ -276,6 +296,7 @@ pnpm build 2>&1 | tee build.log
 ## 🎉 完成后
 
 部署成功后，你的应用将：
+
 - ✅ 在全球Cloudflare边缘节点运行
 - ✅ 享受极低延迟和高性能
 - ✅ 自动扩展，无需担心服务器容量

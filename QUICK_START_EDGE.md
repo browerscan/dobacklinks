@@ -201,6 +201,7 @@ R2_PUBLIC_URL=https://pub-xxx.r2.dev
 ### 如果需要完全Edge化
 
 查看 [EDGE_MIGRATION_GUIDE.md](docs/EDGE_MIGRATION_GUIDE.md) 了解如何:
+
 - 更新代码导入`.edge`版本
 - 添加`runtime = "edge"`到路由
 - 配置R2存储

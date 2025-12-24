@@ -23,7 +23,9 @@ interface ValueForMoneyIndicatorProps {
  * "$100-$200" => 150
  * "$500+" => 500
  */
-function parseAveragePrice(priceRange: string | null | undefined): number | null {
+function parseAveragePrice(
+  priceRange: string | null | undefined,
+): number | null {
   if (!priceRange) return null;
 
   // Try to extract numbers
@@ -108,7 +110,8 @@ function calculateValueScore(product: Product): {
   } else {
     score = 40;
     rating = "Premium Pricing";
-    description = "Higher-end pricing. Consider if niche/quality justifies cost.";
+    description =
+      "Higher-end pricing. Consider if niche/quality justifies cost.";
     color = "text-orange-600";
     bgColor = "bg-orange-100 dark:bg-orange-900/30";
   }
@@ -124,7 +127,9 @@ function calculateValueScore(product: Product): {
   return { score, rating, description, color, bgColor };
 }
 
-export function ValueForMoneyIndicator({ product }: ValueForMoneyIndicatorProps) {
+export function ValueForMoneyIndicator({
+  product,
+}: ValueForMoneyIndicatorProps) {
   const valueData = calculateValueScore(product);
 
   // Don't render if we can't calculate value
@@ -132,7 +137,8 @@ export function ValueForMoneyIndicator({ product }: ValueForMoneyIndicatorProps)
     return null;
   }
 
-  const avgPrice = parseAveragePrice(product.priceRange) ||
+  const avgPrice =
+    parseAveragePrice(product.priceRange) ||
     (product.contentPlacementPrice ? Number(product.contentPlacementPrice) : 0);
 
   return (

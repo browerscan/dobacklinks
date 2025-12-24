@@ -15,12 +15,16 @@ import { env } from "@/lib/env";
 // Types
 // ============================================================================
 export interface UploadResult {
-  fullUrl: string;      // Full-size screenshot URL
+  fullUrl: string; // Full-size screenshot URL
   thumbnailUrl: string; // Thumbnail URL (via Cloudflare Image Resizing)
 }
 
 interface R2Binding {
-  put(key: string, value: ArrayBuffer | ReadableStream, options?: any): Promise<void>;
+  put(
+    key: string,
+    value: ArrayBuffer | ReadableStream,
+    options?: any,
+  ): Promise<void>;
   get(key: string): Promise<any>;
 }
 
@@ -32,7 +36,8 @@ function isEdgeRuntime(): boolean {
     // @ts-ignore - EdgeRuntime is a global in edge runtime
     typeof EdgeRuntime !== "undefined" ||
     // @ts-ignore - navigator exists in Workers
-    (typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers")
+    (typeof navigator !== "undefined" &&
+      navigator.userAgent === "Cloudflare-Workers")
   );
 }
 
@@ -83,7 +88,7 @@ export class ScreenshotStorage {
   private async saveToR2(
     buffer: Buffer,
     fileName: string,
-    domain: string
+    domain: string,
   ): Promise<UploadResult> {
     try {
       if (!this.r2Bucket) {
@@ -95,7 +100,7 @@ export class ScreenshotStorage {
       // Convert Buffer to ArrayBuffer for R2
       const arrayBuffer = buffer.buffer.slice(
         buffer.byteOffset,
-        buffer.byteOffset + buffer.byteLength
+        buffer.byteOffset + buffer.byteLength,
       );
       await this.r2Bucket.put(key, arrayBuffer, {
         httpMetadata: {
@@ -134,7 +139,7 @@ export class ScreenshotStorage {
   private async saveToLocal(
     buffer: Buffer,
     fileName: string,
-    domain: string
+    domain: string,
   ): Promise<UploadResult> {
     try {
       // Dynamic imports to avoid bundling in edge runtime
@@ -153,7 +158,10 @@ export class ScreenshotStorage {
           .webp({ quality: this.quality - 10 })
           .toBuffer();
       } catch (error) {
-        console.warn("⚠️ Sharp not available, skipping thumbnail generation:", error);
+        console.warn(
+          "⚠️ Sharp not available, skipping thumbnail generation:",
+          error,
+        );
       }
 
       // Create directories
