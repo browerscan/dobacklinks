@@ -3,9 +3,16 @@
 # .dev.vars is automatically loaded by wrangler dev (DO NOT commit .dev.vars!)
 
 # ============================================================================
+# CLOUDFLARE
+# ============================================================================
+# Get your Account ID from: https://dash.cloudflare.com -> Right sidebar
+CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+
+# ============================================================================
 # DATABASE
 # ============================================================================
-DATABASE_URL=postgresql://postgres:postgres@93.127.133.204:54322/postgres
+# Replace with your actual database connection string
+DATABASE_URL=postgresql://user:password@host:port/database
 
 # ============================================================================
 # AUTHENTICATION
@@ -54,7 +61,7 @@ UPSTASH_REDIS_REST_TOKEN=your-upstash-redis-token
 # ============================================================================
 # SIMILARWEB API
 # ============================================================================
-SIMILARWEB_API_URL=http://93.127.133.204:3000/api/v1
+SIMILARWEB_API_URL=http://your-similarweb-api-host:port/api/v1
 SIMILARWEB_API_KEY=your-similarweb-api-key
 
 # ============================================================================

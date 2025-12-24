@@ -1,14 +1,13 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "dobacklinks"
 compatibility_date = "2024-12-18"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat", "streams_enable_constructors"]
 
 # Pages configuration
 pages_build_output_dir = ".worker-next"
 
-# Account ID - Get from: https://dash.cloudflare.com -> Right sidebar
-# Set via environment variable: CLOUDFLARE_ACCOUNT_ID
-# Or uncomment below (NOT recommended for committed code):
+# Account ID - DO NOT COMMIT THIS FILE WITH REAL VALUES!
+# Copy this file to wrangler.toml and replace with your actual account ID
 # account_id = "your-account-id-here"
 
 # Environment variables for production
@@ -23,3 +22,43 @@ enabled = true
 [build]
 command = "pnpm cloudflare:build"
 cwd = "."
+
+# ==========================================
+# Cloudflare Hyperdrive Configuration
+# ==========================================
+# To enable Hyperdrive for database connections:
+# 1. Create Hyperdrive config: wrangler hyperdrive create dobacklinks-db \
+#      --connection-string="postgresql://user:pass@93.127.133.204:54322/postgres"
+# 2. Get the ID from output
+# 3. Uncomment below and replace with your ID
+#
+# [[hyperdrive]]
+# binding = "HYPERDRIVE"
+# id = "your-hyperdrive-id-here"
+
+# ==========================================
+# Environment Variables (Set in Cloudflare Dashboard)
+# ==========================================
+# These should be configured in Cloudflare Dashboard → Pages → Settings → Environment Variables
+# DO NOT hardcode secrets in this file!
+#
+# Required:
+# - DATABASE_URL
+# - BETTER_AUTH_SECRET
+# - SIMILARWEB_API_URL
+# - SIMILARWEB_API_KEY
+# - CRON_SECRET
+#
+# Optional:
+# - NEXT_PUBLIC_GOOGLE_CLIENT_ID
+# - GOOGLE_CLIENT_SECRET
+# - NEXT_PUBLIC_GITHUB_CLIENT_ID
+# - GH_CLIENT_SECRET
+# - RESEND_API_KEY
+# - ADMIN_EMAIL
+# - R2_ACCOUNT_ID
+# - R2_ACCESS_KEY_ID
+# - R2_SECRET_ACCESS_KEY
+# - R2_BUCKET_NAME
+# - UPSTASH_REDIS_REST_URL
+# - UPSTASH_REDIS_REST_TOKEN
