@@ -88,10 +88,65 @@ const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 
 /**
+ * Check if we're in build mode and should skip strict validation
+ */
+const isBuildTime =
+  process.env.SKIP_DB_VALIDATION === "true" ||
+  process.env.CF_PAGES === "1" ||
+  process.env.VERCEL_ENV === "preview";
+
+/**
  * Parse and validate environment variables
- * @throws {ZodError} if validation fails
+ * @throws {ZodError} if validation fails (only in runtime, not during build)
  */
 function parseEnv(): Env {
+  // During build time, provide safe defaults for required fields
+  if (isBuildTime) {
+    const buildTimeEnv = {
+      // Required fields - provide build-time placeholders
+      DATABASE_URL: process.env.DATABASE_URL || "postgresql://localhost:5432/placeholder",
+      BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || "build-time-secret-placeholder-min-32-chars",
+      CRON_SECRET: process.env.CRON_SECRET || "build-time-cron-secret-placeholder-32",
+
+      // Optional fields - pass through if present
+      BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+      NEXT_PUBLIC_GITHUB_CLIENT_ID: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
+      GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+      SIMILARWEB_API_URL: process.env.SIMILARWEB_API_URL,
+      SIMILARWEB_API_KEY: process.env.SIMILARWEB_API_KEY,
+      RESEND_API_KEY: process.env.RESEND_API_KEY,
+      ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+      R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID,
+      R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
+      R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,
+      R2_BUCKET_NAME: process.env.R2_BUCKET_NAME,
+      R2_PUBLIC_URL: process.env.R2_PUBLIC_URL,
+      CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID,
+      CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN,
+      CLOUDFLARE_BROWSER_RENDERING_URL: process.env.CLOUDFLARE_BROWSER_RENDERING_URL || "https://api.cloudflare.com/client/v4",
+      SCREENSHOT_VIEWPORT_WIDTH: process.env.SCREENSHOT_VIEWPORT_WIDTH || "1920",
+      SCREENSHOT_VIEWPORT_HEIGHT: process.env.SCREENSHOT_VIEWPORT_HEIGHT || "1080",
+      SCREENSHOT_THUMBNAIL_WIDTH: process.env.SCREENSHOT_THUMBNAIL_WIDTH || "400",
+      SCREENSHOT_THUMBNAIL_HEIGHT: process.env.SCREENSHOT_THUMBNAIL_HEIGHT || "300",
+      SCREENSHOT_FORMAT: process.env.SCREENSHOT_FORMAT || "webp",
+      SCREENSHOT_QUALITY: process.env.SCREENSHOT_QUALITY || "80",
+      UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+      UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+      NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+      SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
+      SENTRY_ORG: process.env.SENTRY_ORG,
+      SENTRY_PROJECT: process.env.SENTRY_PROJECT,
+      NODE_ENV: process.env.NODE_ENV || "development",
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    };
+
+    console.log("⚠️  Build mode detected - using placeholder environment variables");
+    return buildTimeEnv as Env;
+  }
+
+  // Runtime: strict validation
   try {
     return envSchema.parse(process.env);
   } catch (error) {
@@ -112,7 +167,7 @@ function parseEnv(): Env {
 
 /**
  * Validated environment variables
- * Automatically validated on server startup
+ * Automatically validated on server startup (or uses build-time placeholders during build)
  */
 export const env = parseEnv();
 
