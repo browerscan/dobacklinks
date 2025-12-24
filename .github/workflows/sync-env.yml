@@ -1,0 +1,45 @@
+name: Sync Environment Variables to Vercel
+
+on:
+  workflow_dispatch:
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  sync-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Sync Environment Variables
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          # Function to add environment variable to Vercel
+          add_env() {
+            local name=$1
+            local value=$2
+            echo "Setting $name..."
+            echo "$value" | vercel env add "$name" production --token=$VERCEL_TOKEN --yes || true
+          }
+
+          # Add all environment variables
+          add_env "DATABASE_URL" "${{ secrets.DATABASE_URL }}"
+          add_env "BETTER_AUTH_SECRET" "${{ secrets.BETTER_AUTH_SECRET }}"
+          add_env "SIMILARWEB_API_URL" "${{ secrets.SIMILARWEB_API_URL }}"
+          add_env "SIMILARWEB_API_KEY" "${{ secrets.SIMILARWEB_API_KEY }}"
+          add_env "CRON_SECRET" "${{ secrets.CRON_SECRET }}"
+          add_env "ADMIN_EMAIL" "${{ secrets.ADMIN_EMAIL }}"
+          add_env "NEXT_PUBLIC_SITE_URL" "${{ secrets.NEXT_PUBLIC_SITE_URL }}"
+          add_env "NEXT_PUBLIC_GOOGLE_CLIENT_ID" "${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}"
+          add_env "GOOGLE_CLIENT_SECRET" "${{ secrets.GOOGLE_CLIENT_SECRET }}"
+          add_env "NEXT_PUBLIC_GITHUB_CLIENT_ID" "${{ secrets.NEXT_PUBLIC_GITHUB_CLIENT_ID }}"
+          add_env "GH_CLIENT_SECRET" "${{ secrets.GH_CLIENT_SECRET }}"
+
+          echo "✅ All environment variables synced to Vercel!"
