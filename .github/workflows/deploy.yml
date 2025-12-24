@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,8 +26,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
+          node-version: "20"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -39,12 +39,12 @@ jobs:
           NEXT_TELEMETRY_DISABLED: 1
           CF_PAGES: 1
         run: |
-          # Use standard Next.js build (cloudflare:build failed due to DB connection during static generation)
-          pnpm build
+          # Build with @cloudflare/next-on-pages for Cloudflare Pages compatibility
+          pnpm cloudflare:build
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .next --project-name=dobacklinks --branch=${{ github.ref_name }}
+          command: pages deploy .worker-next --project-name=dobacklinks --branch=${{ github.ref_name }}
