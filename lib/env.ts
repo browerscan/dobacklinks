@@ -89,11 +89,13 @@ export type Env = z.infer<typeof envSchema>;
 
 /**
  * Check if we're in build mode and should skip strict validation
+ * This covers Vercel (production/preview), Cloudflare Pages, and manual builds
  */
 const isBuildTime =
   process.env.SKIP_DB_VALIDATION === "true" ||
   process.env.CF_PAGES === "1" ||
-  process.env.VERCEL_ENV === "preview";
+  process.env.VERCEL === "1" ||
+  !!process.env.VERCEL_ENV;
 
 /**
  * Parse and validate environment variables
