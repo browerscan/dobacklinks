@@ -61,13 +61,37 @@ GitHub Secrets 中的 `CLOUDFLARE_ACCOUNT_ID` 与 API Token 关联的账户不�
 
 ---
 
-## 📋 下一步
+## 📋 下一步（需要手动完成）
 
-- [ ] 更新 GitHub Secrets 中的 `CLOUDFLARE_ACCOUNT_ID`
-- [ ] 重新触发部署
-- [ ] 验证部署成功（访问 https://dobacklinks.pages.dev）
-- [ ] 配置自定义域名 `dobacklinks.com`
-- [ ] 在 Cloudflare Pages 中配置生产环境变量（如果需要）
+### 步骤 1: 更新 GitHub Secrets ⚠️  **必须**
+
+1. 访问: https://github.com/browerscan/dobacklinks/settings/secrets/actions
+2. 找到 `CLOUDFLARE_ACCOUNT_ID`
+3. 点击 "Update" 按钮
+4. 将值从 `873cd683fb162639ab3732a3a995b64b` 改为 `9cb8d6ec0f6094cf4f0cd6b3ee5a17a3`
+5. 点击 "Update secret"
+
+### 步骤 2: 重新触发部署
+
+**方式 A - 手动触发 GitHub Actions（推荐）:**
+1. 访问: https://github.com/browerscan/dobacklinks/actions/workflows/deploy.yml
+2. 点击 "Run workflow"
+3. 选择 "Branch: main"
+4. 点击绿色的 "Run workflow" 按钮
+
+**方式 B - 推送空提交:**
+```bash
+cd /Volumes/SSD/dev/links/dobacklinks/dobacklinks
+git commit --allow-empty -m "trigger deployment with correct account ID"
+git push origin main
+```
+
+### 步骤 3: 验证部署成功
+
+- 等待 GitHub Actions 完成（约 2-3 分钟）
+- 访问: https://dobacklinks.pages.dev
+- 检查网站是否正常显示（不再是 404）
+- 访问: https://dobacklinks.com（自定义域名已配置）
 
 ---
 
