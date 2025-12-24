@@ -26,7 +26,10 @@ jobs:
             local name=$1
             local value=$2
             echo "Setting $name..."
-            echo "$value" | vercel env add "$name" production --token=$VERCEL_TOKEN --yes || true
+            # Check if env var already exists and remove it first
+            vercel env rm "$name" production --token=$VERCEL_TOKEN || true
+            # Add the new value
+            echo "$value" | vercel env add "$name" production --token=$VERCEL_TOKEN || true
           }
 
           # Add all environment variables
