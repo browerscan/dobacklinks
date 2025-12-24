@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { getScreenshotUrl } from "@/lib/utils/screenshot-url";
 
 interface ScreenshotDisplayProps {
   screenshotUrl?: string | null;
@@ -26,7 +27,9 @@ export function ScreenshotDisplay({
     return null;
   }
 
-  const imageUrl = screenshotUrl || thumbnailUrl;
+  // Convert local paths to R2 CDN URLs
+  const imageUrl =
+    getScreenshotUrl(screenshotUrl) || getScreenshotUrl(thumbnailUrl);
 
   if (!imageUrl) {
     return null;
@@ -75,7 +78,10 @@ export function ScreenshotThumbnail({
 }: ScreenshotDisplayProps) {
   const [hasError, setHasError] = useState(false);
 
-  if (!thumbnailUrl || hasError) {
+  // Convert local paths to R2 CDN URLs
+  const imageUrl = getScreenshotUrl(thumbnailUrl);
+
+  if (!imageUrl || hasError) {
     return null;
   }
 
@@ -84,7 +90,7 @@ export function ScreenshotThumbnail({
       className={`mt-2 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 ${className}`}
     >
       <Image
-        src={thumbnailUrl}
+        src={imageUrl}
         alt={`${name} preview`}
         width={400}
         height={300}

@@ -75,14 +75,16 @@ const nextConfig = {
     },
   ],
   images: {
-    // Cloudflare Pages: unoptimized by default unless explicitly enabled
-    unoptimized:
-      process.env.CF_PAGES === "1" ||
-      process.env.NEXT_PUBLIC_OPTIMIZED_IMAGES === "false",
+    // Vercel handles image optimization
+    unoptimized: process.env.NEXT_PUBLIC_OPTIMIZED_IMAGES === "false",
     remotePatterns: [
       {
         protocol: "https",
         hostname: "www.google.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.dobacklinks.com",
       },
       ...(process.env.R2_PUBLIC_URL
         ? [
