@@ -241,52 +241,21 @@ export async function ProductDetailContent({
               {/* Public Site Data - Always visible */}
               <PublicSiteData product={product} />
 
-              {/* Screenshot Preview */}
-              {product.screenshotFullUrl && (
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">Website Preview</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ScreenshotDisplay
-                      screenshotUrl={product.screenshotFullUrl}
-                      thumbnailUrl={product.screenshotThumbnailUrl}
-                      name={product.name}
-                    />
-                    {product.screenshotCapturedAt && (
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Screenshot captured:{" "}
-                        {dayjs(product.screenshotCapturedAt).format(
-                          "MMM D, YYYY",
-                        )}
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              )}
-
               {/* Search Engine Index Links */}
               {product.url && (
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">
-                      Search Engine Index
-                    </CardTitle>
+                    <CardTitle className="text-lg">Search Engine Index</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <SearchEngineLinks
-                      hostname={new URL(product.url).hostname}
-                    />
+                    <SearchEngineLinks hostname={new URL(product.url).hostname} />
                   </CardContent>
                 </Card>
               )}
 
               {/* Quick Links */}
               {product.url && (
-                <QuickLinks
-                  url={product.url}
-                  hostname={new URL(product.url).hostname}
-                />
+                <QuickLinks url={product.url} hostname={new URL(product.url).hostname} />
               )}
 
               {/* Screenshots/Images */}
@@ -323,9 +292,7 @@ export async function ProductDetailContent({
               {/* Description/Guidelines */}
               {product.description && (
                 <div>
-                  <h2 className="text-2xl font-semibold mb-4">
-                    Guidelines & Notes
-                  </h2>
+                  <h2 className="text-2xl font-semibold mb-4">Guidelines & Notes</h2>
                   <article className="prose prose-gray dark:prose-invert max-w-none">
                     <MDXRemote
                       source={product.description}
@@ -337,26 +304,17 @@ export async function ProductDetailContent({
               )}
 
               {/* Private Data (Logged-in) or Gated Pricing (Public) */}
-              {isLoggedIn ? (
-                <PrivateSiteData product={product} />
-              ) : (
-                <GatedPricing />
-              )}
+              {isLoggedIn ? <PrivateSiteData product={product} /> : <GatedPricing />}
 
               {/* Related Products */}
               {relatedProducts.length > 0 && (
                 <>
                   <Separator className="my-4" />
                   <section>
-                    <h2 className="text-2xl font-semibold mb-4">
-                      Similar sites
-                    </h2>
+                    <h2 className="text-2xl font-semibold mb-4">Similar sites</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {relatedProducts.map((relatedProduct) => (
-                        <LatestProductCard
-                          key={relatedProduct.id}
-                          product={relatedProduct}
-                        />
+                        <LatestProductCard key={relatedProduct.id} product={relatedProduct} />
                       ))}
                     </div>
                   </section>
@@ -366,6 +324,28 @@ export async function ProductDetailContent({
 
             {/* Right Sidebar (40%) */}
             <div className="space-y-6">
+              {/* Website Screenshot Preview */}
+              {product.screenshotFullUrl && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">Website Preview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ScreenshotDisplay
+                      screenshotUrl={product.screenshotFullUrl}
+                      thumbnailUrl={product.screenshotThumbnailUrl}
+                      name={product.name}
+                    />
+                    {product.screenshotCapturedAt && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Screenshot captured:{" "}
+                        {dayjs(product.screenshotCapturedAt).format("MMM D, YYYY")}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
               {/* SimilarWeb Traffic Metrics */}
               <SimilarWebMetrics product={product} />
 
