@@ -56,7 +56,7 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://challenges.cloudflare.com https://va.vercel-scripts.com",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' data: https://fonts.gstatic.com",
               "connect-src 'self' https://accounts.google.com https://*.google.com https://challenges.cloudflare.com https://region1.google-analytics.com",
@@ -115,10 +115,7 @@ const withBundleAnalyzerWrapper = withBundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
-if (
-  process.env.NODE_ENV === "development" &&
-  !process.env.NEXTY_WELCOME_SHOWN
-) {
+if (process.env.NODE_ENV === "development" && !process.env.NEXTY_WELCOME_SHOWN) {
   console.log("\n🎉 Welcome to Nexty Boilerplate!");
   console.log("💬 Join our Discord community: https://discord.gg/VRDxBgXUZ8");
   console.log("📚 Documentation: https://nexty.dev/docs\n\n");
