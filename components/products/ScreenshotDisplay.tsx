@@ -28,8 +28,7 @@ export function ScreenshotDisplay({
   }
 
   // Convert local paths to R2 CDN URLs
-  const imageUrl =
-    getScreenshotUrl(screenshotUrl) || getScreenshotUrl(thumbnailUrl);
+  const imageUrl = getScreenshotUrl(screenshotUrl) || getScreenshotUrl(thumbnailUrl);
 
   if (!imageUrl) {
     return null;
@@ -56,7 +55,7 @@ export function ScreenshotDisplay({
           width={1920}
           height={1080}
           className={`w-full h-auto ${isLoading ? "hidden" : "block"}`}
-          onLoad={() => setIsLoading(false)}
+          onLoadingComplete={() => setIsLoading(false)}
           onError={() => {
             setIsLoading(false);
             setHasError(true);
