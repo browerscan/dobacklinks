@@ -13,6 +13,11 @@ export const headerLinks: HeaderLink[] = [
     href: "/",
   },
   {
+    id: "search",
+    name: "Search",
+    href: "/search",
+  },
+  {
     id: "services",
     name: "Services",
     href: "/services",

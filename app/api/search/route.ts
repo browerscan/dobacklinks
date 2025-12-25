@@ -16,14 +16,34 @@ const RATE_LIMIT_CONFIG = {
 interface SearchParams {
   q?: string;
   niche?: string;
+  linkType?: "dofollow" | "nofollow";
   minDr?: number;
   maxDr?: number;
   minDa?: number;
   maxDa?: number;
+  minTraffic?: number;
+  maxTraffic?: number;
+  maxSpamScore?: number;
+  googleNews?: boolean;
+  isFeatured?: boolean;
+  isVerified?: boolean;
   sortBy?: "dr" | "da" | "traffic" | "relevance";
   sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;
+}
+
+function parseOptionalInt(value: string | null): number | undefined {
+  if (!value) return undefined;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function parseBooleanFlag(value: string | null): boolean | undefined {
+  if (!value) return undefined;
+  if (value === "1" || value.toLowerCase() === "true") return true;
+  if (value === "0" || value.toLowerCase() === "false") return false;
+  return undefined;
 }
 
 export async function GET(request: NextRequest) {
@@ -43,30 +63,35 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
+    const linkTypeParam = searchParams.get("linkType");
+
+    const googleNewsFlag = parseBooleanFlag(searchParams.get("googleNews"));
+    const featuredFlag = parseBooleanFlag(searchParams.get("featured"));
+    const verifiedFlag = parseBooleanFlag(searchParams.get("verified"));
 
     const params: SearchParams = {
       q: searchParams.get("q") || undefined,
       niche: searchParams.get("niche") || undefined,
-      minDr: searchParams.get("minDr")
-        ? parseInt(searchParams.get("minDr")!)
-        : undefined,
-      maxDr: searchParams.get("maxDr")
-        ? parseInt(searchParams.get("maxDr")!)
-        : undefined,
-      minDa: searchParams.get("minDa")
-        ? parseInt(searchParams.get("minDa")!)
-        : undefined,
-      maxDa: searchParams.get("maxDa")
-        ? parseInt(searchParams.get("maxDa")!)
-        : undefined,
+      linkType:
+        linkTypeParam === "dofollow" || linkTypeParam === "nofollow"
+          ? linkTypeParam
+          : undefined,
+      minDr: parseOptionalInt(searchParams.get("minDr")),
+      maxDr: parseOptionalInt(searchParams.get("maxDr")),
+      minDa: parseOptionalInt(searchParams.get("minDa")),
+      maxDa: parseOptionalInt(searchParams.get("maxDa")),
+      minTraffic: parseOptionalInt(searchParams.get("minTraffic")),
+      maxTraffic: parseOptionalInt(searchParams.get("maxTraffic")),
+      maxSpamScore: parseOptionalInt(searchParams.get("maxSpamScore")),
+      googleNews: googleNewsFlag === true ? true : undefined,
+      isFeatured: featuredFlag === true ? true : undefined,
+      isVerified: verifiedFlag === true ? true : undefined,
       sortBy:
         (searchParams.get("sortBy") as SearchParams["sortBy"]) || "relevance",
       sortOrder:
         (searchParams.get("sortOrder") as SearchParams["sortOrder"]) || "desc",
-      page: searchParams.get("page") ? parseInt(searchParams.get("page")!) : 1,
-      limit: searchParams.get("limit")
-        ? Math.min(parseInt(searchParams.get("limit")!), 50)
-        : 20,
+      page: Math.max(parseOptionalInt(searchParams.get("page")) || 1, 1),
+      limit: Math.min(Math.max(parseOptionalInt(searchParams.get("limit")) || 20, 1), 50),
     };
 
     // Build WHERE conditions
@@ -91,6 +116,22 @@ export async function GET(request: NextRequest) {
       conditions.push(ilike(products.niche, `%${params.niche}%`));
     }
 
+    // Link type filter
+    if (params.linkType) {
+      conditions.push(eq(products.linkType, params.linkType));
+    }
+
+    // Verified / Featured / Google News filters (logged-in UX)
+    if (params.googleNews) {
+      conditions.push(eq(products.googleNews, true));
+    }
+    if (params.isFeatured) {
+      conditions.push(eq(products.isFeatured, true));
+    }
+    if (params.isVerified) {
+      conditions.push(eq(products.isVerified, true));
+    }
+
     // DR range filter
     if (params.minDr !== undefined) {
       conditions.push(sql`${products.dr} >= ${params.minDr}`);
@@ -105,6 +146,24 @@ export async function GET(request: NextRequest) {
     }
     if (params.maxDa !== undefined) {
       conditions.push(sql`${products.da} <= ${params.maxDa}`);
+    }
+
+    // Monthly visits range filter
+    if (params.minTraffic !== undefined) {
+      conditions.push(sql`${products.monthlyVisits} >= ${params.minTraffic}`);
+    }
+    if (params.maxTraffic !== undefined) {
+      conditions.push(sql`${products.monthlyVisits} <= ${params.maxTraffic}`);
+    }
+
+    // Spam score filter (include NULL as "unknown")
+    if (params.maxSpamScore !== undefined) {
+      conditions.push(
+        or(
+          sql`${products.spamScore} <= ${params.maxSpamScore}`,
+          sql`${products.spamScore} is null`,
+        )!,
+      );
     }
 
     const whereClause = and(...conditions);
@@ -178,10 +237,17 @@ export async function GET(request: NextRequest) {
         query: params.q || "",
         filters: {
           niche: params.niche,
+          linkType: params.linkType,
           minDr: params.minDr,
           maxDr: params.maxDr,
           minDa: params.minDa,
           maxDa: params.maxDa,
+          minTraffic: params.minTraffic,
+          maxTraffic: params.maxTraffic,
+          maxSpamScore: params.maxSpamScore,
+          googleNews: params.googleNews,
+          featured: params.isFeatured,
+          verified: params.isVerified,
         },
       },
     });

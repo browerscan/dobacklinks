@@ -144,3 +144,4 @@ dist
 .vercel
 public/screenshots/thumbnails/
 .env*.local
+.env.vercel

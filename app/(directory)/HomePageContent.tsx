@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function HomePageContent() {
   return (
     <div className="max-w-4xl mx-auto mt-16 mb-12 prose prose-slate dark:prose-invert">
@@ -279,22 +281,22 @@ export function HomePageContent() {
             Browse 9,700+ vetted guest post sites or get personalized help with
             outreach.
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <a
-              href="#featured"
-              className="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Browse Sites
-            </a>
-            <a
-              href="/services"
-              className="inline-block px-8 py-3 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 font-semibold rounded-lg hover:bg-gray-900 dark:hover:bg-gray-300 transition-colors"
-            >
-              Hire Me for Outreach
-            </a>
-          </div>
-        </div>
-      </section>
+	          <div className="flex gap-4 justify-center flex-wrap">
+	            <a
+	              href="#featured"
+	              className="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+	            >
+	              Browse Sites
+	            </a>
+	            <Link
+	              href="/services"
+	              className="inline-block px-8 py-3 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 font-semibold rounded-lg hover:bg-gray-900 dark:hover:bg-gray-300 transition-colors"
+	            >
+	              Hire Me for Outreach
+	            </Link>
+	          </div>
+	        </div>
+	      </section>
 
       {/* E-E-A-T Signals */}
       <section className="text-sm text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800 pt-8">

@@ -99,15 +99,30 @@ const isBuildTime =
 
 /**
  * Generate a random build-time placeholder
- * Uses crypto.randomBytes for better security than Math.random()
+ * Uses Node crypto.randomBytes (or WebCrypto getRandomValues) for better security than Math.random()
  */
 function generateBuildTimePlaceholder(prefix: string, length: number): string {
-  if (typeof crypto === "undefined" || !crypto.randomBytes) {
-    // Fallback for environments where crypto is not available
-    return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
+  try {
+    const nodeCrypto = require("crypto") as typeof import("crypto");
+    if (typeof nodeCrypto.randomBytes === "function") {
+      return `${prefix}-${nodeCrypto.randomBytes(length).toString("hex")}`;
+    }
+  } catch {
+    // ignore and fall back
   }
-  const randomBytes = require("crypto").randomBytes(length);
-  return `${prefix}-${randomBytes.toString("hex")}`;
+
+  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+    const bytes = new Uint8Array(length);
+    crypto.getRandomValues(bytes);
+    return `${prefix}-${bytesToHex(bytes)}`;
+  }
+
+  // Fallback for environments where crypto is not available
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
+}
+
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 /**

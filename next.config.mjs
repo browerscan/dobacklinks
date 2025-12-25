@@ -6,18 +6,24 @@ const nextConfig = {
   // output: "standalone",
 
   // Performance optimizations
-  swcMinify: true,
   reactStrictMode: true,
   poweredByHeader: false,
 
-  // Optimize package imports for better tree-shaking
-  optimizePackageImports: [
-    "lucide-react",
-    "@radix-ui/react-icons",
-    "recharts",
-    "framer-motion",
-    "@tanstack/react-table",
-  ],
+  // Avoid monorepo/multi-lockfile workspace root inference warnings
+  turbopack: {
+    root: process.cwd(),
+  },
+
+  experimental: {
+    // Optimize package imports for better tree-shaking
+    optimizePackageImports: [
+      "lucide-react",
+      "@radix-ui/react-icons",
+      "recharts",
+      "framer-motion",
+      "@tanstack/react-table",
+    ],
+  },
 
   async headers() {
     return [

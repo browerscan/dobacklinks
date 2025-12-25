@@ -61,7 +61,7 @@ async function main() {
     const startTime = Date.now();
 
     const result = await service.enrichProducts(
-      "pending",
+      all ? "all" : "pending",
       (progress) => {
         // Progress callback
         const percent = Math.round((progress.processed / progress.total) * 100);

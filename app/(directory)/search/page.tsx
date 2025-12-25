@@ -1,9 +1,8 @@
 import { LatestProductCard } from "@/components/products/LatestProductCard";
-import { ProductsSkeleton } from "@/components/products/ProductsSkeleton";
 import { SearchInput } from "@/components/search/SearchInput";
 import { SearchTracker } from "@/components/search/SearchTracker";
 import { AdvancedFilters } from "@/components/search/AdvancedFilters";
-import { GatedSearch } from "@/components/search/GatedSearch";
+import { BasicFilters } from "@/components/search/BasicFilters";
 import { ExportButton } from "@/components/export/ExportButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +10,6 @@ import { constructMetadata } from "@/lib/metadata";
 import { getSession } from "@/lib/auth/server";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import Link from "next/link";
-import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -62,10 +60,17 @@ interface SearchResponse {
     query: string;
     filters: {
       niche?: string;
+      linkType?: string;
       minDr?: number;
       maxDr?: number;
       minDa?: number;
       maxDa?: number;
+      minTraffic?: number;
+      maxTraffic?: number;
+      maxSpamScore?: number;
+      googleNews?: boolean;
+      featured?: boolean;
+      verified?: boolean;
     };
   };
   error?: string;
@@ -93,14 +98,8 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  // Check if user is logged in
   const session = await getSession();
   const isLoggedIn = !!session?.user;
-
-  // If not logged in, show gated search page
-  if (!isLoggedIn) {
-    return <GatedSearch />;
-  }
 
   const params = await searchParams;
   const urlParams = new URLSearchParams();
@@ -149,7 +148,22 @@ export default async function SearchPage({
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Filters Sidebar */}
         <aside className="lg:col-span-1">
-          <AdvancedFilters />
+          {isLoggedIn ? <AdvancedFilters /> : <BasicFilters />}
+          {!isLoggedIn && (
+            <Card className="mt-4">
+              <CardContent className="p-4 space-y-2">
+                <p className="text-sm font-medium">
+                  Want more filters and CSV export?
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Sign in to unlock advanced DR/DA ranges and export tools.
+                </p>
+                <Button asChild className="w-full">
+                  <Link href="/login?returnUrl=/search">Sign In</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </aside>
 
         {/* Results */}
@@ -189,19 +203,21 @@ export default async function SearchPage({
                   )}{" "}
                   of {pagination?.total || 0} results
                 </p>
-                <ExportButton
-                  data={products.map((p) => ({
-                    name: p.name,
-                    url: p.url,
-                    niche: p.niche,
-                    dr: p.dr,
-                    da: p.da,
-                    monthlyVisits: p.monthlyVisits,
-                    linkType: p.linkType,
-                    googleNews: p.googleNews ? "Yes" : "No",
-                  }))}
-                  filename={`search_results_${query || "all"}_${new Date().toISOString().split("T")[0]}.csv`}
-                />
+                {isLoggedIn && (
+                  <ExportButton
+                    data={products.map((p) => ({
+                      name: p.name,
+                      url: p.url,
+                      niche: p.niche,
+                      dr: p.dr,
+                      da: p.da,
+                      monthlyVisits: p.monthlyVisits,
+                      linkType: p.linkType,
+                      googleNews: p.googleNews ? "Yes" : "No",
+                    }))}
+                    filename={`search_results_${query || "all"}_${new Date().toISOString().split("T")[0]}.csv`}
+                  />
+                )}
               </div>
 
               {/* Results Grid */}

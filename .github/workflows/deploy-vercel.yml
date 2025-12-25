@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Quality Gates
+        run: pnpm check
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
