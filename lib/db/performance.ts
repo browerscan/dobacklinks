@@ -329,7 +329,7 @@ export async function trackQuery<T>(
 }
 
 /**
- * Create a Drizzle logger callback for query tracking
+ * Create a Drizzle logger for query tracking
  *
  * @example
  * import { drizzle } from "drizzle-orm/postgres-js";
@@ -341,14 +341,32 @@ export async function trackQuery<T>(
  */
 export function createDrizzleLogger() {
   const monitor = getPerformanceMonitor();
+  const queryStartTimes = new Map<string, number>();
 
-  return (event: { query: { sql: string; params: unknown[] } }) => {
-    const start = performance.now();
+  return {
+    logQuery(query: string, params: unknown[]): void {
+      // Generate unique key for this query
+      const queryKey = `${query}-${JSON.stringify(params)}-${Date.now()}`;
+      const startTime = queryStartTimes.get(queryKey);
 
-    return () => {
-      const duration = performance.now() - start;
-      monitor.trackQuery(event.query.sql, event.query.params, duration);
-    };
+      if (startTime) {
+        // This is the end of query execution
+        const duration = performance.now() - startTime;
+        monitor.trackQuery(query, params, duration);
+        queryStartTimes.delete(queryKey);
+      } else {
+        // This is the start of query execution - track start time
+        // Since Drizzle calls logQuery once per query, we estimate duration
+        // based on when the next operation happens
+        const start = performance.now();
+
+        // Use setImmediate to track after query completes
+        setImmediate(() => {
+          const duration = performance.now() - start;
+          monitor.trackQuery(query, params, duration);
+        });
+      }
+    },
   };
 }
 
