@@ -36,6 +36,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Category, ProductWithCategories } from "@/types/product";
 import { getSession } from "@/lib/auth/server";
+import { generateProductSchema, generateBreadcrumbSchema } from "@/lib/structured-data";
 import dayjs from "dayjs";
 import { Crown, ExternalLink, Mail, Star } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote-client/rsc";
@@ -54,14 +55,7 @@ const options = {
 };
 
 interface ProductDetailContentProps {
-  product: ProductWithCategories & {
-    user: {
-      id: string;
-      name: string | null;
-      image: string | null;
-      email: string;
-    };
-  };
+  product: ProductWithCategories;
   relatedProducts: ProductWithCategories[];
   featuredProducts: ProductWithCategories[];
 }
@@ -71,110 +65,20 @@ export async function ProductDetailContent({
   relatedProducts,
   featuredProducts,
 }: ProductDetailContentProps) {
-  // Get authenticated user session
+  // Get authenticated user session for RBAC
   const session = await getSession();
   const isLoggedIn = !!session?.user;
 
-  // Enhanced structured data for guest post sites
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    description: product.tagline || `Guest post opportunity on ${product.name}`,
-    url: product.url,
-    category: product.niche || "Guest Post Site",
-    brand: {
-      "@type": "Organization",
-      name: product.name,
-      url: product.url,
-    },
-    ...(product.priceRange && {
-      offers: {
-        "@type": "Offer",
-        priceSpecification: {
-          "@type": "PriceSpecification",
-          price: product.priceRange,
-        },
-        availability: "https://schema.org/InStock",
-      },
-    }),
-    additionalProperty: [
-      ...(product.dr
-        ? [
-            {
-              "@type": "PropertyValue",
-              name: "Domain Rating (DR)",
-              value: product.dr.toString(),
-            },
-          ]
-        : []),
-      ...(product.da
-        ? [
-            {
-              "@type": "PropertyValue",
-              name: "Domain Authority (DA)",
-              value: product.da.toString(),
-            },
-          ]
-        : []),
-      ...(product.linkType
-        ? [
-            {
-              "@type": "PropertyValue",
-              name: "Link Type",
-              value: product.linkType,
-            },
-          ]
-        : []),
-      ...(product.googleNews
-        ? [
-            {
-              "@type": "PropertyValue",
-              name: "Google News Approved",
-              value: "Yes",
-            },
-          ]
-        : []),
-    ],
-  };
+  // Generate structured data with RBAC-aware pricing
+  // Price information is ONLY included when user is logged in
+  const productSchema = generateProductSchema({
+    product,
+    isLoggedIn,
+    includePrice: true,
+  });
 
-  // BreadcrumbList structured data
-  const breadcrumbItems = [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: siteConfig.url,
-    },
-  ];
-
-  if (product.categories.length > 0) {
-    breadcrumbItems.push({
-      "@type": "ListItem",
-      position: 2,
-      name: product.categories[0].name,
-      item: `${siteConfig.url}/categories/${product.categories[0].slug}`,
-    });
-    breadcrumbItems.push({
-      "@type": "ListItem",
-      position: 3,
-      name: product.name,
-      item: `${siteConfig.url}/sites/${product.slug}`,
-    });
-  } else {
-    breadcrumbItems.push({
-      "@type": "ListItem",
-      position: 2,
-      name: product.name,
-      item: `${siteConfig.url}/sites/${product.slug}`,
-    });
-  }
-
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: breadcrumbItems,
-  };
+  // Generate breadcrumb structured data
+  const breadcrumbSchema = generateBreadcrumbSchema(product);
 
   return (
     <>
@@ -186,14 +90,14 @@ export async function ProductDetailContent({
       />
 
       <Script
-        id="site-structured-data"
+        id="product-structured-data"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
+          __html: JSON.stringify(productSchema),
         }}
       />
       <Script
-        id="breadcrumb-schema"
+        id="breadcrumb-structured-data"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(breadcrumbSchema),
