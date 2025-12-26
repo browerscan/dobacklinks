@@ -1,7 +1,6 @@
 import { SiteConfig } from "@/types/siteConfig";
 
-export const BASE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://dobacklinks.com";
+export const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dobacklinks.com";
 
 const GITHUB_URL = "";
 const TWITTER_URL = "";

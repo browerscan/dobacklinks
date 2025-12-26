@@ -6,12 +6,7 @@ interface AsideProps {
   type?: "default" | "warning" | "danger";
 }
 
-export function Aside({
-  children,
-  icon,
-  type = "default",
-  ...props
-}: AsideProps) {
+export function Aside({ children, icon, type = "default", ...props }: AsideProps) {
   return (
     <div
       className={cn(

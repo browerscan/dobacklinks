@@ -21,9 +21,7 @@ export default function Error({
       <div className="flex items-center justify-center w-16 h-16 rounded-full bg-destructive/10 mb-6">
         <AlertCircle className="h-8 w-8 text-destructive" />
       </div>
-      <h2 className="text-2xl font-semibold mb-2">
-        Couldn&apos;t load article
-      </h2>
+      <h2 className="text-2xl font-semibold mb-2">Couldn&apos;t load article</h2>
       <p className="text-muted-foreground mb-6 text-center max-w-md">
         We had trouble loading this blog post. Please try again.
       </p>
@@ -41,9 +39,7 @@ export default function Error({
       </div>
       {process.env.NODE_ENV === "development" && error.message && (
         <div className="mt-8 p-4 bg-muted rounded-lg max-w-lg">
-          <p className="text-sm font-mono text-muted-foreground break-all">
-            {error.message}
-          </p>
+          <p className="text-sm font-mono text-muted-foreground break-all">{error.message}</p>
         </div>
       )}
     </div>

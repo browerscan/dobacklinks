@@ -28,9 +28,7 @@ async function OverviewStatsContent() {
   if (!result.success) {
     return (
       <div className="flex items-center justify-center h-full min-h-36">
-        <p className="text-red-500">
-          {result.error || "Failed to load dashboard data."}
-        </p>
+        <p className="text-red-500">{result.error || "Failed to load dashboard data."}</p>
       </div>
     );
   }
@@ -73,10 +71,7 @@ function OverviewStatsSkeleton() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
       {[0, 1].map((i) => (
-        <Card
-          key={i}
-          className="bg-gradient-to-b from-background to-muted dark:to-muted/50"
-        >
+        <Card key={i} className="bg-gradient-to-b from-background to-muted dark:to-muted/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-normal text-muted-foreground">
               <Skeleton className="h-4 w-28" />

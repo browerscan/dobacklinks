@@ -31,12 +31,8 @@ function LoginContent() {
     <div className="flex items-center justify-center flex-1 py-12">
       <div className="flex flex-col space-y-6">
         <div className="flex flex-col space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Welcome back
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Sign in with the following methods
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+          <p className="text-sm text-muted-foreground">Sign in with the following methods</p>
         </div>
 
         <LoginForm className="w-[300px]" />

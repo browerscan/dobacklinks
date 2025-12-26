@@ -15,12 +15,8 @@ interface ProductsProps {
   totalCount?: number;
 }
 
-export default function MyProducts({
-  initialProducts = [],
-  totalCount = 0,
-}: ProductsProps) {
-  const [products, setProducts] =
-    useState<ProductWithCategories[]>(initialProducts);
+export default function MyProducts({ initialProducts = [], totalCount = 0 }: ProductsProps) {
+  const [products, setProducts] = useState<ProductWithCategories[]>(initialProducts);
   const [pageIndex, setPageIndex] = useState(0);
   const [hasMore, setHasMore] = useState(initialProducts.length < totalCount);
   const { ref, inView } = useInView({

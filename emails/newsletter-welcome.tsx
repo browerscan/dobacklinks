@@ -8,8 +8,7 @@ interface NewsletterWelcomeEmailProps {
 
 const commonStyles = {
   container: {
-    fontFamily:
-      "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     maxWidth: "600px",
     margin: "0 auto",
     backgroundColor: "#f8fafc",
@@ -75,24 +74,14 @@ const commonStyles = {
   },
 };
 
-const EnglishVersion: React.FC<{ unsubscribeLink: string }> = ({
-  unsubscribeLink,
-}) => (
+const EnglishVersion: React.FC<{ unsubscribeLink: string }> = ({ unsubscribeLink }) => (
   <div style={commonStyles.card}>
     <div style={commonStyles.logo}>
-      <img
-        src={`${siteConfig.url}/logo.png`}
-        alt={siteConfig.name}
-        width={80}
-        height={80}
-      />
+      <img src={`${siteConfig.url}/logo.png`} alt={siteConfig.name} width={80} height={80} />
     </div>
 
     <h1 style={commonStyles.title}>
-      <a
-        href={siteConfig.url}
-        style={{ textDecoration: "none", color: "#3b82f6" }}
-      >
+      <a href={siteConfig.url} style={{ textDecoration: "none", color: "#3b82f6" }}>
         {siteConfig.name}
       </a>
     </h1>
@@ -106,9 +95,7 @@ const EnglishVersion: React.FC<{ unsubscribeLink: string }> = ({
     >
       You've Successfully Subscribed to {siteConfig.name} Updates!
     </h2>
-    <p style={commonStyles.paragraph}>
-      Here's what you'll receive in your inbox:
-    </p>
+    <p style={commonStyles.paragraph}>Here's what you'll receive in your inbox:</p>
     <ul style={commonStyles.list}>
       <li>{siteConfig.name} version updates</li>
       <li>Latest promotions and events from {siteConfig.name}</li>

@@ -19,11 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  AdminProductFilters,
-  ProductStatus,
-  ProductWithCategories,
-} from "@/types/product";
+import { AdminProductFilters, ProductStatus, ProductWithCategories } from "@/types/product";
 import {
   ColumnDef,
   ColumnPinningState,
@@ -100,9 +96,7 @@ export function ProductsDataTable({
 
   useEffect(() => {
     const isInitialQuery =
-      pagination.pageIndex === 0 &&
-      !debouncedGlobalFilter &&
-      Object.keys(filters).length === 0;
+      pagination.pageIndex === 0 && !debouncedGlobalFilter && Object.keys(filters).length === 0;
 
     if (hasUsedInitialData && isInitialQuery) {
       setHasUsedInitialData(false);
@@ -126,9 +120,7 @@ export function ProductsDataTable({
         }
 
         setData(result.data?.products as ProductWithCategories[]);
-        setPageCount(
-          Math.ceil((result.data?.count || 0) / pagination.pageSize),
-        );
+        setPageCount(Math.ceil((result.data?.count || 0) / pagination.pageSize));
       } catch (error: any) {
         toast.error("Failed to fetch products", {
           description: error.message,
@@ -271,9 +263,7 @@ export function ProductsDataTable({
                             width: header.getSize(),
                             minWidth: header.column.columnDef.minSize,
                             maxWidth: header.column.columnDef.maxSize,
-                            position: header.column.getIsPinned()
-                              ? "sticky"
-                              : "relative",
+                            position: header.column.getIsPinned() ? "sticky" : "relative",
                             left:
                               header.column.getIsPinned() === "left"
                                 ? `${header.column.getStart("left")}px`
@@ -296,10 +286,7 @@ export function ProductsDataTable({
                         >
                           {header.isPlaceholder
                             ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                            : flexRender(header.column.columnDef.header, header.getContext())}
                         </TableHead>
                       );
                     })}
@@ -309,10 +296,7 @@ export function ProductsDataTable({
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                    >
+                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
@@ -320,9 +304,7 @@ export function ProductsDataTable({
                             width: cell.column.getSize(),
                             minWidth: cell.column.columnDef.minSize,
                             maxWidth: cell.column.columnDef.maxSize,
-                            position: cell.column.getIsPinned()
-                              ? "sticky"
-                              : "relative",
+                            position: cell.column.getIsPinned() ? "sticky" : "relative",
                             left:
                               cell.column.getIsPinned() === "left"
                                 ? `${cell.column.getStart("left")}px`
@@ -343,20 +325,14 @@ export function ProductsDataTable({
                                   : undefined,
                           }}
                         >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
                       {isLoading ? "" : "No results."}
                     </TableCell>
                   </TableRow>
@@ -369,8 +345,8 @@ export function ProductsDataTable({
 
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()} ({totalProducts} Products)
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} (
+          {totalProducts} Products)
         </div>
         <div className="space-x-2">
           <Button

@@ -20,15 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tag } from "@/types/blog";
-import {
-  Check,
-  Edit3,
-  Loader2,
-  PlusCircle,
-  Tags,
-  Trash2,
-  X,
-} from "lucide-react";
+import { Check, Edit3, Loader2, PlusCircle, Tags, Trash2, X } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -70,11 +62,7 @@ export function TagManagementDrawer() {
       toast.info("Tag name is required.");
       return;
     }
-    if (
-      tags.some(
-        (tag) => tag.name.toLowerCase() === newTagName.trim().toLowerCase(),
-      )
-    ) {
+    if (tags.some((tag) => tag.name.toLowerCase() === newTagName.trim().toLowerCase())) {
       toast.info(`Tag "${newTagName.trim()}" already exists.`);
       return;
     }
@@ -86,9 +74,7 @@ export function TagManagementDrawer() {
       if (result.success && result.data?.tag) {
         toast.success(`Tag "${result.data.tag.name}" created successfully.`);
         setTags((prev) =>
-          [...prev, result.data!.tag!].sort((a, b) =>
-            a.name.localeCompare(b.name),
-          ),
+          [...prev, result.data!.tag!].sort((a, b) => a.name.localeCompare(b.name)),
         );
         setNewTagName("");
       } else {
@@ -98,9 +84,7 @@ export function TagManagementDrawer() {
   };
 
   const handleDeleteTag = (tagId: string, tagName: string) => {
-    if (
-      !window.confirm(`Are you sure you want to delete the tag "${tagName}"?`)
-    ) {
+    if (!window.confirm(`Are you sure you want to delete the tag "${tagName}"?`)) {
       return;
     }
     startTransition(async () => {
@@ -182,9 +166,7 @@ export function TagManagementDrawer() {
                 placeholder="New tag name"
                 value={newTagName}
                 onChange={(e) => setNewTagName(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && !isPending && handleCreateTag()
-                }
+                onKeyDown={(e) => e.key === "Enter" && !isPending && handleCreateTag()}
                 disabled={isPending}
               />
               <Button
@@ -205,9 +187,7 @@ export function TagManagementDrawer() {
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : tags.length === 0 ? (
-              <p className="text-center text-muted-foreground py-4">
-                No tags found.
-              </p>
+              <p className="text-center text-muted-foreground py-4">No tags found.</p>
             ) : (
               <ScrollArea className="h-[calc(100vh-350px)] md:h-[400px]">
                 <ul className="space-y-2">
@@ -221,11 +201,7 @@ export function TagManagementDrawer() {
                           <Input
                             value={editingTagName}
                             onChange={(e) => setEditingTagName(e.target.value)}
-                            onKeyDown={(e) =>
-                              e.key === "Enter" &&
-                              !isPending &&
-                              handleUpdateTag()
-                            }
+                            onKeyDown={(e) => e.key === "Enter" && !isPending && handleUpdateTag()}
                             className="h-8"
                             disabled={isPending}
                           />

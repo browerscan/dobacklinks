@@ -18,8 +18,7 @@ function mapServerPostToBlogCard(post: PublicPost): BlogPost {
     featuredImageUrl: post.featuredImageUrl ?? "/placeholder.svg",
     slug: post.slug,
     tags: post.tags ?? "",
-    publishedAt:
-      (post.publishedAt && dayjs(post.publishedAt).toDate()) || new Date(),
+    publishedAt: (post.publishedAt && dayjs(post.publishedAt).toDate()) || new Date(),
     status: post.status ?? "published",
     visibility: post.visibility ?? "public",
     isPinned: post.isPinned ?? false,
@@ -44,9 +43,7 @@ export function BlogList({
 }: BlogListProps) {
   const [posts, setPosts] = useState<PublicPost[]>(initialPosts);
   const [pageIndex, setPageIndex] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(
-    initialPosts.length < initialTotal,
-  );
+  const [hasMore, setHasMore] = useState<boolean>(initialPosts.length < initialTotal);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedTagId, setSelectedTagId] = useState<string | null>(null);
   const { ref, inView } = useInView({
@@ -77,15 +74,7 @@ export function BlogList({
       });
     }
     setIsLoading(false);
-  }, [
-    pageIndex,
-    isLoading,
-    hasMore,
-    initialTotal,
-    posts.length,
-    selectedTagId,
-    pageSize,
-  ]);
+  }, [pageIndex, isLoading, hasMore, initialTotal, posts.length, selectedTagId, pageSize]);
 
   useEffect(() => {
     if (inView && hasMore && !isLoading) {
@@ -143,15 +132,10 @@ export function BlogList({
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {selectedTagId === null &&
-              localPosts.map((post) => (
-                <BlogCard key={`local-${post.slug}`} post={post} />
-              ))}
+              localPosts.map((post) => <BlogCard key={`local-${post.slug}`} post={post} />)}
 
             {posts.map((post) => (
-              <BlogCard
-                key={`server-${post.id}`}
-                post={mapServerPostToBlogCard(post)}
-              />
+              <BlogCard key={`server-${post.id}`} post={mapServerPostToBlogCard(post)} />
             ))}
           </div>
 
@@ -167,9 +151,7 @@ export function BlogList({
 
           {!hasMore && posts.length >= 0 && (
             <p className="text-center text-gray-500 py-8 text-sm">
-              {posts.length === 0
-                ? "No posts found for this tag."
-                : "You've reached the end."}
+              {posts.length === 0 ? "No posts found for this tag." : "You've reached the end."}
             </p>
           )}
         </>

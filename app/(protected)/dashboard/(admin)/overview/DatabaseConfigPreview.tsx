@@ -1,20 +1,7 @@
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { previewConfig } from "@/lib/db/config";
-import {
-  Database,
-  Globe,
-  Link as LinkIcon,
-  Server,
-  ShieldCheck,
-  Zap,
-} from "lucide-react";
+import { Database, Globe, Link as LinkIcon, Server, ShieldCheck, Zap } from "lucide-react";
 
 export const DatabaseConfigPreview = () => {
   if (!process.env.DATABASE_URL) {
@@ -22,9 +9,7 @@ export const DatabaseConfigPreview = () => {
       <Card>
         <CardHeader>
           <CardTitle>Database Configuration</CardTitle>
-          <CardDescription>
-            DATABASE_URL environment variable is not set.
-          </CardDescription>
+          <CardDescription>DATABASE_URL environment variable is not set.</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -40,9 +25,7 @@ export const DatabaseConfigPreview = () => {
     <Card>
       <CardHeader>
         <CardTitle>Live Environment Status</CardTitle>
-        <CardDescription>
-          Auto-detected configuration for the current deployment.
-        </CardDescription>
+        <CardDescription>Auto-detected configuration for the current deployment.</CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
         <div className="space-y-2">

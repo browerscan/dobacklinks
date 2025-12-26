@@ -61,10 +61,7 @@ export const useProductStore = create<ProductState>()(
           state.cache instanceof Map
             ? state.cache
             : new Map(
-                Object.entries(state.cache || {}).map(([k, v]) => [
-                  k,
-                  v as ProductCacheEntry,
-                ]),
+                Object.entries(state.cache || {}).map(([k, v]) => [k, v as ProductCacheEntry]),
               );
 
         const cacheKey = generateCacheKey(filters);
@@ -93,10 +90,7 @@ export const useProductStore = create<ProductState>()(
             state.cache instanceof Map
               ? state.cache
               : new Map(
-                  Object.entries(state.cache || {}).map(([k, v]) => [
-                    k,
-                    v as ProductCacheEntry,
-                  ]),
+                  Object.entries(state.cache || {}).map(([k, v]) => [k, v as ProductCacheEntry]),
                 );
           const newCache = new Map(currentCache);
           newCache.set(cacheKey, entry);
@@ -110,12 +104,7 @@ export const useProductStore = create<ProductState>()(
           const currentLoading =
             state.loading instanceof Map
               ? state.loading
-              : new Map(
-                  Object.entries(state.loading || {}).map(([k, v]) => [
-                    k,
-                    v as boolean,
-                  ]),
-                );
+              : new Map(Object.entries(state.loading || {}).map(([k, v]) => [k, v as boolean]));
           const newLoading = new Map(currentLoading);
           if (loading) {
             newLoading.set(cacheKey, true);
@@ -132,12 +121,7 @@ export const useProductStore = create<ProductState>()(
         const loading =
           state.loading instanceof Map
             ? state.loading
-            : new Map(
-                Object.entries(state.loading || {}).map(([k, v]) => [
-                  k,
-                  v as boolean,
-                ]),
-              );
+            : new Map(Object.entries(state.loading || {}).map(([k, v]) => [k, v as boolean]));
 
         const cacheKey = generateCacheKey(filters);
         return loading.get(cacheKey) || false;
@@ -154,10 +138,7 @@ export const useProductStore = create<ProductState>()(
             state.cache instanceof Map
               ? state.cache
               : new Map(
-                  Object.entries(state.cache || {}).map(([k, v]) => [
-                    k,
-                    v as ProductCacheEntry,
-                  ]),
+                  Object.entries(state.cache || {}).map(([k, v]) => [k, v as ProductCacheEntry]),
                 );
           const newCache = new Map<string, ProductCacheEntry>();
           for (const [key, entry] of currentCache) {
@@ -182,10 +163,7 @@ export const useProductStore = create<ProductState>()(
             state.cache instanceof Map
               ? state.cache
               : new Map(
-                  Object.entries(state.cache || {}).map(([k, v]) => [
-                    k,
-                    v as ProductCacheEntry,
-                  ]),
+                  Object.entries(state.cache || {}).map(([k, v]) => [k, v as ProductCacheEntry]),
                 );
           const newCache = new Map<string, ProductCacheEntry>();
           for (const [key, entry] of currentCache) {
@@ -195,8 +173,7 @@ export const useProductStore = create<ProductState>()(
             for (const [filterKey, filterValue] of Object.entries(filters)) {
               if (
                 filterValue !== undefined &&
-                entry.filters[filterKey as keyof UserProductFilters] ===
-                  filterValue
+                entry.filters[filterKey as keyof UserProductFilters] === filterValue
               ) {
                 shouldInvalidate = true;
                 break;
@@ -217,8 +194,7 @@ export const useProductStore = create<ProductState>()(
       storage: createJSONStorage(() => sessionStorage),
       // Only persist cache, not loading state
       partialize: (state) => ({
-        cache:
-          state.cache instanceof Map ? Array.from(state.cache.entries()) : [],
+        cache: state.cache instanceof Map ? Array.from(state.cache.entries()) : [],
         // Don't persist loading state as it should be reset on page reload
       }),
       // Handle rehydration

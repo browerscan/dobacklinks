@@ -1,10 +1,7 @@
 import { siteConfig } from "@/config/site";
 import { ProductSubmissionType } from "@/types/product";
 
-export const getSubject = (
-  type: ProductSubmissionType,
-  productName: string,
-) => {
+export const getSubject = (type: ProductSubmissionType, productName: string) => {
   switch (type) {
     case "free":
       return `🎉 Great news! "${productName}" is now live on ${siteConfig.name}!`;

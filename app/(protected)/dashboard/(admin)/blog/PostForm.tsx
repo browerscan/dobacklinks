@@ -95,12 +95,7 @@ interface PostFormProps {
   isSubmitting: boolean;
 }
 
-export function PostForm({
-  initialData,
-  isDuplicate,
-  onSubmit,
-  isSubmitting,
-}: PostFormProps) {
+export function PostForm({ initialData, isDuplicate, onSubmit, isSubmitting }: PostFormProps) {
   const router = useRouter();
 
   const defaultValues: Partial<PostFormValues> = {
@@ -117,9 +112,7 @@ export function PostForm({
     isPinned: initialData?.isPinned ?? false,
     status: initialData?.status || "draft",
     visibility:
-      initialData?.visibility === "subscribers"
-        ? "logged_in"
-        : initialData?.visibility || "public",
+      initialData?.visibility === "subscribers" ? "logged_in" : initialData?.visibility || "public",
   };
 
   const form = useForm<PostFormValues>({
@@ -170,14 +163,9 @@ export function PostForm({
         path: BLOGS_IMAGE_PATH,
       });
 
-      if (
-        !presignedUrlActionResponse.success ||
-        !presignedUrlActionResponse.data
-      ) {
+      if (!presignedUrlActionResponse.success || !presignedUrlActionResponse.data) {
         toast.error("Upload failed", {
-          description:
-            presignedUrlActionResponse.error ||
-            "Failed to generate presigned URL",
+          description: presignedUrlActionResponse.error || "Failed to generate presigned URL",
         });
         return "";
       }
@@ -222,15 +210,10 @@ export function PostForm({
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter title"
-                      {...field}
-                      disabled={isSubmitting}
-                    />
+                    <Input placeholder="Enter title" {...field} disabled={isSubmitting} />
                   </FormControl>
                   <FormDescription>
-                    The title of your blog post. (
-                    {`${field.value?.length || 0} / 70`})
+                    The title of your blog post. ({`${field.value?.length || 0} / 70`})
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -246,11 +229,7 @@ export function PostForm({
                   <FormLabel>Slug</FormLabel>
                   <div className="flex gap-2">
                     <FormControl>
-                      <Input
-                        placeholder="Enter slug"
-                        {...field}
-                        disabled={isSubmitting}
-                      />
+                      <Input placeholder="Enter slug" {...field} disabled={isSubmitting} />
                     </FormControl>
                     <Button
                       type="button"
@@ -262,9 +241,7 @@ export function PostForm({
                       Generate
                     </Button>
                   </div>
-                  <FormDescription>
-                    The URL-friendly version of the title.
-                  </FormDescription>
+                  <FormDescription>The URL-friendly version of the title.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -286,8 +263,7 @@ export function PostForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    A short summary of the post. (
-                    {`${field.value?.length || 0} / 160`})
+                    A short summary of the post. ({`${field.value?.length || 0} / 160`})
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -307,9 +283,7 @@ export function PostForm({
                       disabled={isSubmitting}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Add up to 5 tags to your post.
-                  </FormDescription>
+                  <FormDescription>Add up to 5 tags to your post.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -371,9 +345,7 @@ export function PostForm({
                       readOnly={isSubmitting}
                     />
                   </FormControl>
-                  <FormDescription>
-                    The main content of your post.
-                  </FormDescription>
+                  <FormDescription>The main content of your post.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -445,9 +417,7 @@ export function PostForm({
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">Pin Post</FormLabel>
-                    <FormDescription>
-                      Pin this post to the top of the blog.
-                    </FormDescription>
+                    <FormDescription>Pin this post to the top of the blog.</FormDescription>
                   </div>
                   <FormControl>
                     <Checkbox
@@ -472,11 +442,7 @@ export function PostForm({
               </Button>
 
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting
-                  ? "Submitting..."
-                  : initialData && !isDuplicate
-                    ? "Update"
-                    : "Create"}
+                {isSubmitting ? "Submitting..." : initialData && !isDuplicate ? "Update" : "Create"}
               </Button>
             </div>
           </div>

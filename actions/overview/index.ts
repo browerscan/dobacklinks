@@ -3,10 +3,7 @@
 import { actionResponse, ActionResult } from "@/lib/action-response";
 import { isAdmin } from "@/lib/auth/server";
 import { db } from "@/lib/db";
-import {
-  products as productsSchema,
-  user as userSchema,
-} from "@/lib/db/schema";
+import { products as productsSchema, user as userSchema } from "@/lib/db/schema";
 import { getErrorMessage } from "@/lib/error-utils";
 import { and, count, gte, lt, sql } from "drizzle-orm";
 
@@ -35,29 +32,17 @@ function calculateGrowthRate(today: number, yesterday: number): number {
   return ((today - yesterday) / yesterday) * 100;
 }
 
-export const getOverviewStats = async (): Promise<
-  ActionResult<IOverviewStats>
-> => {
+export const getOverviewStats = async (): Promise<ActionResult<IOverviewStats>> => {
   if (!(await isAdmin())) {
     return actionResponse.forbidden("Admin privileges required.");
   }
   try {
     const now = new Date();
-    const todayStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
-    const yesterdayStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() - 1,
-    );
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterdayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 
     // User stats
-    const totalUsersResult = await db
-      .select({ value: count() })
-      .from(userSchema);
+    const totalUsersResult = await db.select({ value: count() }).from(userSchema);
     const totalUsers = totalUsersResult[0].value;
 
     const todayUsersResult = await db
@@ -69,18 +54,11 @@ export const getOverviewStats = async (): Promise<
     const yesterdayUsersResult = await db
       .select({ value: count() })
       .from(userSchema)
-      .where(
-        and(
-          gte(userSchema.createdAt, yesterdayStart),
-          lt(userSchema.createdAt, todayStart),
-        ),
-      );
+      .where(and(gte(userSchema.createdAt, yesterdayStart), lt(userSchema.createdAt, todayStart)));
     const yesterdayUsers = yesterdayUsersResult[0].value;
 
     // Submission stats
-    const totalSubmissionsResult = await db
-      .select({ value: count() })
-      .from(productsSchema);
+    const totalSubmissionsResult = await db.select({ value: count() }).from(productsSchema);
     const totalSubmissions = totalSubmissionsResult[0].value;
 
     const todaySubmissionsResult = await db

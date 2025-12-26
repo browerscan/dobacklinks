@@ -17,9 +17,9 @@ import { useState } from "react";
 
 export default function NewsletterButton() {
   const [email, setEmail] = useState("");
-  const [subscribeStatus, setSubscribeStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error">(
+    "idle",
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -28,9 +28,7 @@ export default function NewsletterButton() {
     if (!email) return;
 
     const normalizedEmailAddress = normalizeEmail(email);
-    const { isValid, error: validationError } = validateEmail(
-      normalizedEmailAddress,
-    );
+    const { isValid, error: validationError } = validateEmail(normalizedEmailAddress);
 
     if (!isValid) {
       setSubscribeStatus("error");
@@ -45,9 +43,7 @@ export default function NewsletterButton() {
       const result = await subscribeToNewsletter(normalizedEmailAddress);
 
       if (!result.success) {
-        throw new Error(
-          result.error || "An error occurred. Please try again later.",
-        );
+        throw new Error(result.error || "An error occurred. Please try again later.");
       }
 
       setSubscribeStatus("success");
@@ -61,9 +57,7 @@ export default function NewsletterButton() {
     } catch (error) {
       setSubscribeStatus("error");
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "An error occurred. Please try again later.",
+        error instanceof Error ? error.message : "An error occurred. Please try again later.",
       );
     } finally {
       setTimeout(() => setSubscribeStatus("idle"), 5000);
@@ -88,8 +82,8 @@ export default function NewsletterButton() {
             Subscribe to Newsletter
           </DialogTitle>
           <DialogDescription>
-            Stay updated with the latest news and updates. We respect your
-            privacy and won&apos;t spam you.
+            Stay updated with the latest news and updates. We respect your privacy and won&apos;t
+            spam you.
           </DialogDescription>
         </DialogHeader>
 

@@ -32,8 +32,7 @@ export function ExportButton({
 
       // Generate filename with timestamp if not provided
       const exportFilename =
-        filename ||
-        `guest_posts_export_${new Date().toISOString().split("T")[0]}.csv`;
+        filename || `guest_posts_export_${new Date().toISOString().split("T")[0]}.csv`;
 
       // Export to CSV
       exportToCSV(data, { filename: exportFilename });

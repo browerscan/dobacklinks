@@ -8,11 +8,7 @@
 // Declare gtag function for TypeScript
 declare global {
   interface Window {
-    gtag?: (
-      command: "event",
-      eventName: string,
-      eventParams?: Record<string, any>,
-    ) => void;
+    gtag?: (command: "event", eventName: string, eventParams?: Record<string, any>) => void;
   }
 }
 
@@ -21,10 +17,7 @@ declare global {
  * @param eventName - GA4 event name
  * @param eventParams - Additional event parameters
  */
-export function trackEvent(
-  eventName: string,
-  eventParams?: Record<string, any>,
-): void {
+export function trackEvent(eventName: string, eventParams?: Record<string, any>): void {
   if (typeof window !== "undefined" && window.gtag) {
     window.gtag("event", eventName, eventParams);
   }
@@ -36,11 +29,7 @@ export function trackEvent(
  * @param ctaLocation - Where the CTA appears (e.g., "sidebar", "homepage", "404")
  * @param ctaUrl - Destination URL
  */
-export function trackCTAClick(
-  ctaName: string,
-  ctaLocation: string,
-  ctaUrl?: string,
-): void {
+export function trackCTAClick(ctaName: string, ctaLocation: string, ctaUrl?: string): void {
   trackEvent("cta_click", {
     cta_name: ctaName,
     cta_location: ctaLocation,

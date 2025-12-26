@@ -1,6 +1,5 @@
 import { listPublishedPostsAction } from "@/actions/blogs/posts";
 import { getActiveCategories } from "@/actions/categories/user";
-import { getAllProductSlugs } from "@/actions/products/user";
 import { siteConfig } from "@/config/site";
 import { getPosts } from "@/lib/getBlogs";
 import { MetadataRoute } from "next";
@@ -17,6 +16,13 @@ type ChangeFrequency =
   | "never"
   | undefined;
 
+/**
+ * Main sitemap for dobacklinks.com
+ * Includes: static pages, blog posts, and category pages
+ *
+ * Product pages (9700+ items) are in a separate sitemap at /sitemap-products.xml
+ * This keeps the main sitemap lightweight and within size limits
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages with priorities
   const staticPages = [
@@ -75,9 +81,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (slugPart) {
         allBlogSitemapEntries.push({
           url: `${siteUrl}/blog/${slugPart}`,
-          lastModified:
-            post.metadata?.updatedAt || post.publishedAt || new Date(),
-          changeFrequency: "daily" as ChangeFrequency,
+          lastModified: post.metadata?.updatedAt || post.publishedAt || new Date(),
+          changeFrequency: "weekly" as ChangeFrequency,
           priority: 0.7,
         });
       }
@@ -94,7 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         allBlogSitemapEntries.push({
           url: `${siteUrl}/blog/${slugPart}`,
           lastModified: post.publishedAt || new Date(),
-          changeFrequency: "daily" as ChangeFrequency,
+          changeFrequency: "weekly" as ChangeFrequency,
           priority: 0.7,
         });
       }
@@ -121,8 +126,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  // Product pages are now in a separate sitemap: /sitemap-products.xml
-  // This keeps the main sitemap lightweight
+  // Note: Product pages (9700+ items) are served from /sitemap-products.xml
+  // This keeps the main sitemap file small and fast-loading
 
   return [...pages, ...uniqueBlogPostEntries, ...categoryEntries];
 }

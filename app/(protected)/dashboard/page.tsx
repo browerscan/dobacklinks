@@ -1,13 +1,7 @@
 import { getEnrichmentStatsAction } from "@/actions/enrichment";
 import { getOverviewStats } from "@/actions/overview";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { isAdminCheck } from "@/lib/auth/server";
 import { BarChart3, FileText, FolderOpen, Settings, Users } from "lucide-react";
 import Link from "next/link";
@@ -34,9 +28,7 @@ export default async function DashboardPage() {
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
-        <p className="text-muted-foreground">
-          System overview and quick actions
-        </p>
+        <p className="text-muted-foreground">System overview and quick actions</p>
       </div>
 
       {/* Quick Stats */}
@@ -49,8 +41,7 @@ export default async function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">{enrichment?.total ?? "-"}</div>
             <p className="text-xs text-muted-foreground">
-              {enrichment?.enriched ?? 0} enriched, {enrichment?.pending ?? 0}{" "}
-              pending
+              {enrichment?.enriched ?? 0} enriched, {enrichment?.pending ?? 0} pending
             </p>
           </CardContent>
         </Card>
@@ -61,12 +52,8 @@ export default async function DashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {overview?.users.total ?? "-"}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              +{overview?.users.today ?? 0} today
-            </p>
+            <div className="text-2xl font-bold">{overview?.users.total ?? "-"}</div>
+            <p className="text-xs text-muted-foreground">+{overview?.users.today ?? 0} today</p>
           </CardContent>
         </Card>
 
@@ -76,9 +63,7 @@ export default async function DashboardPage() {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {overview?.submissions.total ?? "-"}
-            </div>
+            <div className="text-2xl font-bold">{overview?.submissions.total ?? "-"}</div>
             <p className="text-xs text-muted-foreground">
               +{overview?.submissions.today ?? 0} today
             </p>
@@ -91,12 +76,8 @@ export default async function DashboardPage() {
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {enrichment?.enrichedPercentage ?? 0}%
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {enrichment?.failed ?? 0} failed
-            </p>
+            <div className="text-2xl font-bold">{enrichment?.enrichedPercentage ?? 0}%</div>
+            <p className="text-xs text-muted-foreground">{enrichment?.failed ?? 0} failed</p>
           </CardContent>
         </Card>
       </div>

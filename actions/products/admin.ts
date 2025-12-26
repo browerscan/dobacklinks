@@ -8,12 +8,14 @@ import { getSession, isAdmin } from "@/lib/auth/server";
 import { db } from "@/lib/db";
 import { Category, productCategories, products } from "@/lib/db/schema";
 import { getErrorMessage } from "@/lib/error-utils";
+import { createLogger } from "@/lib/logger";
 import { universalSlugify } from "@/lib/url";
 import { ProductQueryParams, ProductWithCategories } from "@/types/product";
 import { and, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+const log = createLogger({ module: "AdminProductsAction" });
 const ADMIN_PRODUCTS_PAGE_SIZE = 20;
 
 export async function getProductsAsAdminAction(
@@ -80,7 +82,7 @@ export async function getProductsAsAdminAction(
         },
       },
       orderBy: [
-        sql`CASE WHEN ${products.status} = 'pending_review' THEN 1 WHEN ${products.status} = 'pending_payment' THEN 2 ELSE 3 END`,
+        sql`CASE WHEN ${products.status} = 'pending_review' THEN 1 ELSE 2 END`,
         desc(products.lastRenewedAt),
         desc(products.submittedAt),
         desc(products.id),
@@ -89,15 +91,9 @@ export async function getProductsAsAdminAction(
       limit: pageSize,
     });
 
-    const countQuery = db
-      .select({ value: count() })
-      .from(products)
-      .where(where);
+    const countQuery = db.select({ value: count() }).from(products).where(where);
 
-    const [[{ value: totalCount }], data] = await Promise.all([
-      countQuery,
-      productsQuery,
-    ]);
+    const [[{ value: totalCount }], data] = await Promise.all([countQuery, productsQuery]);
 
     const productsData = data.map((p) => {
       const {
@@ -133,7 +129,11 @@ export async function getProductsAsAdminAction(
       count: totalCount,
     });
   } catch (error) {
-    console.error("Error fetching all products for admin:", error);
+    log.error(
+      "Error fetching all products for admin",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return actionResponse.error("Failed to fetch products for admin.");
   }
 }
@@ -187,12 +187,14 @@ export async function deleteProductAction({
 
     return actionResponse.success({ productId });
   } catch (error) {
-    console.error(`Delete Product Action Failed for ${productId}:`, error);
+    log.error(
+      "Delete Product Action Failed",
+      { productId },
+      error instanceof Error ? error : undefined,
+    );
     const errorMessage = getErrorMessage(error);
     if (errorMessage.includes("permission denied")) {
-      return actionResponse.forbidden(
-        "Permission denied to delete this product.",
-      );
+      return actionResponse.forbidden("Permission denied to delete this product.");
     }
     return actionResponse.error(errorMessage);
   }
@@ -242,13 +244,17 @@ export async function approveProductInternal(
         userId: productData.userId,
       });
     } catch (emailError) {
-      console.error("Failed to send approval email:", emailError);
+      log.error(
+        "Failed to send approval email",
+        { productId },
+        emailError instanceof Error ? emailError : undefined,
+      );
       // Don't fail the approval process if email fails
     }
 
     return actionResponse.success({ productId, slug: productData.slug });
   } catch (error) {
-    console.error(`Approve Product Failed for ${productId}:`, error);
+    log.error("Approve Product Failed", { productId }, error instanceof Error ? error : undefined);
     const errorMessage = getErrorMessage(error);
     return actionResponse.error(errorMessage);
   }
@@ -315,9 +321,7 @@ export async function getProductByIdForAdmin(
       return actionResponse.notFound("Product not found.");
     }
 
-    const categoryIds = productData.productCategories.map(
-      (pc) => pc.categoryId,
-    );
+    const categoryIds = productData.productCategories.map((pc) => pc.categoryId);
 
     const product: ProductFormValues & { id: string } = {
       id: productData.id,
@@ -333,16 +337,17 @@ export async function getProductByIdForAdmin(
       dr: productData.dr || 0,
       traffic: productData.traffic || "",
       priceRange: productData.priceRange || "",
-      linkType: (productData.linkType as any) || "dofollow",
+      linkType: (productData.linkType ?? "dofollow") as "dofollow" | "nofollow",
       turnaroundTime: productData.turnaroundTime || "",
       contactEmail: productData.contactEmail || "",
     };
 
     return actionResponse.success(product);
   } catch (error) {
-    console.error(
-      `Get Product for Admin Action Failed for ${productId}:`,
-      error,
+    log.error(
+      "Get Product for Admin Action Failed",
+      { productId },
+      error instanceof Error ? error : undefined,
     );
     const errorMessage = getErrorMessage(error);
     return actionResponse.error(errorMessage);
@@ -452,24 +457,30 @@ export async function createProductAsAdminAction(
 
       // 异步执行，不等待结果
       enrichmentService.enrichSingleProduct(productId).catch((error) => {
-        console.error(
-          "Background screenshot capture failed:",
+        log.error(
+          "Background screenshot capture failed",
           { productId },
-          error,
+          error instanceof Error ? error : undefined,
         );
       });
 
-      console.log("📸 Screenshot capture queued for new product:", {
-        productId,
-      });
+      log.debug("Screenshot capture queued for new product", { productId });
     } catch (error) {
-      console.error("Failed to queue screenshot capture:", error);
+      log.error(
+        "Failed to queue screenshot capture",
+        {},
+        error instanceof Error ? error : undefined,
+      );
       // 不阻塞产品创建
     }
 
     return actionResponse.success({ productId });
   } catch (error) {
-    console.error("Create Product as Admin Action Failed:", error);
+    log.error(
+      "Create Product as Admin Action Failed",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     const errorMessage = getErrorMessage(error);
     return actionResponse.error(errorMessage);
   }
@@ -524,12 +535,8 @@ export async function updateProductAsAdminAction({
 
       const existingCategoryIds = existingCategories.map((c) => c.categoryId);
 
-      const categoriesToAdd = categoryIds.filter(
-        (id) => !existingCategoryIds.includes(id),
-      );
-      const categoriesToRemove = existingCategoryIds.filter(
-        (id) => !categoryIds.includes(id),
-      );
+      const categoriesToAdd = categoryIds.filter((id) => !existingCategoryIds.includes(id));
+      const categoriesToRemove = existingCategoryIds.filter((id) => !categoryIds.includes(id));
 
       if (categoriesToRemove.length > 0) {
         await tx
@@ -575,26 +582,29 @@ export async function updateProductAsAdminAction({
 
       // 异步执行，不等待结果
       enrichmentService.enrichSingleProduct(productId).catch((error) => {
-        console.error(
-          "Background screenshot re-capture failed:",
+        log.error(
+          "Background screenshot re-capture failed",
           { productId },
-          error,
+          error instanceof Error ? error : undefined,
         );
       });
 
-      console.log("📸 Screenshot re-capture queued for updated product:", {
-        productId,
-      });
+      log.debug("Screenshot re-capture queued for updated product", { productId });
     } catch (error) {
-      console.error("Failed to queue screenshot re-capture:", error);
+      log.error(
+        "Failed to queue screenshot re-capture",
+        {},
+        error instanceof Error ? error : undefined,
+      );
       // 不阻塞产品更新
     }
 
     return actionResponse.success({});
   } catch (error) {
-    console.error(
-      `Update Product as Admin Action Failed for ${productId}:`,
-      error,
+    log.error(
+      "Update Product as Admin Action Failed",
+      { productId },
+      error instanceof Error ? error : undefined,
     );
     const errorMessage = getErrorMessage(error);
     if (errorMessage.includes("Product not found.")) {

@@ -34,11 +34,7 @@ interface AutoFillResponse {
   contactEmail?: string;
 }
 
-export default function AutoFillButton({
-  form,
-  categories,
-  disabled,
-}: AutoFillButtonProps) {
+export default function AutoFillButton({ form, categories, disabled }: AutoFillButtonProps) {
   const router = useRouter();
 
   const { data: session } = authClient.useSession();
@@ -90,25 +86,17 @@ export default function AutoFillButton({
 
       if (autoFillData.name) fieldsToUpdate.name = autoFillData.name;
       if (autoFillData.tagline) fieldsToUpdate.tagline = autoFillData.tagline;
-      if (autoFillData.description)
-        fieldsToUpdate.description = autoFillData.description;
+      if (autoFillData.description) fieldsToUpdate.description = autoFillData.description;
       if (autoFillData.logoUrl) fieldsToUpdate.logoUrl = autoFillData.logoUrl;
-      if (autoFillData.appImages?.length > 0)
-        fieldsToUpdate.appImages = autoFillData.appImages;
+      if (autoFillData.appImages?.length > 0) fieldsToUpdate.appImages = autoFillData.appImages;
       if (autoFillData.niche) fieldsToUpdate.niche = autoFillData.niche;
-      if (typeof autoFillData.dr === "number")
-        fieldsToUpdate.dr = autoFillData.dr;
-      if (typeof autoFillData.da === "number")
-        fieldsToUpdate.da = autoFillData.da;
+      if (typeof autoFillData.dr === "number") fieldsToUpdate.dr = autoFillData.dr;
+      if (typeof autoFillData.da === "number") fieldsToUpdate.da = autoFillData.da;
       if (autoFillData.traffic) fieldsToUpdate.traffic = autoFillData.traffic;
-      if (autoFillData.priceRange)
-        fieldsToUpdate.priceRange = autoFillData.priceRange;
-      if (autoFillData.linkType)
-        fieldsToUpdate.linkType = autoFillData.linkType as any;
-      if (autoFillData.turnaroundTime)
-        fieldsToUpdate.turnaroundTime = autoFillData.turnaroundTime;
-      if (autoFillData.contactEmail)
-        fieldsToUpdate.contactEmail = autoFillData.contactEmail;
+      if (autoFillData.priceRange) fieldsToUpdate.priceRange = autoFillData.priceRange;
+      if (autoFillData.linkType) fieldsToUpdate.linkType = autoFillData.linkType as any;
+      if (autoFillData.turnaroundTime) fieldsToUpdate.turnaroundTime = autoFillData.turnaroundTime;
+      if (autoFillData.contactEmail) fieldsToUpdate.contactEmail = autoFillData.contactEmail;
       if (autoFillData.categoryIds?.length > 0) {
         // Validate that the category IDs exist in the available categories
         const validCategoryIds = autoFillData.categoryIds.filter((categoryId) =>
@@ -127,10 +115,7 @@ export default function AutoFillButton({
     } catch (error) {
       console.error("Auto-fill error:", error);
       toast.error("Auto-fill failed", {
-        description:
-          error instanceof Error
-            ? error.message
-            : "An unexpected error occurred",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
       });
     } finally {
       setIsLoading(false);
@@ -147,11 +132,7 @@ export default function AutoFillButton({
       className="ml-2 shrink-0 transition-all duration-200 hover:scale-105"
       title="Auto-fill form with AI"
     >
-      {isLoading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : (
-        <Bot className="h-4 w-4" />
-      )}
+      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bot className="h-4 w-4" />}
     </Button>
   );
 }

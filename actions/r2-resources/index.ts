@@ -11,7 +11,7 @@ import {
   listR2Objects,
 } from "@/lib/cloudflare/r2";
 import { getErrorMessage } from "@/lib/error-utils";
-import { checkRateLimit, getClientIPFromHeaders } from "@/lib/upstash";
+import { checkRateLimit, getClientIPFromHeaders, RedisFallbackMode } from "@/lib/upstash";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { z } from "zod";
@@ -34,9 +34,7 @@ const listSchema = z.object({
   pageSize: z.number().int().positive().max(100).default(20),
 });
 
-export async function listR2Files(
-  input: z.infer<typeof listSchema>,
-): Promise<ListR2FilesData> {
+export async function listR2Files(input: z.infer<typeof listSchema>): Promise<ListR2FilesData> {
   if (!(await isAdmin())) {
     return actionResponse.forbidden("Admin privileges required.");
   }
@@ -44,17 +42,12 @@ export async function listR2Files(
   const validationResult = listSchema.safeParse(input);
   if (!validationResult.success) {
     const formattedErrors = validationResult.error.flatten().fieldErrors;
-    return actionResponse.badRequest(
-      `Invalid input: ${JSON.stringify(formattedErrors)}`,
-    );
+    return actionResponse.badRequest(`Invalid input: ${JSON.stringify(formattedErrors)}`);
   }
 
-  const { categoryPrefix, filterPrefix, continuationToken, pageSize } =
-    validationResult.data;
+  const { categoryPrefix, filterPrefix, continuationToken, pageSize } = validationResult.data;
 
-  const searchPrefix = filterPrefix
-    ? `${categoryPrefix}${filterPrefix}`
-    : categoryPrefix;
+  const searchPrefix = filterPrefix ? `${categoryPrefix}${filterPrefix}` : categoryPrefix;
 
   try {
     const result = await listR2Objects({
@@ -73,9 +66,7 @@ export async function listR2Files(
     });
   } catch (error: any) {
     console.error("Failed to list files using generic R2 lister:", error);
-    return actionResponse.error(
-      `Failed to list files: ${error.message || "Unknown error"}`,
-    );
+    return actionResponse.error(`Failed to list files: ${error.message || "Unknown error"}`);
   }
 }
 
@@ -88,9 +79,7 @@ const deleteSchema = z.object({
   key: z.string().min(1, "File key cannot be empty"),
 });
 
-export async function deleteR2File(
-  input: z.infer<typeof deleteSchema>,
-): Promise<DeleteR2FileData> {
+export async function deleteR2File(input: z.infer<typeof deleteSchema>): Promise<DeleteR2FileData> {
   if (!(await isAdmin())) {
     return actionResponse.forbidden("Admin privileges required.");
   }
@@ -98,9 +87,7 @@ export async function deleteR2File(
   const validationResult = deleteSchema.safeParse(input);
   if (!validationResult.success) {
     const formattedErrors = validationResult.error.flatten().fieldErrors;
-    return actionResponse.badRequest(
-      `Invalid input: ${JSON.stringify(formattedErrors)}`,
-    );
+    return actionResponse.badRequest(`Invalid input: ${JSON.stringify(formattedErrors)}`);
   }
 
   const { key } = validationResult.data;
@@ -110,9 +97,7 @@ export async function deleteR2File(
     return actionResponse.success();
   } catch (error: any) {
     console.error(`Failed to delete R2 file (${key}):`, error);
-    return actionResponse.error(
-      error.message || "Failed to delete file from R2.",
-    );
+    return actionResponse.error(error.message || "Failed to delete file from R2.");
   }
 }
 
@@ -131,9 +116,7 @@ const generatePresignedUrlSchema = z.object({
   prefix: z.string().optional(),
   path: z.string(),
 });
-type GeneratePresignedUploadUrlInput = z.infer<
-  typeof generatePresignedUrlSchema
->;
+type GeneratePresignedUploadUrlInput = z.infer<typeof generatePresignedUrlSchema>;
 
 export async function generatePresignedUploadUrl(
   input: GeneratePresignedUploadUrlInput,
@@ -141,18 +124,14 @@ export async function generatePresignedUploadUrl(
   const validationResult = generatePresignedUrlSchema.safeParse(input);
   if (!validationResult.success) {
     const formattedErrors = validationResult.error.flatten().fieldErrors;
-    return actionResponse.badRequest(
-      `Invalid input: ${JSON.stringify(formattedErrors)}`,
-    );
+    return actionResponse.badRequest(`Invalid input: ${JSON.stringify(formattedErrors)}`);
   }
 
   const { fileName, contentType, path, prefix } = validationResult.data;
 
   if (!process.env.R2_BUCKET_NAME || !process.env.R2_PUBLIC_URL) {
     console.error("R2 configuration is missing (bucket name or public URL).");
-    return actionResponse.error(
-      "Server configuration error: R2 settings are incomplete.",
-    );
+    return actionResponse.error("Server configuration error: R2 settings are incomplete.");
   }
 
   const cleanedPath = path.replace(/^\/+|\/+$/g, "");
@@ -185,9 +164,7 @@ export async function generatePresignedUploadUrl(
     });
   } catch (error: any) {
     console.error(`Failed to generate pre-signed URL for ${objectKey}:`, error);
-    return actionResponse.error(
-      getErrorMessage(error) || "Failed to generate pre-signed URL",
-    );
+    return actionResponse.error(getErrorMessage(error) || "Failed to generate pre-signed URL");
   }
 }
 
@@ -220,13 +197,15 @@ export async function generatePublicPresignedUploadUrl(
   if (!session || !isAdminUser) {
     // Anonymous user: Use IP for rate limiting with stricter limits
     const clientIP = await getClientIPFromHeaders();
-    const isAllowed = await checkRateLimit(clientIP, {
-      prefix: `${siteConfig.name.trim()}-anonymous-image-upload`,
-      maxRequests: parseInt(
-        process.env.NEXT_PUBLIC_DAILY_IMAGE_UPLOAD_LIMIT || "100",
-      ),
-      window: "1 d",
-    });
+    const isAllowed = await checkRateLimit(
+      clientIP,
+      {
+        prefix: `${siteConfig.name.trim()}-anonymous-image-upload`,
+        maxRequests: parseInt(process.env.NEXT_PUBLIC_DAILY_IMAGE_UPLOAD_LIMIT || "100"),
+        window: "1 d",
+      },
+      RedisFallbackMode.MEMORY_FALLBACK,
+    );
 
     if (!isAllowed) {
       return actionResponse.badRequest(

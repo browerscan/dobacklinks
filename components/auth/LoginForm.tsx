@@ -75,9 +75,7 @@ export default function LoginForm({ className = "" }: LoginFormProps) {
           <GoogleIcon className="mr-2 h-4 w-4" />
         )}
         Continue with Google
-        {lastMethod === "google" && (
-          <Badge className="ml-2 text-xs">Last used</Badge>
-        )}
+        {lastMethod === "google" && <Badge className="ml-2 text-xs">Last used</Badge>}
       </Button>
       <Button
         variant="outline"
@@ -90,9 +88,7 @@ export default function LoginForm({ className = "" }: LoginFormProps) {
           <Github className="mr-2 h-4 w-4" />
         )}
         Continue with Github
-        {lastMethod === "github" && (
-          <Badge className="ml-2 text-xs">Last used</Badge>
-        )}
+        {lastMethod === "github" && <Badge className="ml-2 text-xs">Last used</Badge>}
       </Button>
     </div>
   );

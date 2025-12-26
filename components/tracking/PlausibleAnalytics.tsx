@@ -10,12 +10,7 @@ const PlausibleAnalytics = () => {
     <>
       {PLAUSIBLE_DOMAIN ? (
         <>
-          <Script
-            strategy="lazyOnload"
-            data-domain={PLAUSIBLE_DOMAIN}
-            src={PLAUSIBLE_SRC}
-            defer
-          />
+          <Script strategy="lazyOnload" data-domain={PLAUSIBLE_DOMAIN} src={PLAUSIBLE_SRC} defer />
           <Script
             id="plausible-init"
             strategy="lazyOnload"

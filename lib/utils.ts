@@ -24,8 +24,7 @@ export function formatCurrency(
   if (amount === null || amount === undefined || isNaN(amount)) {
     return "-";
   }
-  const effectiveCurrency =
-    currency || process.env.NEXT_PUBLIC_DEFAULT_CURRENCY || "usd";
+  const effectiveCurrency = currency || process.env.NEXT_PUBLIC_DEFAULT_CURRENCY || "usd";
   try {
     return new Intl.NumberFormat("en-US", {
       style: "currency",

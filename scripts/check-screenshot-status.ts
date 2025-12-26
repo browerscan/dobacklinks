@@ -13,9 +13,7 @@ async function checkStatus() {
   console.log(`   已捕获: ${stats.captured} (${stats.capturedPercentage}%)`);
   console.log(`   失败: ${stats.failed} (${stats.failedPercentage}%)`);
   console.log("");
-  console.log(
-    `✅ 进度: ${stats.captured}/${stats.total} (${stats.capturedPercentage}%)`,
-  );
+  console.log(`✅ 进度: ${stats.captured}/${stats.total} (${stats.capturedPercentage}%)`);
 }
 
 checkStatus().catch(console.error);

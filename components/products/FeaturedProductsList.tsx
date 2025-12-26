@@ -26,15 +26,10 @@ export function FeaturedProductsList({
   if (loading && useClientCache) {
     return (
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Featured
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Featured</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="h-48 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"
-            />
+            <div key={i} className="h-48 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
           ))}
         </div>
       </div>
@@ -47,9 +42,7 @@ export function FeaturedProductsList({
 
   return (
     <div className="mb-4">
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-        Featured
-      </h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Featured</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {products.map((product) => (
           <FeaturedProductCard key={product.id} product={product} />

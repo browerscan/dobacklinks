@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  getPostByIdAction,
-  updatePostAction,
-  type PostWithTags,
-} from "@/actions/blogs/posts";
+import { getPostByIdAction, updatePostAction, type PostWithTags } from "@/actions/blogs/posts";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -84,12 +80,8 @@ export default function EditBlogClient() {
     return (
       <div className="space-y-6 p-4 md:p-8 text-center">
         <h2 className="text-2xl font-bold tracking-tight">Post Not Found</h2>
-        <p className="text-muted-foreground">
-          The requested post could not be found
-        </p>
-        <Button onClick={() => router.push(`/dashboard/blog`)}>
-          Back to List
-        </Button>
+        <p className="text-muted-foreground">The requested post could not be found</p>
+        <Button onClick={() => router.push(`/dashboard/blog`)}>Back to List</Button>
       </div>
     );
   }

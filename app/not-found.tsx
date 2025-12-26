@@ -12,17 +12,13 @@ export default function NotFound() {
         <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Left side - Error message */}
           <div className="text-center md:text-left">
-            <div className="text-6xl sm:text-8xl font-bold mb-4 text-primary">
-              404
-            </div>
+            <div className="text-6xl sm:text-8xl font-bold mb-4 text-primary">404</div>
 
-            <h1 className="text-2xl sm:text-3xl font-bold mb-4">
-              Page Not Found
-            </h1>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-4">Page Not Found</h1>
 
             <p className="text-gray-600 dark:text-gray-400 mb-8 text-base sm:text-lg">
-              Sorry, we couldn&apos;t find the page you&apos;re looking for. The
-              site may have been removed or the URL might be incorrect.
+              Sorry, we couldn&apos;t find the page you&apos;re looking for. The site may have been
+              removed or the URL might be incorrect.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-8">
@@ -41,9 +37,7 @@ export default function NotFound() {
 
             {/* Quick links */}
             <div className="space-y-2 text-sm">
-              <p className="text-muted-foreground font-medium">
-                Popular pages:
-              </p>
+              <p className="text-muted-foreground font-medium">Popular pages:</p>
               <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                 <Button variant="ghost" size="sm" asChild>
                   <Link href="/categories">

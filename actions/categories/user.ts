@@ -3,11 +3,7 @@
 import { Category } from "@/actions/categories/admin";
 import { ActionResult, actionResponse } from "@/lib/action-response";
 import { db } from "@/lib/db";
-import {
-  categories as categoriesSchema,
-  productCategories,
-  products,
-} from "@/lib/db/schema";
+import { categories as categoriesSchema, productCategories, products } from "@/lib/db/schema";
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 
 export type CategoryWithCount = Category & { productCount: number };
@@ -26,9 +22,7 @@ export async function getActiveCategories(): Promise<ActionResult<Category[]>> {
   }
 }
 
-export async function getActiveCategoriesWithCounts(): Promise<
-  ActionResult<CategoryWithCount[]>
-> {
+export async function getActiveCategoriesWithCounts(): Promise<ActionResult<CategoryWithCount[]>> {
   try {
     const data = await db
       .select({
@@ -56,9 +50,7 @@ export async function getActiveCategoriesWithCounts(): Promise<
   }
 }
 
-export async function getCategoryBySlug(
-  slug: string,
-): Promise<ActionResult<Category | null>> {
+export async function getCategoryBySlug(slug: string): Promise<ActionResult<Category | null>> {
   if (!slug?.trim()) {
     return actionResponse.badRequest("Slug is required");
   }
@@ -67,12 +59,7 @@ export async function getCategoryBySlug(
     const results = await db
       .select()
       .from(categoriesSchema)
-      .where(
-        and(
-          eq(categoriesSchema.slug, slug.trim()),
-          eq(categoriesSchema.isActive, true),
-        ),
-      )
+      .where(and(eq(categoriesSchema.slug, slug.trim()), eq(categoriesSchema.isActive, true)))
       .limit(1);
 
     const data = results[0] ?? null;
@@ -81,9 +68,7 @@ export async function getCategoryBySlug(
     return actionResponse.error((error as Error).message);
   }
 }
-export async function getCategorySlugByIds(
-  ids: string[],
-): Promise<ActionResult<string[] | null>> {
+export async function getCategorySlugByIds(ids: string[]): Promise<ActionResult<string[] | null>> {
   if (typeof ids !== "object" || !ids.length) {
     return actionResponse.badRequest("IDs are required");
   }
@@ -94,12 +79,7 @@ export async function getCategorySlugByIds(
         slug: categoriesSchema.slug,
       })
       .from(categoriesSchema)
-      .where(
-        and(
-          inArray(categoriesSchema.id, ids),
-          eq(categoriesSchema.isActive, true),
-        ),
-      );
+      .where(and(inArray(categoriesSchema.id, ids), eq(categoriesSchema.isActive, true)));
 
     if (!data || data.length === 0) {
       return actionResponse.success(null);

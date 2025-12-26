@@ -3,13 +3,7 @@
 import { Copy, CopyCheck } from "lucide-react";
 import { useCallback, useState } from "react";
 
-const CopyButton = ({
-  text,
-  className,
-}: {
-  text: string;
-  className?: string;
-}) => {
+const CopyButton = ({ text, className }: { text: string; className?: string }) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const copy = useCallback(() => {

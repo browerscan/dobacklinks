@@ -12,9 +12,7 @@ type MetadataProps = {
   params: Params;
 };
 
-export async function generateMetadata({
-  params,
-}: MetadataProps): Promise<Metadata> {
+export async function generateMetadata({ params }: MetadataProps): Promise<Metadata> {
   const { productId } = await params;
   return constructMetadata({
     title: "Edit Site",
@@ -40,9 +38,7 @@ export default async function EditProductPage({ params }: { params: Params }) {
       <div className="space-y-4 p-4 md:p-8">
         <h1 className="text-2xl font-semibold">Edit Site</h1>
         <p className="text-destructive">
-          {`Error: ${
-            !categoriesResult.success ? categoriesResult.error : "Unknown error"
-          }`}
+          {`Error: ${!categoriesResult.success ? categoriesResult.error : "Unknown error"}`}
         </p>
       </div>
     );

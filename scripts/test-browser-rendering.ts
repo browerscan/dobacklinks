@@ -57,10 +57,7 @@ async function main() {
         console.log("\n💾 Test 3: Save to Local Storage");
         console.log("-----------------------------------");
         const domain = storage.extractDomain(url);
-        const { fullUrl, thumbnailUrl } = await storage.saveScreenshot(
-          screenshot,
-          domain,
-        );
+        const { fullUrl, thumbnailUrl } = await storage.saveScreenshot(screenshot, domain);
         console.log(`✅ Screenshot saved:`);
         console.log(`   Full: ${fullUrl}`);
         console.log(`   Thumbnail: ${thumbnailUrl}`);

@@ -29,8 +29,7 @@ function estimateDomainAge(approvedDate: string | null | undefined): {
     const now = new Date();
     const diffYears = now.getFullYear() - approved.getFullYear();
     const diffMonths =
-      (now.getFullYear() - approved.getFullYear()) * 12 +
-      (now.getMonth() - approved.getMonth());
+      (now.getFullYear() - approved.getFullYear()) * 12 + (now.getMonth() - approved.getMonth());
 
     let label = "";
     let description = "";
@@ -133,16 +132,12 @@ export function DomainInfoCard({ product }: DomainInfoCardProps) {
                 {isHTTPS ? (
                   <>
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span className="text-sm font-medium text-green-600">
-                      HTTPS
-                    </span>
+                    <span className="text-sm font-medium text-green-600">HTTPS</span>
                   </>
                 ) : (
                   <>
                     <XCircle className="w-4 h-4 text-red-600" />
-                    <span className="text-sm font-medium text-red-600">
-                      HTTP Only
-                    </span>
+                    <span className="text-sm font-medium text-red-600">HTTP Only</span>
                   </>
                 )}
               </div>
@@ -179,20 +174,15 @@ export function DomainInfoCard({ product }: DomainInfoCardProps) {
                       {ageInfo.label}
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {ageInfo.description}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{ageInfo.description}</p>
 
                   {product.approvedDate && (
                     <p className="text-xs text-muted-foreground mt-2">
                       Platform approved since:{" "}
-                      {new Date(product.approvedDate).toLocaleDateString(
-                        "en-US",
-                        {
-                          month: "short",
-                          year: "numeric",
-                        },
-                      )}
+                      {new Date(product.approvedDate).toLocaleDateString("en-US", {
+                        month: "short",
+                        year: "numeric",
+                      })}
                     </p>
                   )}
                 </div>
@@ -202,9 +192,7 @@ export function DomainInfoCard({ product }: DomainInfoCardProps) {
 
           {/* Trust Indicators */}
           <div className="pt-3 border-t">
-            <div className="text-xs font-medium mb-2 text-muted-foreground">
-              Trust Indicators:
-            </div>
+            <div className="text-xs font-medium mb-2 text-muted-foreground">Trust Indicators:</div>
             <div className="flex flex-wrap gap-2">
               {isHTTPS && (
                 <Badge variant="outline" className="text-xs">
@@ -230,8 +218,8 @@ export function DomainInfoCard({ product }: DomainInfoCardProps) {
           {/* Info Note */}
           <div className="pt-3 border-t">
             <p className="text-xs text-muted-foreground">
-              Domain age is estimated based on platform approval date. Actual
-              registration date may be earlier.
+              Domain age is estimated based on platform approval date. Actual registration date may
+              be earlier.
             </p>
           </div>
         </div>

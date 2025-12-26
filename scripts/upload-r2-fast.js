@@ -84,9 +84,7 @@ function uploadFile(filePath, index) {
 const CONCURRENT = 20;
 async function batchUpload() {
   for (let i = 0; i < files.length; i += CONCURRENT) {
-    const batch = files
-      .slice(i, i + CONCURRENT)
-      .map((f, idx) => uploadFile(f, i + idx));
+    const batch = files.slice(i, i + CONCURRENT).map((f, idx) => uploadFile(f, i + idx));
     await Promise.all(batch);
 
     const progress = Math.min(i + CONCURRENT, files.length);

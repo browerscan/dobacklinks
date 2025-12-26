@@ -221,4 +221,3 @@ export function BasicFilters({ onApply }: BasicFiltersProps) {
     </Card>
   );
 }
-

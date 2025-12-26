@@ -9,8 +9,7 @@ interface UserWelcomeEmailProps {
 
 const commonStyles = {
   container: {
-    fontFamily:
-      "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     maxWidth: "600px",
     margin: "0 auto",
     backgroundColor: "#f8fafc",
@@ -108,19 +107,11 @@ export const UserWelcomeEmail: React.FC<UserWelcomeEmailProps> = ({
     <div style={commonStyles.container}>
       <div style={commonStyles.card}>
         <div style={commonStyles.logo}>
-          <img
-            src={`${siteConfig.url}/logo.png`}
-            alt={siteName}
-            width={80}
-            height={80}
-          />
+          <img src={`${siteConfig.url}/logo.png`} alt={siteName} width={80} height={80} />
         </div>
 
         <h1 style={commonStyles.title}>
-          <a
-            href={siteConfig.url}
-            style={{ textDecoration: "none", color: "#3b82f6" }}
-          >
+          <a href={siteConfig.url} style={{ textDecoration: "none", color: "#3b82f6" }}>
             {siteName}
           </a>
         </h1>
@@ -128,8 +119,8 @@ export const UserWelcomeEmail: React.FC<UserWelcomeEmailProps> = ({
         <h2 style={commonStyles.greeting}>Hi {displayName},</h2>
 
         <p style={commonStyles.paragraph}>
-          Welcome to our newest member. You are now part of the {siteName}{" "}
-          family! Get ready to depart on an exciting journey with us!
+          Welcome to our newest member. You are now part of the {siteName} family! Get ready to
+          depart on an exciting journey with us!
         </p>
 
         <div style={commonStyles.socialContainer}>

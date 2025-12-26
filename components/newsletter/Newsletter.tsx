@@ -8,9 +8,9 @@ import { useState } from "react";
 
 export function Newsletter() {
   const [email, setEmail] = useState("");
-  const [subscribeStatus, setSubscribeStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error">(
+    "idle",
+  );
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubscribe = async (e: React.FormEvent) => {
@@ -18,9 +18,7 @@ export function Newsletter() {
     if (!email) return;
 
     const normalizedEmailAddress = normalizeEmail(email);
-    const { isValid, error: validationError } = validateEmail(
-      normalizedEmailAddress,
-    );
+    const { isValid, error: validationError } = validateEmail(normalizedEmailAddress);
 
     if (!isValid) {
       setSubscribeStatus("error");
@@ -35,9 +33,7 @@ export function Newsletter() {
       const result = await subscribeToNewsletter(normalizedEmailAddress);
 
       if (!result.success) {
-        throw new Error(
-          result.error || "An error occurred. Please try again later.",
-        );
+        throw new Error(result.error || "An error occurred. Please try again later.");
       }
 
       setSubscribeStatus("success");
@@ -46,9 +42,7 @@ export function Newsletter() {
     } catch (error) {
       setSubscribeStatus("error");
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "An error occurred. Please try again later.",
+        error instanceof Error ? error.message : "An error occurred. Please try again later.",
       );
     } finally {
       setTimeout(() => setSubscribeStatus("idle"), 5000);
@@ -82,13 +76,9 @@ export function Newsletter() {
           </button>
         </div>
         {subscribeStatus === "success" && (
-          <p className="text-xs text-green-600 mt-1">
-            You have successfully subscribed!
-          </p>
+          <p className="text-xs text-green-600 mt-1">You have successfully subscribed!</p>
         )}
-        {subscribeStatus === "error" && (
-          <p className="text-xs text-red-600 mt-1">{errorMessage}</p>
-        )}
+        {subscribeStatus === "error" && <p className="text-xs text-red-600 mt-1">{errorMessage}</p>}
       </form>
     </div>
   );

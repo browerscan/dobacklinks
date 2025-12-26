@@ -42,9 +42,7 @@ export function useSearchHistory() {
 
     setHistory((prev) => {
       // Remove duplicate if exists
-      const filtered = prev.filter(
-        (item) => item.query.toLowerCase() !== query.toLowerCase(),
-      );
+      const filtered = prev.filter((item) => item.query.toLowerCase() !== query.toLowerCase());
 
       // Add new item to beginning
       const updated = [newItem, ...filtered];
@@ -76,9 +74,7 @@ export function useSearchHistory() {
   // Remove specific item
   const removeFromHistory = (query: string) => {
     setHistory((prev) => {
-      const filtered = prev.filter(
-        (item) => item.query.toLowerCase() !== query.toLowerCase(),
-      );
+      const filtered = prev.filter((item) => item.query.toLowerCase() !== query.toLowerCase());
 
       try {
         localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(filtered));

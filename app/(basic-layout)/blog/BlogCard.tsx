@@ -26,12 +26,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
   const visibilityInfo = getVisibilityInfo();
 
   return (
-    <Link
-      href={`/blog/${post.slug}`}
-      title={post.title}
-      prefetch={false}
-      className="group block"
-    >
+    <Link href={`/blog/${post.slug}`} title={post.title} prefetch={false} className="group block">
       <div className="bg-card border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md hover:translate-y-[-3px]">
         <div className="relative h-48 w-full overflow-hidden">
           <Image
@@ -43,10 +38,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
 
           <div className="absolute top-3 right-3 flex gap-2">
             {post.isPinned && (
-              <div
-                className="bg-amber-500/90 text-white rounded-full p-1.5"
-                title="Pinned Post"
-              >
+              <div className="bg-amber-500/90 text-white rounded-full p-1.5" title="Pinned Post">
                 <PinIcon className="h-3.5 w-3.5" />
               </div>
             )}
@@ -70,9 +62,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
           </h2>
 
           {post.description && (
-            <p className="text-muted-foreground text-sm mt-2 line-clamp-1">
-              {post.description}
-            </p>
+            <p className="text-muted-foreground text-sm mt-2 line-clamp-1">{post.description}</p>
           )}
         </div>
       </div>

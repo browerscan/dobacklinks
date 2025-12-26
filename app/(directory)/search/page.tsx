@@ -6,9 +6,10 @@ import { BasicFilters } from "@/components/search/BasicFilters";
 import { ExportButton } from "@/components/export/ExportButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { constructMetadata } from "@/lib/metadata";
 import { getSession } from "@/lib/auth/server";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Lock, Sliders } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,8 @@ export async function generateMetadata({
       ? `Search results for "${query}" - Find guest post opportunities matching your criteria.`
       : "Search our directory of 9,700+ guest post sites by name, niche, DR, DA, and more.",
     path: `/search${query ? `?q=${encodeURIComponent(query)}` : ""}`,
+    // Prevent search result pages from being indexed to avoid duplicate content issues
+    noIndex: true,
   });
 }
 
@@ -76,9 +79,7 @@ interface SearchResponse {
   error?: string;
 }
 
-async function searchProducts(
-  searchParams: URLSearchParams,
-): Promise<SearchResponse> {
+async function searchProducts(searchParams: URLSearchParams): Promise<SearchResponse> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const url = `${baseUrl}/api/search?${searchParams.toString()}`;
 
@@ -129,18 +130,47 @@ export default async function SearchPage({
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Track search event */}
-      {query && (
-        <SearchTracker
-          searchTerm={query}
-          resultsCount={pagination?.total || 0}
-        />
-      )}
+      {query && <SearchTracker searchTerm={query} resultsCount={pagination?.total || 0} />}
 
       {/* Search Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">
-          {query ? `Search Results for "${query}"` : "Search Guest Post Sites"}
-        </h1>
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">
+              {query ? `Search Results for "${query}"` : "Search Guest Post Sites"}
+            </h1>
+            {pagination && pagination.total > 0 && (
+              <p className="text-muted-foreground">
+                Found{" "}
+                <span className="font-semibold text-foreground">
+                  {pagination.total.toLocaleString()}
+                </span>{" "}
+                sites
+                {!isLoggedIn && (
+                  <Badge variant="outline" className="ml-2">
+                    <Lock className="w-3 h-3 mr-1" />
+                    Sign in for pricing
+                  </Badge>
+                )}
+              </p>
+            )}
+          </div>
+          {isLoggedIn && products.length > 0 && (
+            <ExportButton
+              data={products.map((p) => ({
+                name: p.name,
+                url: p.url,
+                niche: p.niche,
+                dr: p.dr,
+                da: p.da,
+                monthlyVisits: p.monthlyVisits,
+                linkType: p.linkType,
+                googleNews: p.googleNews ? "Yes" : "No",
+              }))}
+              filename={`search_results_${query || "all"}_${new Date().toISOString().split("T")[0]}.csv`}
+            />
+          )}
+        </div>
         <SearchInput defaultValue={query} className="max-w-2xl" />
       </div>
 
@@ -149,17 +179,26 @@ export default async function SearchPage({
         {/* Filters Sidebar */}
         <aside className="lg:col-span-1">
           {isLoggedIn ? <AdvancedFilters /> : <BasicFilters />}
+
+          {/* Upgrade Prompt for Non-Logged Users */}
           {!isLoggedIn && (
-            <Card className="mt-4">
-              <CardContent className="p-4 space-y-2">
-                <p className="text-sm font-medium">
-                  Want more filters and CSV export?
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Sign in to unlock advanced DR/DA ranges and export tools.
-                </p>
-                <Button asChild className="w-full">
-                  <Link href="/login?returnUrl=/search">Sign In</Link>
+            <Card className="mt-4 border-primary/20 bg-primary/5">
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-md bg-primary/10">
+                    <Sliders className="w-4 h-4 text-primary" />
+                  </div>
+                  <span className="font-semibold text-sm">Unlock Advanced Filters</span>
+                </div>
+                <ul className="text-xs text-muted-foreground space-y-1.5 ml-7">
+                  <li>Custom DR/DA range sliders</li>
+                  <li>Minimum traffic filtering</li>
+                  <li>Spam score thresholds</li>
+                  <li>Export results to CSV</li>
+                  <li className="text-primary font-medium">View pricing & contact info</li>
+                </ul>
+                <Button asChild className="w-full" size="sm">
+                  <Link href="/login?returnUrl=/search">Sign In Free</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -171,9 +210,7 @@ export default async function SearchPage({
           {!result.success ? (
             <Card>
               <CardContent className="p-8 text-center">
-                <p className="text-destructive">
-                  Search failed. Please try again.
-                </p>
+                <p className="text-destructive">Search failed. Please try again.</p>
               </CardContent>
             </Card>
           ) : products.length === 0 ? (
@@ -193,40 +230,10 @@ export default async function SearchPage({
             </Card>
           ) : (
             <>
-              {/* Results Count & Export Button */}
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-muted-foreground">
-                  Showing {(page - 1) * (pagination?.limit || 20) + 1}-
-                  {Math.min(
-                    page * (pagination?.limit || 20),
-                    pagination?.total || 0,
-                  )}{" "}
-                  of {pagination?.total || 0} results
-                </p>
-                {isLoggedIn && (
-                  <ExportButton
-                    data={products.map((p) => ({
-                      name: p.name,
-                      url: p.url,
-                      niche: p.niche,
-                      dr: p.dr,
-                      da: p.da,
-                      monthlyVisits: p.monthlyVisits,
-                      linkType: p.linkType,
-                      googleNews: p.googleNews ? "Yes" : "No",
-                    }))}
-                    filename={`search_results_${query || "all"}_${new Date().toISOString().split("T")[0]}.csv`}
-                  />
-                )}
-              </div>
-
               {/* Results Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {mappedProducts.map((product) => (
-                  <LatestProductCard
-                    key={product.id}
-                    product={product as any}
-                  />
+                  <LatestProductCard key={product.id} product={product as any} />
                 ))}
               </div>
 
@@ -255,11 +262,7 @@ export default async function SearchPage({
                       page: String(Math.min(pagination.totalPages, page + 1)),
                     }).toString()}`}
                   >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={page >= pagination.totalPages}
-                    >
+                    <Button variant="outline" size="sm" disabled={page >= pagination.totalPages}>
                       Next
                       <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>

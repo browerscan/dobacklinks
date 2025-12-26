@@ -29,12 +29,7 @@ interface ProductCardProps {
 
 const statusBadgeStyle = {
   live: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-  pending_review:
-    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-  pending_payment:
-    "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
-  cancelled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-  expired: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+  pending_review: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
 };
 
 export function MyProductCard({ product }: ProductCardProps) {
@@ -54,9 +49,7 @@ export function MyProductCard({ product }: ProductCardProps) {
         toast.error(result.error || "Failed to delete product.");
       }
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "An unknown error occurred.",
-      );
+      toast.error(error instanceof Error ? error.message : "An unknown error occurred.");
     } finally {
       setIsDeleting(false);
     }
@@ -82,9 +75,7 @@ export function MyProductCard({ product }: ProductCardProps) {
           />
         ) : (
           <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700">
-            <span className="text-white font-bold text-lg">
-              {product.name.charAt(0)}
-            </span>
+            <span className="text-white font-bold text-lg">{product.name.charAt(0)}</span>
           </div>
         )}
         <div className="flex-1 min-w-0">
@@ -92,17 +83,13 @@ export function MyProductCard({ product }: ProductCardProps) {
             <h3
               className={cn(
                 `font-semibold line-clamp-1`,
-                product.isFeatured
-                  ? "text-primary"
-                  : "text-gray-900 dark:text-gray-100",
+                product.isFeatured ? "text-primary" : "text-gray-900 dark:text-gray-100",
               )}
             >
               {product.name}
             </h3>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-            {product.tagline}
-          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{product.tagline}</p>
         </div>
       </div>
 
@@ -125,10 +112,7 @@ export function MyProductCard({ product }: ProductCardProps) {
         <div className="flex items-center gap-2">
           {product.status && (
             <Badge
-              className={cn(
-                "capitalize",
-                statusBadgeStyle[product.status] || "bg-gray-500",
-              )}
+              className={cn("capitalize", statusBadgeStyle[product.status] || "bg-gray-500")}
               variant="outline"
             >
               {product.status.replace(/_/g, " ")}
@@ -165,11 +149,9 @@ export function MyProductCard({ product }: ProductCardProps) {
               </Button>
             </>
           )}
-          {product.status === "cancelled" && (
-            <AlertDialog
-              open={isDeleteDialogOpen}
-              onOpenChange={setIsDeleteDialogOpen}
-            >
+          {/* Allow deletion of pending_review products, not live products */}
+          {product.status === "pending_review" && (
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" size="sm">
                   Delete
@@ -179,22 +161,18 @@ export function MyProductCard({ product }: ProductCardProps) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    your product submission.
+                    This action cannot be undone. This will permanently delete your product
+                    submission.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel disabled={isDeleting}>
-                    Cancel
-                  </AlertDialogCancel>
+                  <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDelete}
                     disabled={isDeleting}
                     className="bg-red-600 hover:bg-red-700"
                   >
-                    {isDeleting && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
+                    {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Delete
                   </AlertDialogAction>
                 </AlertDialogFooter>

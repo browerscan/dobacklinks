@@ -29,9 +29,7 @@ export const user = pgTable("user", {
   banned: boolean("banned"),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull()
@@ -42,9 +40,7 @@ export const session = pgTable("session", {
   id: uuid("id").primaryKey().defaultRandom(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   token: text("token").notNull().unique(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .$onUpdate(() => new Date())
@@ -74,9 +70,7 @@ export const account = pgTable("account", {
   }),
   scope: text("scope"),
   password: text("password"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .$onUpdate(() => new Date())
@@ -88,26 +82,16 @@ export const verification = pgTable("verification", {
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
 });
 
-export const postStatusEnum = pgEnum("post_status", [
-  "draft",
-  "published",
-  "archived",
-]);
+export const postStatusEnum = pgEnum("post_status", ["draft", "published", "archived"]);
 
-export const postVisibilityEnum = pgEnum("post_visibility", [
-  "public",
-  "logged_in",
-  "subscribers",
-]);
+export const postVisibilityEnum = pgEnum("post_visibility", ["public", "logged_in", "subscribers"]);
 
 export const posts = pgTable(
   "posts",
@@ -125,9 +109,7 @@ export const posts = pgTable(
     status: postStatusEnum("status").default("draft").notNull(),
     visibility: postVisibilityEnum("visibility").default("public").notNull(),
     publishedAt: timestamp("published_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull()
@@ -148,9 +130,7 @@ export const tags = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull().unique(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => {
     return {
@@ -178,24 +158,17 @@ export const postTags = pgTable(
   },
 );
 
-export const pricingModelEnum = pgEnum("pricing_model_enum", [
-  "Free",
-  "Freemium",
-  "Paid",
-]);
+export const pricingModelEnum = pgEnum("pricing_model_enum", ["Free", "Freemium", "Paid"]);
 
-export const productStatusEnum = pgEnum("product_status_enum", [
-  "live",
-  "cancelled",
-  "expired",
-  "pending_payment",
-  "pending_review",
-]);
+export const productStatusEnum = pgEnum("product_status_enum", ["live", "pending_review"]);
 
-export const productSubmissionTypeEnum = pgEnum(
-  "product_submission_type_enum",
-  ["free", "one_time", "monthly_promotion", "featured", "sponsor"],
-);
+export const productSubmissionTypeEnum = pgEnum("product_submission_type_enum", [
+  "free",
+  "one_time",
+  "monthly_promotion",
+  "featured",
+  "sponsor",
+]);
 
 export const categories = pgTable(
   "categories",
@@ -206,9 +179,7 @@ export const categories = pgTable(
     icon: text("icon"),
     displayOrder: integer("display_order").default(0).notNull(),
     isActive: boolean("is_active").default(true).notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => {
     return {
@@ -334,13 +305,9 @@ export const products = pgTable(
     appImages: text("app_images").array(),
     linkRel: text("link_rel"),
     submitType: productSubmissionTypeEnum("submit_type").default("free"),
-    submittedAt: timestamp("submitted_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    submittedAt: timestamp("submitted_at", { withTimezone: true }).defaultNow().notNull(),
     lastRenewedAt: timestamp("last_renewed_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull()
@@ -348,33 +315,111 @@ export const products = pgTable(
   },
   (table) => {
     return {
-      // Enrichment management indexes
-      enrichmentStatusIdx: index("idx_products_enrichment_status").on(
-        table.enrichmentStatus,
-      ),
-      // Screenshot status index
-      screenshotStatusIdx: index("idx_products_screenshot_status").on(
-        table.screenshotStatus,
-      ),
+      // ========================================
+      // ENRICHMENT & SCREENSHOT INDEXES
+      // ========================================
+      enrichmentStatusIdx: index("idx_products_enrichment_status").on(table.enrichmentStatus),
+      screenshotStatusIdx: index("idx_products_screenshot_status").on(table.screenshotStatus),
       screenshotCapturedAtIdx: index("idx_products_screenshot_captured_at").on(
         table.screenshotCapturedAt,
       ),
-      // Filtering indexes for products
+
+      // ========================================
+      // SINGLE-COLUMN FILTERING INDEXES
+      // ========================================
       nicheIdx: index("idx_products_niche").on(table.niche),
       drIdx: index("idx_products_dr").on(table.dr),
-      monthlyVisitsIdx: index("idx_products_monthly_visits").on(
-        table.monthlyVisits,
+      monthlyVisitsIdx: index("idx_products_monthly_visits").on(table.monthlyVisits),
+      statusIdx: index("idx_products_status").on(table.status),
+
+      // ========================================
+      // COMPOSITE INDEXES FOR PERFORMANCE
+      // ========================================
+
+      /**
+       * Primary search index (API: /api/search)
+       * Covers: WHERE status = 'live' AND enrichmentStatus = 'enriched'
+       *         ORDER BY dr DESC, monthlyVisits DESC
+       * Partial index reduces size by only indexing live products
+       */
+      liveSearchIdx: index("idx_products_live_search")
+        .on(table.status, table.enrichmentStatus, desc(table.dr), desc(table.monthlyVisits))
+        .where(sql`${table.status} = 'live'`),
+
+      /**
+       * Category browsing index
+       * Covers: WHERE status = 'live' ORDER BY dr DESC
+       * Used in category pages and filtered listings
+       */
+      liveDrIdx: index("idx_products_live_dr")
+        .on(table.status, desc(table.dr))
+        .where(sql`${table.status} = 'live'`),
+
+      /**
+       * Featured products index (homepage, category pages)
+       * Covers: WHERE isFeatured = true AND status = 'live'
+       *         ORDER BY submittedAt DESC
+       */
+      featuredLiveIdx: index("idx_products_featured_live")
+        .on(table.isFeatured, table.status, desc(table.submittedAt))
+        .where(sql`${table.isFeatured} = true AND ${table.status} = 'live'`),
+
+      /**
+       * User products dashboard index
+       * Covers: WHERE userId = ? ORDER BY createdAt DESC, lastRenewedAt DESC
+       * Used in user profile: "My Products" listing
+       */
+      userProductsIdx: index("idx_products_user_created").on(
+        table.userId,
+        desc(table.createdAt),
+        desc(table.lastRenewedAt),
       ),
-      // Composite indexes for common queries
+
+      /**
+       * Admin dashboard index
+       * Covers: WHERE status = 'pending_review' ORDER BY createdAt DESC
+       * Used in admin sites management
+       */
+      adminPendingIdx: index("idx_products_admin_pending")
+        .on(table.status, desc(table.createdAt))
+        .where(sql`${table.status} = 'pending_review'`),
+
+      /**
+       * Status + enrichment composite index
+       * Covers enrichment queries with status filter
+       */
       statusEnrichmentIdx: index("idx_products_status_enrichment").on(
         table.status,
         table.enrichmentStatus,
       ),
-      statusIdx: index("idx_products_status").on(table.status),
-      // Featured products index for homepage queries
-      featuredStatusIdx: index("idx_products_featured_status").on(
-        table.isFeatured,
-        table.status,
+
+      /**
+       * Niche + DR composite for category filtering
+       * Covers: WHERE status = 'live' AND niche = ? ORDER BY dr DESC
+       */
+      liveNicheDrIdx: index("idx_products_live_niche_dr")
+        .on(table.status, table.niche, desc(table.dr))
+        .where(sql`${table.status} = 'live'`),
+
+      /**
+       * Enrichment time-based index
+       * Covers: ORDER BY enrichedAt DESC, createdAt DESC
+       * Used in enrichment dashboard
+       */
+      enrichedAtIdx: index("idx_products_enriched_at").on(
+        desc(table.enrichedAt),
+        desc(table.createdAt),
+      ),
+
+      /**
+       * Screenshot scheduling index
+       * Covers: WHERE screenshotStatus = 'pending' OR screenshotNextCaptureAt <= NOW()
+       *         ORDER BY screenshotNextCaptureAt ASC
+       * Used by screenshot cron jobs
+       */
+      screenshotScheduleIdx: index("idx_products_screenshot_schedule").on(
+        table.screenshotStatus,
+        table.screenshotNextCaptureAt,
       ),
     };
   },
@@ -402,9 +447,7 @@ export const newsletter = pgTable("newsletter", {
   email: text("email").notNull().unique(),
   subscribed: boolean("subscribed").default(true).notNull(),
   unsubscribeToken: text("unsubscribe_token").unique(),
-  subscribedAt: timestamp("subscribed_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  subscribedAt: timestamp("subscribed_at", { withTimezone: true }).defaultNow().notNull(),
   unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
 });
 
@@ -417,9 +460,7 @@ export const publishedExamples = pgTable("published_examples", {
   clientNiche: text("client_niche"),
   publishedDate: timestamp("published_date", { withTimezone: true }),
   notes: text("notes"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const auditActionEnum = pgEnum("audit_action", [
@@ -445,15 +486,44 @@ export const auditLogs = pgTable(
     details: jsonb("details"),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     userIdIdx: index("idx_audit_logs_user_id").on(table.userId),
     actionIdx: index("idx_audit_logs_action").on(table.action),
     entityTypeIdx: index("idx_audit_logs_entity_type").on(table.entityType),
     createdAtIdx: index("idx_audit_logs_created_at").on(table.createdAt),
+  }),
+);
+
+/**
+ * Saved Products (Bookmarks) table
+ * Users can save/bookmark products they're interested in
+ */
+export const savedProducts = pgTable(
+  "saved_products",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    // Composite unique index to prevent duplicate saves
+    userIdProductIdUnique: unique("saved_products_user_product_unique").on(
+      table.userId,
+      table.productId,
+    ),
+    // Index for querying user's saved products
+    userIdIdx: index("idx_saved_products_user_id").on(table.userId),
+    // Index for querying product's savers
+    productIdIdx: index("idx_saved_products_product_id").on(table.productId),
+    // Index for sorting by creation date
+    createdAtIdx: index("idx_saved_products_created_at").on(table.createdAt),
   }),
 );
 
@@ -467,18 +537,27 @@ export const productsRelations = relations(products, ({ one, many }) => ({
     references: [user.id],
   }),
   productCategories: many(productCategories),
+  savedProducts: many(savedProducts),
 }));
 
-export const productCategoriesRelations = relations(
-  productCategories,
-  ({ one }) => ({
-    product: one(products, {
-      fields: [productCategories.productId],
-      references: [products.id],
-    }),
-    category: one(categories, {
-      fields: [productCategories.categoryId],
-      references: [categories.id],
-    }),
+export const productCategoriesRelations = relations(productCategories, ({ one }) => ({
+  product: one(products, {
+    fields: [productCategories.productId],
+    references: [products.id],
   }),
-);
+  category: one(categories, {
+    fields: [productCategories.categoryId],
+    references: [categories.id],
+  }),
+}));
+
+export const savedProductsRelations = relations(savedProducts, ({ one }) => ({
+  user: one(user, {
+    fields: [savedProducts.userId],
+    references: [user.id],
+  }),
+  product: one(products, {
+    fields: [savedProducts.productId],
+    references: [products.id],
+  }),
+}));

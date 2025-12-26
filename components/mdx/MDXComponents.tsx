@@ -14,11 +14,7 @@ const Heading: React.FC<HeadingProps> = ({ level, className, children }) => {
   const HeadingTag = `h${level}` as keyof React.ElementType;
   const headingId = children?.toString() ?? "";
 
-  return React.createElement(
-    HeadingTag,
-    { id: headingId, className },
-    children,
-  );
+  return React.createElement(HeadingTag, { id: headingId, className }, children);
 };
 
 interface MDXComponentsProps {
@@ -26,9 +22,7 @@ interface MDXComponentsProps {
 }
 
 const MDXComponents: MDXComponentsProps = {
-  h1: (props) => (
-    <Heading level={1} className="text-4xl font-bold mt-8 mb-6" {...props} />
-  ),
+  h1: (props) => <Heading level={1} className="text-4xl font-bold mt-8 mb-6" {...props} />,
   h2: (props) => (
     <Heading
       level={2}
@@ -36,32 +30,13 @@ const MDXComponents: MDXComponentsProps = {
       {...props}
     />
   ),
-  h3: (props) => (
-    <Heading
-      level={3}
-      className="text-2xl font-semibold mt-6 mb-4"
-      {...props}
-    />
-  ),
-  h4: (props) => (
-    <Heading level={4} className="text-xl font-semibold mt-6 mb-4" {...props} />
-  ),
-  h5: (props) => (
-    <Heading level={5} className="text-lg font-semibold mt-6 mb-4" {...props} />
-  ),
-  h6: (props) => (
-    <Heading
-      level={6}
-      className="text-base font-semibold mt-6 mb-4"
-      {...props}
-    />
-  ),
+  h3: (props) => <Heading level={3} className="text-2xl font-semibold mt-6 mb-4" {...props} />,
+  h4: (props) => <Heading level={4} className="text-xl font-semibold mt-6 mb-4" {...props} />,
+  h5: (props) => <Heading level={5} className="text-lg font-semibold mt-6 mb-4" {...props} />,
+  h6: (props) => <Heading level={6} className="text-base font-semibold mt-6 mb-4" {...props} />,
   hr: (props) => <hr className="border-t border-gray-200 my-8" {...props} />,
   p: (props) => (
-    <p
-      className="mt-6 mb-6 leading-relaxed text-gray-700 dark:text-gray-300"
-      {...props}
-    />
+    <p className="mt-6 mb-6 leading-relaxed text-gray-700 dark:text-gray-300" {...props} />
   ),
   a: (props) => (
     <a
@@ -72,24 +47,13 @@ const MDXComponents: MDXComponentsProps = {
   ),
   ul: (props) => <ul className="list-disc pl-6 mt-0 mb-6" {...props} />,
   ol: (props) => <ol className="list-decimal pl-6 mt-0 mb-6" {...props} />,
-  li: (props) => (
-    <li className="mb-3 text-gray-700 dark:text-gray-300" {...props} />
-  ),
+  li: (props) => <li className="mb-3 text-gray-700 dark:text-gray-300" {...props} />,
   code: (props) => (
-    <span
-      className="bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 font-mono text-sm"
-      {...props}
-    />
+    <span className="bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 font-mono text-sm" {...props} />
   ),
   pre: (props) => {
-    const preStyles =
-      "rounded-lg p-4 overflow-x-auto my-4 bg-gray-100 dark:bg-gray-800";
-    return (
-      <CodeBlock
-        {...props}
-        className={`${props.className || ""} ${preStyles}`.trim()}
-      />
-    );
+    const preStyles = "rounded-lg p-4 overflow-x-auto my-4 bg-gray-100 dark:bg-gray-800";
+    return <CodeBlock {...props} className={`${props.className || ""} ${preStyles}`.trim()} />;
   },
   blockquote: (props) => (
     <blockquote
@@ -98,19 +62,12 @@ const MDXComponents: MDXComponentsProps = {
     />
   ),
   img: ({ alt, ...rest }) => (
-    <img
-      className="rounded-lg border-2 border-gray-200 my-6"
-      alt={alt || ""}
-      {...rest}
-    />
+    <img className="rounded-lg border-2 border-gray-200 my-6" alt={alt || ""} {...rest} />
   ),
   strong: (props) => <strong className="font-bold" {...props} />,
   table: (props) => (
     <div className="my-8 w-full overflow-x-auto">
-      <table
-        className="w-full shadow-sm rounded-lg overflow-hidden"
-        {...props}
-      />
+      <table className="w-full shadow-sm rounded-lg overflow-hidden" {...props} />
     </div>
   ),
   tr: (props) => <tr className="border-t border-gray-200" {...props} />,

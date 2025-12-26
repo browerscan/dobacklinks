@@ -67,12 +67,8 @@ export const columns: ColumnDef<PostWithTags>[] = [
     cell: ({ row }) => {
       const visibility = row.getValue("visibility") as string;
       const label =
-        visibility === "logged_in" || visibility === "subscribers"
-          ? "members"
-          : visibility;
-      return (
-        <Badge variant={getVisibilityBadgeVariant(visibility)}>{label}</Badge>
-      );
+        visibility === "logged_in" || visibility === "subscribers" ? "members" : visibility;
+      return <Badge variant={getVisibilityBadgeVariant(visibility)}>{label}</Badge>;
     },
   },
   {
@@ -80,8 +76,7 @@ export const columns: ColumnDef<PostWithTags>[] = [
     header: "Tags",
     cell: ({ row }) => {
       const tags = row.original.tags || [];
-      if (tags.length === 0)
-        return <span className="text-muted-foreground">-</span>;
+      if (tags.length === 0) return <span className="text-muted-foreground">-</span>;
       return (
         <div className="flex flex-wrap gap-1">
           {tags.map((tag) => (

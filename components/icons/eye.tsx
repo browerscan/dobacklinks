@@ -1,18 +1,7 @@
 export default function TablerEyeFilled(props: any) {
   return (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-      >
+    <svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <g fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
         <path d="M0 0h24v24H0z"></path>
         <path
           fill="#000000"

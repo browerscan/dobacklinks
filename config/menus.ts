@@ -11,6 +11,11 @@ export const userMenus: Menu[] = [
     href: "/dashboard/profile",
     icon: "UserRoundCog",
   },
+  {
+    name: "Saved Products",
+    href: "/dashboard/saved",
+    icon: "Bookmark",
+  },
 ];
 
 export const adminMenus: Menu[] = [

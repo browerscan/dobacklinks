@@ -2,18 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useVirtualizer, VirtualItem } from "@tanstack/react-virtual";
 import Fuse from "fuse.js";
@@ -27,10 +18,7 @@ import { iconsData } from "./icons-data";
 export type IconData = (typeof iconsData)[number];
 
 interface IconPickerProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof PopoverTrigger>,
-    "onSelect" | "onOpenChange"
-  > {
+  extends Omit<React.ComponentPropsWithoutRef<typeof PopoverTrigger>, "onSelect" | "onOpenChange"> {
   value?: IconName;
   defaultValue?: IconName;
   onValueChange?: (value: IconName) => void;
@@ -90,10 +78,7 @@ const useIconsData = () => {
   return { icons, isLoading };
 };
 
-const IconPicker = React.forwardRef<
-  React.ComponentRef<typeof PopoverTrigger>,
-  IconPickerProps
->(
+const IconPicker = React.forwardRef<React.ComponentRef<typeof PopoverTrigger>, IconPickerProps>(
   (
     {
       value,
@@ -113,9 +98,7 @@ const IconPicker = React.forwardRef<
     },
     ref,
   ) => {
-    const [selectedIcon, setSelectedIcon] = useState<IconName | undefined>(
-      defaultValue,
-    );
+    const [selectedIcon, setSelectedIcon] = useState<IconName | undefined>(defaultValue);
     const [isOpen, setIsOpen] = useState(defaultOpen || false);
     const [search, setSearch] = useDebounceValue("", 100);
     const [isPopoverVisible, setIsPopoverVisible] = useState(false);
@@ -217,8 +200,7 @@ const IconPicker = React.forwardRef<
     const virtualizer = useVirtualizer({
       count: virtualItems.length,
       getScrollElement: () => parentRef.current,
-      estimateSize: (index) =>
-        virtualItems[index].type === "category" ? 25 : 40,
+      estimateSize: (index) => (virtualItems[index].type === "category" ? 25 : 40),
       paddingEnd: 2,
       gap: 10,
       overscan: 5,
@@ -360,11 +342,7 @@ const IconPicker = React.forwardRef<
 
             if (item.type === "category") {
               return (
-                <div
-                  key={virtualItem.key}
-                  style={itemStyle}
-                  className="top-0 bg-background z-10"
-                >
+                <div key={virtualItem.key} style={itemStyle} className="top-0 bg-background z-10">
                   <h3 className="font-medium text-sm capitalize">
                     {categorizedIcons[item.categoryIndex].name}
                   </h3>
@@ -374,26 +352,14 @@ const IconPicker = React.forwardRef<
             }
 
             return (
-              <div
-                key={virtualItem.key}
-                data-index={virtualItem.index}
-                style={itemStyle}
-              >
-                <div className="grid grid-cols-5 gap-2 w-full">
-                  {item.icons!.map(renderIcon)}
-                </div>
+              <div key={virtualItem.key} data-index={virtualItem.index} style={itemStyle}>
+                <div className="grid grid-cols-5 gap-2 w-full">{item.icons!.map(renderIcon)}</div>
               </div>
             );
           })}
         </div>
       );
-    }, [
-      virtualizer,
-      virtualItems,
-      categorizedIcons,
-      filteredIcons,
-      renderIcon,
-    ]);
+    }, [virtualizer, virtualItems, categorizedIcons, filteredIcons, renderIcon]);
 
     React.useEffect(() => {
       if (isPopoverVisible) {
@@ -419,18 +385,13 @@ const IconPicker = React.forwardRef<
     }, [isPopoverVisible, virtualizer]);
 
     return (
-      <Popover
-        open={open ?? isOpen}
-        onOpenChange={handleOpenChange}
-        modal={modal}
-      >
+      <Popover open={open ?? isOpen} onOpenChange={handleOpenChange} modal={modal}>
         <PopoverTrigger ref={ref} asChild {...props}>
           {children || (
             <Button variant="outline">
               {value || selectedIcon ? (
                 <>
-                  <Icon name={(value || selectedIcon)!} />{" "}
-                  {value || selectedIcon}
+                  <Icon name={(value || selectedIcon)!} /> {value || selectedIcon}
                 </>
               ) : (
                 triggerPlaceholder
@@ -440,16 +401,10 @@ const IconPicker = React.forwardRef<
         </PopoverTrigger>
         <PopoverContent className="w-64 p-2 z-[60]" side="bottom" align="start">
           {searchable && (
-            <Input
-              placeholder={searchPlaceholder}
-              onChange={handleSearchChange}
-              className="mb-2"
-            />
+            <Input placeholder={searchPlaceholder} onChange={handleSearchChange} className="mb-2" />
           )}
           {categorized && search.trim() === "" && (
-            <div className="flex flex-row gap-1 mt-2 overflow-x-auto pb-2">
-              {categoryButtons}
-            </div>
+            <div className="flex flex-row gap-1 mt-2 overflow-x-auto pb-2">{categoryButtons}</div>
           )}
           <div
             ref={parentRef}

@@ -36,14 +36,7 @@ export default defineConfig({
     include: ["**/__tests__/**/*.test.{ts,tsx}", "**/*.test.{ts,tsx}"],
 
     // Exclude patterns
-    exclude: [
-      "node_modules",
-      "dist",
-      ".next",
-      "cypress",
-      "playwright",
-      "**/*.spec.{ts,tsx}",
-    ],
+    exclude: ["node_modules", "dist", ".next", "cypress", "playwright", "**/*.spec.{ts,tsx}"],
   },
   resolve: {
     alias: {

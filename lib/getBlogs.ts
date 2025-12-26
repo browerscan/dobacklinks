@@ -1,7 +1,4 @@
-import {
-  getPublishedPostBySlugAction,
-  PublicPostWithContent,
-} from "@/actions/blogs/posts";
+import { getPublishedPostBySlugAction, PublicPostWithContent } from "@/actions/blogs/posts";
 import { BlogPost } from "@/types/blog";
 import dayjs from "dayjs";
 import fs from "fs";
@@ -60,9 +57,7 @@ export async function getPosts(): Promise<{ posts: BlogPost[] }> {
     if (a.isPinned !== b.isPinned) {
       return (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0);
     }
-    return (
-      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-    );
+    return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
   });
 
   return {
@@ -99,9 +94,7 @@ export async function getPostBySlug(
         const fileContents = await fs.promises.readFile(fullPath, "utf8");
         const { data, content } = matter(fileContents);
 
-        const localSlug = (data.slug || "")
-          .replace(/^\//, "")
-          .replace(/\/$/, "");
+        const localSlug = (data.slug || "").replace(/^\//, "").replace(/\/$/, "");
         const targetSlug = slug.replace(/^\//, "").replace(/\/$/, "");
 
         if (localSlug === targetSlug && data.status !== "draft") {
@@ -112,9 +105,7 @@ export async function getPostBySlug(
               featuredImageUrl: data.featuredImageUrl || "",
               slug: data.slug,
               tags: data.tags || "",
-              publishedAt: data.publishedAt
-                ? new Date(data.publishedAt)
-                : new Date(),
+              publishedAt: data.publishedAt ? new Date(data.publishedAt) : new Date(),
               status: data.status || "published",
               visibility: data.visibility || "public",
               isPinned: data.isPinned || false,

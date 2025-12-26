@@ -22,9 +22,7 @@ export default function BuiltWithButton2() {
       <span>
         <LogoNexty className="size-4 rounded-full" />
       </span>
-      <span className="text-base-content flex gap-0.5 items-center tracking-tight">
-        Nexty.dev
-      </span>
+      <span className="text-base-content flex gap-0.5 items-center tracking-tight">Nexty.dev</span>
     </Link>
   );
 }

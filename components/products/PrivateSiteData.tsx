@@ -1,13 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  DollarSign,
-  Mail,
-  Clock,
-  Link as LinkIcon,
-  FileText,
-  ExternalLink,
-} from "lucide-react";
+import { DollarSign, Mail, Clock, Link as LinkIcon, FileText, ExternalLink } from "lucide-react";
 import { ObfuscatedEmailLink } from "@/lib/utils/ObfuscatedEmailLink";
 import Link from "next/link";
 import { ValueForMoneyIndicator } from "@/components/products/ValueForMoneyIndicator";
@@ -41,9 +34,7 @@ export function PrivateSiteData({ product }: PrivateSiteDataProps) {
   return (
     <div className="space-y-6">
       {/* Value for Money Indicator */}
-      {product.dr != null && product.priceRange && (
-        <ValueForMoneyIndicator product={product} />
-      )}
+      {product.dr != null && product.priceRange && <ValueForMoneyIndicator product={product} />}
 
       {/* Pricing Information */}
       <Card className="border-primary/20 bg-primary/5">
@@ -57,12 +48,8 @@ export function PrivateSiteData({ product }: PrivateSiteDataProps) {
           <div className="space-y-4">
             {product.priceRange && (
               <div>
-                <div className="text-sm text-muted-foreground mb-1">
-                  Price Range
-                </div>
-                <div className="text-2xl font-bold text-primary">
-                  {product.priceRange}
-                </div>
+                <div className="text-sm text-muted-foreground mb-1">Price Range</div>
+                <div className="text-2xl font-bold text-primary">{product.priceRange}</div>
               </div>
             )}
 
@@ -78,9 +65,7 @@ export function PrivateSiteData({ product }: PrivateSiteDataProps) {
                 {product.contentPlacementPrice != null &&
                   Number(product.contentPlacementPrice) > 0 && (
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">
-                        Content Placement Only
-                      </span>
+                      <span className="text-sm text-muted-foreground">Content Placement Only</span>
                       <span className="text-sm font-semibold">
                         ${Number(product.contentPlacementPrice).toFixed(2)}
                       </span>
@@ -90,26 +75,21 @@ export function PrivateSiteData({ product }: PrivateSiteDataProps) {
                 {product.writingPlacementPrice != null &&
                   Number(product.writingPlacementPrice) > 0 && (
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">
-                        Writing + Placement
-                      </span>
+                      <span className="text-sm text-muted-foreground">Writing + Placement</span>
                       <span className="text-sm font-semibold">
                         ${Number(product.writingPlacementPrice).toFixed(2)}
                       </span>
                     </div>
                   )}
 
-                {product.specialTopicPrice != null &&
-                  Number(product.specialTopicPrice) > 0 && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">
-                        Special Topic (add-on)
-                      </span>
-                      <span className="text-sm font-semibold text-orange-600">
-                        +${Number(product.specialTopicPrice).toFixed(2)}
-                      </span>
-                    </div>
-                  )}
+                {product.specialTopicPrice != null && Number(product.specialTopicPrice) > 0 && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Special Topic (add-on)</span>
+                    <span className="text-sm font-semibold text-orange-600">
+                      +${Number(product.specialTopicPrice).toFixed(2)}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
 
@@ -135,17 +115,12 @@ export function PrivateSiteData({ product }: PrivateSiteDataProps) {
               )}
             </div>
 
-            {product.requiredContentSize != null &&
-              product.requiredContentSize > 0 && (
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">
-                    Required Word Count
-                  </div>
-                  <div className="font-semibold">
-                    {product.requiredContentSize} words minimum
-                  </div>
-                </div>
-              )}
+            {product.requiredContentSize != null && product.requiredContentSize > 0 && (
+              <div>
+                <div className="text-sm text-muted-foreground mb-1">Required Word Count</div>
+                <div className="font-semibold">{product.requiredContentSize} words minimum</div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -161,9 +136,7 @@ export function PrivateSiteData({ product }: PrivateSiteDataProps) {
           </CardHeader>
           <CardContent>
             <div>
-              <div className="text-sm text-muted-foreground mb-1">
-                Direct Contact
-              </div>
+              <div className="text-sm text-muted-foreground mb-1">Direct Contact</div>
               <ObfuscatedEmailLink email={product.contactEmail} />
             </div>
             <div className="mt-4 p-3 bg-muted rounded-lg">

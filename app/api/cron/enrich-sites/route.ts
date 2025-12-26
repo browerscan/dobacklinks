@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEnrichmentService } from "@/lib/services/enrichment-service";
-import {
-  verifyHMACSignature,
-  extractHMACSignature,
-} from "@/lib/security/hmac-auth";
+import { verifyHMACSignature, extractHMACSignature } from "@/lib/security/hmac-auth";
 import { env } from "@/lib/env";
 
 export const maxDuration = 60; // 60 seconds timeout
@@ -30,8 +27,7 @@ export async function GET(request: NextRequest) {
     console.warn("⚠️ Missing or invalid Authorization header");
     return NextResponse.json(
       {
-        error:
-          'Missing or invalid Authorization header. Expected: "HMAC <signature>"',
+        error: 'Missing or invalid Authorization header. Expected: "HMAC <signature>"',
       },
       { status: 401 },
     );
@@ -41,10 +37,7 @@ export async function GET(request: NextRequest) {
   const timestamp = timestampHeader ? parseInt(timestampHeader, 10) : null;
   if (!timestamp || isNaN(timestamp)) {
     console.warn("⚠️ Missing or invalid X-Timestamp header");
-    return NextResponse.json(
-      { error: "Missing or invalid X-Timestamp header" },
-      { status: 401 },
-    );
+    return NextResponse.json({ error: "Missing or invalid X-Timestamp header" }, { status: 401 });
   }
 
   // Verify HMAC signature
@@ -119,8 +112,7 @@ export async function POST(request: NextRequest) {
     console.warn("⚠️ Missing or invalid Authorization header");
     return NextResponse.json(
       {
-        error:
-          'Missing or invalid Authorization header. Expected: "HMAC <signature>"',
+        error: 'Missing or invalid Authorization header. Expected: "HMAC <signature>"',
       },
       { status: 401 },
     );
@@ -129,10 +121,7 @@ export async function POST(request: NextRequest) {
   const timestamp = timestampHeader ? parseInt(timestampHeader, 10) : null;
   if (!timestamp || isNaN(timestamp)) {
     console.warn("⚠️ Missing or invalid X-Timestamp header");
-    return NextResponse.json(
-      { error: "Missing or invalid X-Timestamp header" },
-      { status: 401 },
-    );
+    return NextResponse.json({ error: "Missing or invalid X-Timestamp header" }, { status: 401 });
   }
 
   // Read body if present

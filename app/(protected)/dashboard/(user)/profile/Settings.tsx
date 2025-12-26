@@ -50,13 +50,9 @@ export default function Settings({ user }: { user: User }) {
     setFullName(value);
 
     if (value.length > FULL_NAME_MAX_LENGTH) {
-      setFullNameError(
-        `Full name cannot exceed ${FULL_NAME_MAX_LENGTH} characters.`,
-      );
+      setFullNameError(`Full name cannot exceed ${FULL_NAME_MAX_LENGTH} characters.`);
     } else if (value && !isValidFullName(value)) {
-      setFullNameError(
-        "Full name can only contain letters, numbers, and spaces.",
-      );
+      setFullNameError("Full name can only contain letters, numbers, and spaces.");
     } else {
       setFullNameError("");
     }
@@ -68,9 +64,7 @@ export default function Settings({ user }: { user: User }) {
 
     if (!AVATAR_ALLOWED_FILE_TYPES.includes(file.type)) {
       toast.error("Invalid file type", {
-        description: `Please upload a ${AVATAR_ALLOWED_EXTENSIONS.join(
-          ", ",
-        ).toUpperCase()} file.`,
+        description: `Please upload a ${AVATAR_ALLOWED_EXTENSIONS.join(", ").toUpperCase()} file.`,
       });
       e.target.value = "";
       return;
@@ -78,9 +72,7 @@ export default function Settings({ user }: { user: User }) {
 
     if (file.size > AVATAR_MAX_FILE_SIZE) {
       toast.error("File size exceeded", {
-        description: `Please upload a file smaller than ${
-          AVATAR_MAX_FILE_SIZE / 1024 / 1024
-        }MB.`,
+        description: `Please upload a file smaller than ${AVATAR_MAX_FILE_SIZE / 1024 / 1024}MB.`,
       });
       e.target.value = "";
       return;
@@ -134,19 +126,14 @@ export default function Settings({ user }: { user: User }) {
         URL.revokeObjectURL(previewUrl);
         setPreviewUrl(null);
       }
-      const fileInput = document.querySelector(
-        'input[type="file"]',
-      ) as HTMLInputElement;
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
       if (fileInput) {
         fileInput.value = "";
       }
       setDialogOpen(false);
     } catch (error) {
       toast.error("Failed to update settings", {
-        description:
-          error instanceof Error
-            ? error.message
-            : "An unexpected error occurred.",
+        description: error instanceof Error ? error.message : "An unexpected error occurred.",
       });
     } finally {
       setIsLoading(false);
@@ -168,16 +155,11 @@ export default function Settings({ user }: { user: User }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Avatar className="w-10 h-10">
-              <AvatarImage
-                src={user?.image || undefined}
-                alt={user?.name || "User avatar"}
-              />
+              <AvatarImage src={user?.image || undefined} alt={user?.name || "User avatar"} />
               <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
             </Avatar>
             <div>
-              <h3 className="text-lg font-semibold">
-                {user?.name || "Name not set"}
-              </h3>
+              <h3 className="text-lg font-semibold">{user?.name || "Name not set"}</h3>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
           </div>
@@ -192,20 +174,14 @@ export default function Settings({ user }: { user: User }) {
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Update Profile</DialogTitle>
-                <DialogDescription>
-                  Update your personal information here.
-                </DialogDescription>
+                <DialogDescription>Update your personal information here.</DialogDescription>
               </DialogHeader>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label>Email</Label>
-                    <Input
-                      defaultValue={user?.email}
-                      disabled
-                      className="bg-muted"
-                    />
+                    <Input defaultValue={user?.email} disabled className="bg-muted" />
                   </div>
 
                   <div className="space-y-2">
@@ -216,11 +192,7 @@ export default function Settings({ user }: { user: User }) {
                       placeholder="Enter your full name"
                       maxLength={FULL_NAME_MAX_LENGTH}
                     />
-                    {fullNameError && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {fullNameError}
-                      </p>
-                    )}
+                    {fullNameError && <p className="text-sm text-red-500 mt-1">{fullNameError}</p>}
                   </div>
 
                   <div className="space-y-2">
@@ -231,9 +203,7 @@ export default function Settings({ user }: { user: User }) {
                           src={previewUrl || user?.image || undefined}
                           alt={user?.name || "User avatar"}
                         />
-                        <AvatarFallback>
-                          {user?.name?.[0] || "U"}
-                        </AvatarFallback>
+                        <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
                       </Avatar>
                       <div className="w-full space-y-1">
                         <Input

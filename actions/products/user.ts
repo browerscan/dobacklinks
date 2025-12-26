@@ -8,25 +8,11 @@ import { getSession, isAdmin } from "@/lib/auth/server";
 import { db } from "@/lib/db";
 import { productCategories, products as productsSchema } from "@/lib/db/schema";
 import { getErrorMessage } from "@/lib/error-utils";
-import { checkRateLimit, getClientIPFromHeaders } from "@/lib/upstash";
+import { checkRateLimit, getClientIPFromHeaders, RedisFallbackMode } from "@/lib/upstash";
 import { universalSlugify } from "@/lib/url";
-import {
-  and,
-  count,
-  desc,
-  eq,
-  ilike,
-  inArray,
-  ne,
-  sql,
-  gte,
-} from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, ne, sql, gte } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import {
-  ProductSubmissionType,
-  ProductWithCategories,
-  UserProductFilters,
-} from "types/product";
+import { ProductSubmissionType, ProductWithCategories, UserProductFilters } from "types/product";
 
 /**
  * Create a free product(pending review)
@@ -44,11 +30,15 @@ export async function createFreeProductAction(
   // Rate limiting for non-admin users
   if (!(await isAdmin())) {
     const clientIP = await getClientIPFromHeaders();
-    const isAllowed = await checkRateLimit(clientIP, {
-      prefix: `${siteConfig.name.trim()}-submit`,
-      maxRequests: parseInt(process.env.NEXT_PUBLIC_DAILY_SUBMIT_LIMIT || "30"),
-      window: "1 d",
-    });
+    const isAllowed = await checkRateLimit(
+      clientIP,
+      {
+        prefix: `${siteConfig.name.trim()}-submit`,
+        maxRequests: parseInt(process.env.NEXT_PUBLIC_DAILY_SUBMIT_LIMIT || "30"),
+        window: "1 d",
+      },
+      RedisFallbackMode.MEMORY_FALLBACK,
+    );
 
     if (!isAllowed) {
       return actionResponse.badRequest(
@@ -62,9 +52,7 @@ export async function createFreeProductAction(
     const result = await _createProductAction(data, user.id, submitType);
 
     if (!result.success || !result.data?.productId) {
-      return actionResponse.badRequest(
-        "Failed to create product after verification.",
-      );
+      return actionResponse.badRequest("Failed to create product after verification.");
     }
 
     // Send Discord notification for product submission
@@ -77,10 +65,7 @@ export async function createFreeProductAction(
       });
     } catch (error) {
       // Don't fail the product creation if Discord notification fails
-      console.error(
-        "Failed to send Discord notification:",
-        getErrorMessage(error),
-      );
+      console.error("Failed to send Discord notification:", getErrorMessage(error));
     }
 
     revalidatePath("/");
@@ -111,11 +96,15 @@ export async function createPendingPaymentProductAction({
   // Rate limiting for non-admin users
   if (!(await isAdmin())) {
     const clientIP = await getClientIPFromHeaders();
-    const isAllowed = await checkRateLimit(clientIP, {
-      prefix: `${siteConfig.name.trim()}-submit`,
-      maxRequests: parseInt(process.env.NEXT_PUBLIC_DAILY_SUBMIT_LIMIT || "30"),
-      window: "1 d",
-    });
+    const isAllowed = await checkRateLimit(
+      clientIP,
+      {
+        prefix: `${siteConfig.name.trim()}-submit`,
+        maxRequests: parseInt(process.env.NEXT_PUBLIC_DAILY_SUBMIT_LIMIT || "30"),
+        window: "1 d",
+      },
+      RedisFallbackMode.MEMORY_FALLBACK,
+    );
 
     if (!isAllowed) {
       return actionResponse.badRequest(
@@ -136,14 +125,11 @@ export async function createPendingPaymentProductAction({
         productData: data,
         productId: result.data.productId,
         submitType: submitType,
-        status: "pending_payment",
+        status: "pending_review",
       });
     } catch (error) {
       // Don't fail the product creation if Discord notification fails
-      console.error(
-        "Failed to send Discord notification:",
-        getErrorMessage(error),
-      );
+      console.error("Failed to send Discord notification:", getErrorMessage(error));
     }
 
     return actionResponse.success({ productId: result.data.productId });
@@ -195,7 +181,7 @@ async function _createProductAction(
           turnaroundTime: data.turnaroundTime,
           contactEmail: data.contactEmail,
           submitType: submitType,
-          status: submitType === "free" ? "pending_review" : "pending_payment",
+          status: "pending_review", // All submissions go to pending_review for approval
         })
         .returning({ id: productsSchema.id });
 
@@ -335,15 +321,9 @@ async function _getProductsCore(
       limit: pageSize,
     });
 
-    const countQuery = db
-      .select({ value: count() })
-      .from(productsSchema)
-      .where(where);
+    const countQuery = db.select({ value: count() }).from(productsSchema).where(where);
 
-    const [[{ value: totalCount }], data] = await Promise.all([
-      countQuery,
-      productsQuery,
-    ]);
+    const [[{ value: totalCount }], data] = await Promise.all([countQuery, productsQuery]);
 
     const productsData = data.map((p) => ({
       ...p,
@@ -410,10 +390,7 @@ export async function getProductByIdForEdit(
   }
 
   const product = await db.query.products.findFirst({
-    where: and(
-      eq(productsSchema.id, productId),
-      eq(productsSchema.userId, user.id),
-    ),
+    where: and(eq(productsSchema.id, productId), eq(productsSchema.userId, user.id)),
     with: {
       productCategories: {
         columns: {
@@ -454,11 +431,15 @@ export async function updateMyProductAction({
   // Rate limiting for non-admin users
   if (!(await isAdmin())) {
     const clientIP = await getClientIPFromHeaders();
-    const isAllowed = await checkRateLimit(clientIP, {
-      prefix: `${siteConfig.name.trim()}-submit`,
-      maxRequests: parseInt(process.env.NEXT_PUBLIC_DAILY_SUBMIT_LIMIT || "30"),
-      window: "1 d",
-    });
+    const isAllowed = await checkRateLimit(
+      clientIP,
+      {
+        prefix: `${siteConfig.name.trim()}-submit`,
+        maxRequests: parseInt(process.env.NEXT_PUBLIC_DAILY_SUBMIT_LIMIT || "30"),
+        window: "1 d",
+      },
+      RedisFallbackMode.MEMORY_FALLBACK,
+    );
 
     if (!isAllowed) {
       return actionResponse.badRequest(
@@ -484,10 +465,7 @@ export async function updateMyProductAction({
 
       const { categoryIds, ...restOfData } = data;
 
-      await tx
-        .update(productsSchema)
-        .set(restOfData)
-        .where(eq(productsSchema.id, productId));
+      await tx.update(productsSchema).set(restOfData).where(eq(productsSchema.id, productId));
 
       const existingCategories = await tx.query.productCategories.findMany({
         columns: { categoryId: true },
@@ -500,9 +478,7 @@ export async function updateMyProductAction({
       const categoriesToAdd = newCategoryIds.filter(
         (id: string) => !existingCategoryIds.includes(id),
       );
-      const categoriesToRemove = existingCategoryIds.filter(
-        (id) => !newCategoryIds.includes(id),
-      );
+      const categoriesToRemove = existingCategoryIds.filter((id) => !newCategoryIds.includes(id));
 
       if (categoriesToRemove.length > 0) {
         await tx
@@ -543,9 +519,7 @@ export async function updateMyProductAction({
   }
 }
 
-export async function deleteMyProductAction(
-  productId: string,
-): Promise<ActionResult<{}>> {
+export async function deleteMyProductAction(productId: string): Promise<ActionResult<{}>> {
   const session = await getSession();
   const user = session?.user;
 
@@ -564,15 +538,13 @@ export async function deleteMyProductAction(
     }
 
     if (product.userId !== user.id) {
-      return actionResponse.unauthorized(
-        "You don't have permission to delete this product.",
-      );
+      return actionResponse.unauthorized("You don't have permission to delete this product.");
     }
 
-    if (product.status !== "cancelled") {
-      return actionResponse.badRequest(
-        "Only cancelled products can be deleted.",
-      );
+    // Users can only delete their own pending_review products
+    // Live products must be handled by admin
+    if (product.status === "live") {
+      return actionResponse.badRequest("Live products cannot be deleted. Please contact support.");
     }
 
     await db.delete(productsSchema).where(eq(productsSchema.id, productId));
@@ -641,19 +613,14 @@ export async function getProductBySlug(slug: string): Promise<
 /**
  * Get all product slugs for static generation
  */
-export async function getAllProductSlugs(): Promise<
-  ActionResult<{ slugs: string[] }>
-> {
+export async function getAllProductSlugs(): Promise<ActionResult<{ slugs: string[] }>> {
   try {
     const productData = await db
       .select({ slug: productsSchema.slug })
       .from(productsSchema)
       .where(eq(productsSchema.status, "live")); // Only 'live' products for static generation
 
-    const slugs =
-      (productData
-        ?.map((product) => product.slug)
-        .filter(Boolean) as string[]) || [];
+    const slugs = (productData?.map((product) => product.slug).filter(Boolean) as string[]) || [];
     return actionResponse.success({ slugs });
   } catch (err) {
     return actionResponse.error(getErrorMessage(err));
@@ -688,7 +655,7 @@ export async function getRelatedProducts(
     const relatedProducts = await db.query.products.findMany({
       where: and(
         inArray(productsSchema.id, subquery),
-        inArray(productsSchema.status, ["live", "expired"]),
+        inArray(productsSchema.status, ["live"]), // Only show live products
       ),
       with: {
         productCategories: {
@@ -697,10 +664,7 @@ export async function getRelatedProducts(
           },
         },
       },
-      orderBy: [
-        desc(productsSchema.isFeatured),
-        desc(productsSchema.submittedAt),
-      ],
+      orderBy: [desc(productsSchema.isFeatured), desc(productsSchema.submittedAt)],
       limit: limit,
     });
 

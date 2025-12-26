@@ -30,8 +30,7 @@ export const useSubmitFormStore = create<SubmitFormState>()(
   persist(
     (set) => ({
       formData: initialState,
-      setFormData: (data) =>
-        set((state) => ({ formData: { ...state.formData, ...data } })),
+      setFormData: (data) => set((state) => ({ formData: { ...state.formData, ...data } })),
       reset: () => set({ formData: initialState }),
     }),
     {

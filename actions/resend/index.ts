@@ -31,9 +31,7 @@ export async function sendEmail({
     }
 
     if (!resend) {
-      return actionResponse.error(
-        "Resend is not configured. Check RESEND_API_KEY.",
-      );
+      return actionResponse.error("Resend is not configured. Check RESEND_API_KEY.");
     }
 
     // Add user to contacts (non-blocking, don't fail if this fails)
@@ -43,10 +41,7 @@ export async function sendEmail({
         email,
       });
     } catch (contactError) {
-      console.warn(
-        "[sendEmail] Failed to add contact (may already exist):",
-        contactError,
-      );
+      console.warn("[sendEmail] Failed to add contact (may already exist):", contactError);
     }
 
     // Send email
@@ -79,8 +74,7 @@ export async function sendEmail({
     return actionResponse.success({ messageId: data?.id || "sent" });
   } catch (error) {
     console.error("[sendEmail] Failed to send email:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred";
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
     return actionResponse.error(`Failed to send email: ${errorMessage}`);
   }
 }

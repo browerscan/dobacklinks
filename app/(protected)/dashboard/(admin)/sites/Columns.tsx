@@ -21,12 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { ProductWithCategories } from "@/types/product";
 import { ColumnDef } from "@tanstack/react-table";
@@ -85,8 +80,8 @@ const ApproveProductButton = ({ productId }: ApproveProductButtonProps) => {
         <AlertDialogHeader>
           <AlertDialogTitle>Approve Product?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will change the product status to &quot;live&quot; and it will
-            be visible to the public. Are you sure?
+            This will change the product status to &quot;live&quot; and it will be visible to the
+            public. Are you sure?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -113,12 +108,7 @@ interface BooleanFilterProps {
 
 const statusBadgeStyle = {
   live: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-  pending_review:
-    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-  pending_payment:
-    "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
-  cancelled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-  expired: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+  pending_review: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
 };
 
 const StatusFilter = ({ onStatusChange, currentStatus }: StatusFilterProps) => {
@@ -135,25 +125,16 @@ const StatusFilter = ({ onStatusChange, currentStatus }: StatusFilterProps) => {
       <SelectContent>
         <SelectItem value="all">All</SelectItem>
         <SelectItem value="live">Live</SelectItem>
-        <SelectItem value="cancelled">Cancelled</SelectItem>
-        <SelectItem value="expired">Expired</SelectItem>
         <SelectItem value="pending_review">Pending Review</SelectItem>
-        <SelectItem value="pending_payment">Pending Payment</SelectItem>
       </SelectContent>
     </Select>
   );
 };
 
-const BooleanFilter = ({
-  onFilterChange,
-  currentValue,
-  label,
-}: BooleanFilterProps) => {
+const BooleanFilter = ({ onFilterChange, currentValue, label }: BooleanFilterProps) => {
   return (
     <Select
-      value={
-        currentValue === undefined ? "all" : currentValue ? "true" : "false"
-      }
+      value={currentValue === undefined ? "all" : currentValue ? "true" : "false"}
       onValueChange={(value) => {
         if (value === "all") {
           onFilterChange(undefined);
@@ -266,17 +247,12 @@ export const createColumns = ({
       return (
         <div className="">
           <Badge
-            className={cn(
-              "capitalize",
-              statusBadgeStyle[status] || "bg-gray-500",
-            )}
+            className={cn("capitalize", statusBadgeStyle[status] || "bg-gray-500")}
             variant="outline"
           >
             {status.replace(/_/g, " ")}
           </Badge>
-          {status === "pending_review" && (
-            <ApproveProductButton productId={row.original.id} />
-          )}
+          {status === "pending_review" && <ApproveProductButton productId={row.original.id} />}
         </div>
       );
     },
@@ -291,14 +267,10 @@ export const createColumns = ({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="truncate max-w-72 md:max-w-[31rem]">
-                {tagline}
-              </span>
+              <span className="truncate max-w-72 md:max-w-[31rem]">{tagline}</span>
             </TooltipTrigger>
             <TooltipContent>
-              <span className="text-xs max-w-72 md:max-w-[31rem]">
-                {tagline}
-              </span>
+              <span className="text-xs max-w-72 md:max-w-[31rem]">{tagline}</span>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

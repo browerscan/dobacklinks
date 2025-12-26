@@ -21,12 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { user as userSchema } from "@/lib/db/schema";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
@@ -64,8 +59,7 @@ const BanUserDialog = ({
         <DialogHeader>
           <DialogTitle>Ban user</DialogTitle>
           <DialogDescription>
-            This will immediately ban {user.email || user.id}. You can provide
-            an optional reason.
+            This will immediately ban {user.email || user.id}. You can provide an optional reason.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-2">
@@ -78,11 +72,7 @@ const BanUserDialog = ({
           />
         </div>
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isPending}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
             Cancel
           </Button>
           <Button
@@ -136,11 +126,7 @@ const UnbanUserDialog = ({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isPending}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
             Cancel
           </Button>
           <Button
@@ -192,9 +178,7 @@ const ActionsCell = ({ user }: { user: UserType }) => {
             Copy user ID
           </DropdownMenuItem>
           {user.banned ? (
-            <DropdownMenuItem onClick={() => setOpenUnban(true)}>
-              Unban user
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setOpenUnban(true)}>Unban user</DropdownMenuItem>
           ) : (
             <DropdownMenuItem
               onClick={() => {
@@ -212,11 +196,7 @@ const ActionsCell = ({ user }: { user: UserType }) => {
       </DropdownMenu>
 
       <BanUserDialog open={openBan} onOpenChange={setOpenBan} user={user} />
-      <UnbanUserDialog
-        open={openUnban}
-        onOpenChange={setOpenUnban}
-        user={user}
-      />
+      <UnbanUserDialog open={openUnban} onOpenChange={setOpenUnban} user={user} />
     </>
   );
 };
@@ -261,9 +241,7 @@ export const columns: ColumnDef<UserType>[] = [
     header: "Role",
     cell: ({ row }) => (
       <span
-        className={`capitalize ${
-          row.original.role === "admin" ? "text-primary font-medium" : ""
-        }`}
+        className={`capitalize ${row.original.role === "admin" ? "text-primary font-medium" : ""}`}
       >
         {row.original.role}
       </span>
@@ -274,9 +252,7 @@ export const columns: ColumnDef<UserType>[] = [
     header: "Referral",
     cell: ({ row }) => {
       const referral = row.original.referral;
-      return (
-        <span className="text-sm text-muted-foreground">{referral || "-"}</span>
-      );
+      return <span className="text-sm text-muted-foreground">{referral || "-"}</span>;
     },
   },
   {

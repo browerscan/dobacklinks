@@ -2,13 +2,7 @@
 
 import { formatNumber } from "@/lib/utils";
 import { ProductWithCategories } from "@/types/product";
-import {
-  Crown,
-  ExternalLink,
-  CheckCircle,
-  TrendingUp,
-  Zap,
-} from "lucide-react";
+import { Crown, ExternalLink, CheckCircle, TrendingUp, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ScreenshotThumbnail } from "./ScreenshotDisplay";
@@ -20,11 +14,7 @@ interface FeaturedProductCardProps {
 export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
   return (
     <div className="relative group">
-      <Link
-        href={`/sites/${product.slug}`}
-        title={product.name}
-        className="group block h-full"
-      >
+      <Link href={`/sites/${product.slug}`} title={product.name} className="group block h-full">
         <div className="relative pt-3 h-full">
           <div className="relative h-full">
             <div className="relative bg-card rounded-xl shadow-md border-2 border-primary/40 dark:border-primary/40 p-3 hover:shadow-lg hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 h-full flex flex-col">
@@ -61,9 +51,7 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
                       {product.name}
                     </h3>
                     {product.niche && (
-                      <p className="text-xs text-muted-foreground truncate">
-                        {product.niche}
-                      </p>
+                      <p className="text-xs text-muted-foreground truncate">{product.niche}</p>
                     )}
                   </div>
                 </div>
@@ -131,9 +119,9 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
                   </div>
                 )}
                 <div>
-                  <div className="text-muted-foreground">Price</div>
-                  <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">
-                    {product.priceRange || "Contact"}
+                  <div className="text-muted-foreground">Link Type</div>
+                  <div className="font-semibold text-gray-900 dark:text-gray-100 capitalize">
+                    {product.linkType === "dofollow" ? "Dofollow" : "Nofollow"}
                   </div>
                 </div>
               </div>

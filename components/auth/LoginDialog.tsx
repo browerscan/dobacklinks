@@ -20,9 +20,7 @@ export default function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader className="sm:text-center">
           <DialogTitle>Welcome back</DialogTitle>
-          <DialogDescription>
-            Sign in with the following methods
-          </DialogDescription>
+          <DialogDescription>Sign in with the following methods</DialogDescription>
         </DialogHeader>
 
         <LoginForm />

@@ -49,13 +49,7 @@ export function DashboardSidebar() {
           prefetch={true}
           className="flex items-center space-x-1 px-2 py-1"
         >
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={24}
-            height={24}
-            className="rounded-md"
-          />
+          <Image src="/logo.png" alt="Logo" width={24} height={24} className="rounded-md" />
           {!isCollapsed && <h1 className="font-semibold">{siteConfig.name}</h1>}
         </Link>
       </SidebarHeader>
@@ -67,12 +61,7 @@ export function DashboardSidebar() {
               {userMenus.map((menu) => (
                 <SidebarMenuItem key={menu.href}>
                   <SidebarMenuButton asChild isActive={isActive(menu.href)}>
-                    <Link
-                      href={menu.href}
-                      title={menu.name}
-                      prefetch={true}
-                      target={menu.target}
-                    >
+                    <Link href={menu.href} title={menu.name} prefetch={true} target={menu.target}>
                       {menu.icon ? (
                         <DynamicIcon name={menu.icon} className="h-4 w-4" />
                       ) : (
@@ -97,11 +86,7 @@ export function DashboardSidebar() {
                   {adminMenus.map((menu) => (
                     <SidebarMenuItem key={menu.href}>
                       <SidebarMenuButton asChild isActive={isActive(menu.href)}>
-                        <Link
-                          href={menu.href}
-                          title={menu.name}
-                          prefetch={false}
-                        >
+                        <Link href={menu.href} title={menu.name} prefetch={false}>
                           <DynamicIcon name={menu.icon} className="h-4 w-4" />
                           {!isCollapsed && <span>{menu.name}</span>}
                         </Link>

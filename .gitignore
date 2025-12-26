@@ -145,3 +145,8 @@ dist
 public/screenshots/thumbnails/
 .env*.local
 .env.vercel
+
+# Security - Never commit
+CLAUDE.md
+.claude/
+docs/

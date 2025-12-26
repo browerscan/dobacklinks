@@ -1,18 +1,11 @@
-import {
-  getFeaturedProducts,
-  getLatestProducts,
-  getProducts,
-} from "@/actions/products/user";
+import { getFeaturedProducts, getLatestProducts, getProducts } from "@/actions/products/user";
 import { useProductStore } from "@/stores/productStore";
 import { UserProductFilters } from "@/types/product";
 import { useEffect, useMemo } from "react";
 import useSWR from "swr";
 
 // Generate cache key for SWR
-function generateSWRKey(
-  filters: UserProductFilters,
-  type?: "featured" | "latest",
-): string {
+function generateSWRKey(filters: UserProductFilters, type?: "featured" | "latest"): string {
   const baseKey = JSON.stringify(filters);
   return type ? `products:${type}:${baseKey}` : `products:${baseKey}`;
 }
@@ -58,13 +51,8 @@ const SWR_CONFIG = {
  * Hook for fetching general products with caching
  */
 export function useProducts(filters: UserProductFilters = {}) {
-  const {
-    getCachedProducts,
-    setCachedProducts,
-    setLoading,
-    isLoading,
-    clearExpiredCache,
-  } = useProductStore();
+  const { getCachedProducts, setCachedProducts, setLoading, isLoading, clearExpiredCache } =
+    useProductStore();
 
   // Clear expired cache on mount
   useEffect(() => {
@@ -129,16 +117,9 @@ export function useProducts(filters: UserProductFilters = {}) {
 /**
  * Hook for fetching featured products with caching
  */
-export function useFeaturedProducts(
-  filters: Omit<UserProductFilters, "isFeatured"> = {},
-) {
-  const {
-    getCachedProducts,
-    setCachedProducts,
-    setLoading,
-    isLoading,
-    clearExpiredCache,
-  } = useProductStore();
+export function useFeaturedProducts(filters: Omit<UserProductFilters, "isFeatured"> = {}) {
+  const { getCachedProducts, setCachedProducts, setLoading, isLoading, clearExpiredCache } =
+    useProductStore();
 
   // Convert to full filters with isFeatured: true
   const fullFilters: UserProductFilters = useMemo(
@@ -209,16 +190,9 @@ export function useFeaturedProducts(
 /**
  * Hook for fetching latest products with caching
  */
-export function useLatestProducts(
-  filters: Omit<UserProductFilters, "isFeatured"> = {},
-) {
-  const {
-    getCachedProducts,
-    setCachedProducts,
-    setLoading,
-    isLoading,
-    clearExpiredCache,
-  } = useProductStore();
+export function useLatestProducts(filters: Omit<UserProductFilters, "isFeatured"> = {}) {
+  const { getCachedProducts, setCachedProducts, setLoading, isLoading, clearExpiredCache } =
+    useProductStore();
 
   // Convert to full filters with specific status for latest products
   const fullFilters: UserProductFilters = useMemo(
@@ -297,8 +271,7 @@ export function useInvalidateProducts() {
 
   return {
     invalidateAll: () => invalidateCache(),
-    invalidateByCategory: (categoryId: string) =>
-      invalidateCache({ categoryId }),
+    invalidateByCategory: (categoryId: string) => invalidateCache({ categoryId }),
     invalidateFeatured: () => invalidateCache({ isFeatured: true }),
     invalidateByStatus: (status: string) => invalidateCache({ status } as any),
   };

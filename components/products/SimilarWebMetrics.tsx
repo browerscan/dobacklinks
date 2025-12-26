@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatNumber } from "@/lib/utils";
+import { SimilarWebRawData, TrafficSources } from "@/types/product";
 import {
   TrendingUp,
   TrendingDown,
@@ -20,16 +21,8 @@ import {
   Layers,
 } from "lucide-react";
 
-interface TrafficSources {
-  direct?: number;
-  search?: number;
-  referral?: number;
-  social?: number;
-  mail?: number;
-  display?: number;
-}
-
-interface SimilarWebRawData {
+// Extended SimilarWeb raw data with additional fields from API
+interface ExtendedSimilarWebRawData extends SimilarWebRawData {
   category?: string;
   category_rank?: number;
   snapshot_date?: string;
@@ -50,7 +43,7 @@ interface Product {
   avgVisitDuration?: number | null;
   trafficSources?: TrafficSources | null;
   enrichedAt?: string | Date | null;
-  similarwebData?: SimilarWebRawData | null;
+  similarwebData?: ExtendedSimilarWebRawData | null;
 }
 
 interface SimilarWebMetricsProps {
@@ -98,14 +91,11 @@ function getParentCategory(category: string): string | null {
 
 export function SimilarWebMetrics({ product }: SimilarWebMetricsProps) {
   // Don't show anything if not enriched or failed
-  if (
-    product.enrichmentStatus === "pending" ||
-    product.enrichmentStatus === "failed"
-  ) {
+  if (product.enrichmentStatus === "pending" || product.enrichmentStatus === "failed") {
     return null;
   }
 
-  const rawData = product.similarwebData as SimilarWebRawData | null;
+  const rawData = product.similarwebData as ExtendedSimilarWebRawData | null;
 
   // Check if we have any useful data to display
   const hasMonthlyVisits = product.monthlyVisits != null;
@@ -130,8 +120,7 @@ export function SimilarWebMetrics({ product }: SimilarWebMetricsProps) {
   }
 
   const hasTrafficSources =
-    product.trafficSources &&
-    Object.values(product.trafficSources).some((v) => v != null && v > 0);
+    product.trafficSources && Object.values(product.trafficSources).some((v) => v != null && v > 0);
 
   // Enriched state with data
   return (
@@ -173,29 +162,26 @@ export function SimilarWebMetrics({ product }: SimilarWebMetricsProps) {
                 {formatNumber(product.monthlyVisits!)}
               </div>
               {/* Monthly Visits Change Trend */}
-              {rawData?.monthly_visits_change != null &&
-                rawData.monthly_visits_change !== 0 && (
-                  <div className="flex items-center gap-1">
-                    {rawData.monthly_visits_change > 0 ? (
-                      <>
-                        <TrendingUp className="w-3 h-3 text-green-500" />
-                        <span className="text-xs font-medium text-green-600">
-                          +{(rawData.monthly_visits_change * 100).toFixed(1)}%
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <TrendingDown className="w-3 h-3 text-red-500" />
-                        <span className="text-xs font-medium text-red-600">
-                          {(rawData.monthly_visits_change * 100).toFixed(1)}%
-                        </span>
-                      </>
-                    )}
-                    <span className="text-xs text-muted-foreground">
-                      vs prev month
-                    </span>
-                  </div>
-                )}
+              {rawData?.monthly_visits_change != null && rawData.monthly_visits_change !== 0 && (
+                <div className="flex items-center gap-1">
+                  {rawData.monthly_visits_change > 0 ? (
+                    <>
+                      <TrendingUp className="w-3 h-3 text-green-500" />
+                      <span className="text-xs font-medium text-green-600">
+                        +{(rawData.monthly_visits_change * 100).toFixed(1)}%
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <TrendingDown className="w-3 h-3 text-red-500" />
+                      <span className="text-xs font-medium text-red-600">
+                        {(rawData.monthly_visits_change * 100).toFixed(1)}%
+                      </span>
+                    </>
+                  )}
+                  <span className="text-xs text-muted-foreground">vs prev month</span>
+                </div>
+              )}
             </div>
           ) : (
             <div className="space-y-1">
@@ -205,9 +191,7 @@ export function SimilarWebMetrics({ product }: SimilarWebMetricsProps) {
                 <span className="sm:hidden">Visits</span>
               </div>
               <div className="text-sm text-muted-foreground">&lt;5K</div>
-              <div className="text-xs text-muted-foreground">
-                Low traffic site
-              </div>
+              <div className="text-xs text-muted-foreground">Low traffic site</div>
             </div>
           )}
 
@@ -241,9 +225,7 @@ export function SimilarWebMetrics({ product }: SimilarWebMetricsProps) {
         {/* Rankings - Row 2 */}
         {(product.countryRank || rawData?.category_rank) && (
           <div className="pt-3 border-t">
-            <div className="text-xs font-medium mb-3 text-muted-foreground">
-              Rankings
-            </div>
+            <div className="text-xs font-medium mb-3 text-muted-foreground">Rankings</div>
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {product.countryRank && (
                 <div className="space-y-1">
@@ -276,9 +258,7 @@ export function SimilarWebMetrics({ product }: SimilarWebMetricsProps) {
 
         {/* Engagement Metrics - Row 3 */}
         <div className="pt-3 border-t">
-          <div className="text-xs font-medium mb-3 text-muted-foreground">
-            Engagement
-          </div>
+          <div className="text-xs font-medium mb-3 text-muted-foreground">Engagement</div>
           <div className="grid grid-cols-3 gap-3 sm:gap-4">
             {product.pagesPerVisit && (
               <div className="space-y-1">
@@ -286,13 +266,9 @@ export function SimilarWebMetrics({ product }: SimilarWebMetricsProps) {
                   <FileText className="w-3 h-3" />
                   Pages/Visit
                 </div>
-                <div className="text-lg sm:text-xl font-bold">
-                  {product.pagesPerVisit}
-                </div>
+                <div className="text-lg sm:text-xl font-bold">{product.pagesPerVisit}</div>
                 <div className="text-xs text-muted-foreground hidden sm:block">
-                  {parseFloat(product.pagesPerVisit) > 2
-                    ? "Good depth"
-                    : "Low depth"}
+                  {parseFloat(product.pagesPerVisit) > 2 ? "Good depth" : "Low depth"}
                 </div>
               </div>
             )}
@@ -308,9 +284,7 @@ export function SimilarWebMetrics({ product }: SimilarWebMetricsProps) {
                   {formatDuration(product.avgVisitDuration)}
                 </div>
                 <div className="text-xs text-muted-foreground hidden sm:block">
-                  {product.avgVisitDuration > 120
-                    ? "High engagement"
-                    : "Quick visits"}
+                  {product.avgVisitDuration > 120 ? "High engagement" : "Quick visits"}
                 </div>
               </div>
             )}
@@ -329,9 +303,7 @@ export function SimilarWebMetrics({ product }: SimilarWebMetricsProps) {
                       : "Low"}
                 </div>
                 <div className="text-xs text-muted-foreground hidden sm:block">
-                  {parseFloat(product.bounceRate) < 0.5
-                    ? "Good retention"
-                    : "Average"}
+                  {parseFloat(product.bounceRate) < 0.5 ? "Good retention" : "Average"}
                 </div>
               </div>
             )}

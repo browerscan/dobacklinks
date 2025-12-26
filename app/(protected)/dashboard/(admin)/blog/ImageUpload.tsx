@@ -57,15 +57,10 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
         path: BLOGS_IMAGE_PATH,
       });
 
-      if (
-        !presignedUrlActionResponse.success ||
-        !presignedUrlActionResponse.data
-      ) {
+      if (!presignedUrlActionResponse.success || !presignedUrlActionResponse.data) {
         setPreviewUrl(null);
         toast.error("Upload Error", {
-          description:
-            presignedUrlActionResponse.error ||
-            "Failed to generate presigned URL.",
+          description: presignedUrlActionResponse.error || "Failed to generate presigned URL.",
         });
         return "";
       }
@@ -96,9 +91,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
     } catch (error) {
       setPreviewUrl(null);
       console.error("MDX Image Upload failed:", error);
-      toast.error(
-        getErrorMessage(error) || "An unexpected error occurred during upload.",
-      );
+      toast.error(getErrorMessage(error) || "An unexpected error occurred during upload.");
       throw error;
     } finally {
       setIsLoading(false);
@@ -189,9 +182,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
           <div className="text-center">
             <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
             <p className="mt-2 text-sm text-gray-600">
-              {isDragActive
-                ? "Drop the image here..."
-                : "Drag & drop or click to upload"}
+              {isDragActive ? "Drop the image here..." : "Drag & drop or click to upload"}
             </p>
             <p className="text-xs text-gray-500">PNG, JPG, WEBP up to 5MB</p>
           </div>

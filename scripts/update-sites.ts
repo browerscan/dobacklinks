@@ -2,8 +2,7 @@
 import { loadEnvConfig } from "@next/env";
 loadEnvConfig(process.cwd());
 
-const DEFAULT_SOURCE =
-  "/Volumes/SSD/dev/links/dobacklinks/scraper/active-sites-incremental.json";
+const DEFAULT_SOURCE = "/Volumes/SSD/dev/links/dobacklinks/scraper/active-sites-incremental.json";
 
 async function main() {
   const { updateSites } = await import("../lib/import/update-sites");
@@ -11,8 +10,7 @@ async function main() {
   const args = process.argv.slice(2);
   const dryRun = args.includes("--dry-run");
   const sourceIndex = args.indexOf("--source");
-  const sourcePath =
-    sourceIndex !== -1 ? args[sourceIndex + 1] : DEFAULT_SOURCE;
+  const sourcePath = sourceIndex !== -1 ? args[sourceIndex + 1] : DEFAULT_SOURCE;
 
   console.log("🔄 Site Update Script");
   console.log("=====================\n");

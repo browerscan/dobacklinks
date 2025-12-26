@@ -9,7 +9,7 @@ import { actionResponse, ActionResult } from "@/lib/action-response";
 import { db } from "@/lib/db";
 import { newsletter } from "@/lib/db/schema";
 import { normalizeEmail, validateEmail } from "@/lib/email";
-import { checkRateLimit } from "@/lib/upstash";
+import { checkRateLimit, RedisFallbackMode } from "@/lib/upstash";
 import { headers } from "next/headers";
 
 const NEWSLETTER_RATE_LIMIT = {
@@ -20,13 +20,14 @@ const NEWSLETTER_RATE_LIMIT = {
 
 async function validateRateLimit() {
   const headersList = await headers();
-  const ip =
-    headersList.get("x-real-ip") || headersList.get("x-forwarded-for") || "";
-  const success = await checkRateLimit(ip, NEWSLETTER_RATE_LIMIT);
+  const ip = headersList.get("x-real-ip") || headersList.get("x-forwarded-for") || "";
+  const success = await checkRateLimit(
+    ip,
+    NEWSLETTER_RATE_LIMIT,
+    RedisFallbackMode.MEMORY_FALLBACK,
+  );
   if (!success) {
-    throw new Error(
-      "You have submitted too many times. Please try again later.",
-    );
+    throw new Error("You have submitted too many times. Please try again later.");
   }
 }
 
@@ -145,9 +146,7 @@ export async function unsubscribeFromNewsletter(
  * Get email from unsubscribe token (for display purposes only)
  * Returns null if token is invalid
  */
-export async function getEmailFromUnsubscribeToken(
-  token: string,
-): Promise<string | null> {
+export async function getEmailFromUnsubscribeToken(token: string): Promise<string | null> {
   if (!token || !/^[a-f0-9]{64}$/i.test(token)) {
     return null;
   }

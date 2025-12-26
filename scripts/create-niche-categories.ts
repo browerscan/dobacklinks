@@ -18,9 +18,7 @@ const NICHE_CONFIG: Record<string, { icon: string; displayOrder: number }> = {
 async function main() {
   // Dynamic imports after env is loaded
   const { db } = await import("@/lib/db");
-  const { products, categories, productCategories } = await import(
-    "@/lib/db/schema"
-  );
+  const { products, categories, productCategories } = await import("@/lib/db/schema");
   const { eq, sql, and, inArray } = await import("drizzle-orm");
   const slugify = (await import("slugify")).default;
 
@@ -53,9 +51,7 @@ async function main() {
   const existingCategories = await db.query.categories.findMany();
   const existingBySlug = new Map(existingCategories.map((c) => [c.slug, c]));
 
-  console.log(
-    `\nExisting categories: ${existingCategories.map((c) => c.name).join(", ")}`,
-  );
+  console.log(`\nExisting categories: ${existingCategories.map((c) => c.name).join(", ")}`);
 
   // 3. Create missing niche categories
   const nichesToCreate = nicheStats
@@ -79,10 +75,7 @@ async function main() {
       isActive: true,
     }));
 
-    const inserted = await db
-      .insert(categories)
-      .values(categoriesToInsert)
-      .returning();
+    const inserted = await db.insert(categories).values(categoriesToInsert).returning();
     console.log(`✓ Created ${inserted.length} new categories`);
 
     // Refresh category map
@@ -136,9 +129,7 @@ async function main() {
     const toLink = productIds.filter((id) => !existingProductIds.has(id));
 
     if (dryRun) {
-      console.log(
-        `   ${niche}: Would link ${toLink.length} products to ${category.name}`,
-      );
+      console.log(`   ${niche}: Would link ${toLink.length} products to ${category.name}`);
     } else if (toLink.length > 0) {
       const links = toLink.map((productId) => ({
         productId,
@@ -154,9 +145,7 @@ async function main() {
 
       console.log(`   ✓ ${niche}: Linked ${toLink.length} products`);
     } else {
-      console.log(
-        `   ✓ ${niche}: All ${productIds.length} products already linked`,
-      );
+      console.log(`   ✓ ${niche}: All ${productIds.length} products already linked`);
     }
   }
 

@@ -9,11 +9,7 @@ interface TagSelectorProps {
   onSelectTag: (tagId: string | null) => void;
 }
 
-export function TagSelector({
-  tags,
-  selectedTagId,
-  onSelectTag,
-}: TagSelectorProps) {
+export function TagSelector({ tags, selectedTagId, onSelectTag }: TagSelectorProps) {
   return (
     <div className="flex flex-wrap gap-2 justify-center mb-6">
       <button

@@ -2,14 +2,9 @@ import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-interface RainbowButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+interface RainbowButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
-export function RainbowButton({
-  children,
-  className,
-  ...props
-}: RainbowButtonProps) {
+export function RainbowButton({ children, className, ...props }: RainbowButtonProps) {
   return (
     <Button
       asChild

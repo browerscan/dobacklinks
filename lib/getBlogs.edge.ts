@@ -21,9 +21,7 @@ import dayjs from "dayjs";
 // ============================================================================
 function mapServerPostToBlogPost(serverPost: PublicPostWithContent): BlogPost;
 function mapServerPostToBlogPost(serverPost: PublicPost): BlogPost;
-function mapServerPostToBlogPost(
-  serverPost: PublicPostWithContent | PublicPost,
-): BlogPost {
+function mapServerPostToBlogPost(serverPost: PublicPostWithContent | PublicPost): BlogPost {
   return {
     title: serverPost.title,
     description: serverPost.description ?? "",
@@ -64,9 +62,7 @@ export async function getPosts(): Promise<{ posts: BlogPost[] }> {
       if (a.isPinned !== b.isPinned) {
         return (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0);
       }
-      return (
-        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-      );
+      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
     });
 
     return { posts };

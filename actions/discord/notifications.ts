@@ -42,12 +42,7 @@ export async function sendProductSubmissionNotification({
 }: {
   productData: ProductFormValues;
   productId: string;
-  submitType:
-    | "free"
-    | "monthly_promotion"
-    | "featured"
-    | "sponsor"
-    | "one_time";
+  submitType: "free" | "monthly_promotion" | "featured" | "sponsor" | "one_time";
   status?: string;
   amount?: number;
 }): Promise<{ success: boolean; error?: string }> {
@@ -61,15 +56,8 @@ export async function sendProductSubmissionNotification({
   try {
     const isPaidSubmission = submitType !== "free" && amount > 0;
     const embed: DiscordEmbed = {
-      title: isPaidSubmission
-        ? "💰 Product Payment Completed"
-        : "New Product Submission",
-      color:
-        submitType === "free"
-          ? 0x00ff00
-          : isPaidSubmission
-            ? 0xffd700
-            : 0x0099ff, // Green for free, gold for paid, blue for pending
+      title: isPaidSubmission ? "💰 Product Payment Completed" : "New Product Submission",
+      color: submitType === "free" ? 0x00ff00 : isPaidSubmission ? 0xffd700 : 0x0099ff, // Green for free, gold for paid, blue for pending
       fields: [
         {
           name: "Product Name",
@@ -154,10 +142,7 @@ export async function sendProductSubmissionNotification({
       };
     }
 
-    console.log(
-      "Discord notification sent successfully for product:",
-      productId,
-    );
+    console.log("Discord notification sent successfully for product:", productId);
     return { success: true };
   } catch (error) {
     const errorMessage = getErrorMessage(error);

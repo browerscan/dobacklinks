@@ -12,9 +12,7 @@ type MetadataProps = {
   params: Params;
 };
 
-export async function generateMetadata({
-  params,
-}: MetadataProps): Promise<Metadata> {
+export async function generateMetadata({ params }: MetadataProps): Promise<Metadata> {
   const { productId } = await params;
   return constructMetadata({
     page: "Edit Product",

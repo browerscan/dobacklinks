@@ -16,11 +16,7 @@ export interface ProductGenerationResult {
   contactEmail?: string;
 }
 
-function buildPrompt(
-  url: string,
-  scrapedData: any,
-  categoriesString: string,
-): string {
+function buildPrompt(url: string, scrapedData: any, categoriesString: string): string {
   return `You are preparing a guest-post directory entry. Extract concise, structured data from the site.
 
 Website URL: ${url}
@@ -66,9 +62,7 @@ export async function generateProductInfo(
 
   const model = createAIModel(provider, modelId);
 
-  const categoriesString = categories
-    .map((cat) => `${cat.id}: ${cat.name}`)
-    .join("\n");
+  const categoriesString = categories.map((cat) => `${cat.id}: ${cat.name}`).join("\n");
 
   const prompt = buildPrompt(url, scrapedData, categoriesString);
 

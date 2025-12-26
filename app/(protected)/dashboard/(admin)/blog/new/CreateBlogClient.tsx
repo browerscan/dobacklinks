@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  createPostAction,
-  getPostByIdAction,
-  PostWithTags,
-} from "@/actions/blogs/posts";
+import { createPostAction, getPostByIdAction, PostWithTags } from "@/actions/blogs/posts";
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -45,8 +41,7 @@ export default function CreateBlogClient() {
             setInitialData(duplicatedPostData);
           } else {
             toast.error("Error fetching post to duplicate", {
-              description:
-                result.error || "Failed to fetch the post to duplicate",
+              description: result.error || "Failed to fetch the post to duplicate",
             });
             setInitialData(null);
             setPageMode("create");

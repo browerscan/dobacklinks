@@ -14,8 +14,7 @@ interface ProductApprovedEmailProps {
 
 const commonStyles = {
   container: {
-    fontFamily:
-      "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     maxWidth: "600px",
     margin: "0 auto",
     backgroundColor: "#f8fafc",
@@ -230,16 +229,9 @@ export const ProductApprovedEmail: React.FC<ProductApprovedEmailProps> = ({
       <div style={commonStyles.card}>
         <div style={commonStyles.header}>
           <div style={commonStyles.logo}>
-            <img
-              src={`${siteConfig.url}/logo.png`}
-              alt={siteName}
-              width={80}
-              height={80}
-            />
+            <img src={`${siteConfig.url}/logo.png`} alt={siteName} width={80} height={80} />
           </div>
-          <h1 style={commonStyles.title}>
-            {getSubject(submitType, productName)}
-          </h1>
+          <h1 style={commonStyles.title}>{getSubject(submitType, productName)}</h1>
         </div>
 
         <div
@@ -255,31 +247,25 @@ export const ProductApprovedEmail: React.FC<ProductApprovedEmailProps> = ({
         <div style={commonStyles.productCard}>
           <div style={commonStyles.productHeader}>
             {logoUrl ? (
-              <img
-                src={logoUrl}
-                alt={productName}
-                style={commonStyles.productLogo}
-              />
+              <img src={logoUrl} alt={productName} style={commonStyles.productLogo} />
             ) : (
               <div style={commonStyles.productLogo} />
             )}
             <div>
               <h2 style={commonStyles.productName}>{productName}</h2>
-              {productUrl && (
-                <p style={commonStyles.productUrl}>{productUrl}</p>
-              )}
+              {productUrl && <p style={commonStyles.productUrl}>{productUrl}</p>}
             </div>
           </div>
         </div>
 
         <p style={commonStyles.paragraph}>
-          Your product is now visible to thousands of visitors and can start
-          attracting users, customers, and valuable backlinks.
+          Your product is now visible to thousands of visitors and can start attracting users,
+          customers, and valuable backlinks.
         </p>
 
         <p style={commonStyles.paragraph}>
-          Thank you for choosing {siteName} to showcase your product. We're
-          excited to see your success!
+          Thank you for choosing {siteName} to showcase your product. We're excited to see your
+          success!
         </p>
 
         <div style={{ textAlign: "center" }}>

@@ -8,9 +8,9 @@ import { useState } from "react";
 
 export default function InlineNewsletter() {
   const [email, setEmail] = useState("");
-  const [subscribeStatus, setSubscribeStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error">(
+    "idle",
+  );
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubscribe = async (e: React.FormEvent) => {
@@ -18,9 +18,7 @@ export default function InlineNewsletter() {
     if (!email) return;
 
     const normalizedEmailAddress = normalizeEmail(email);
-    const { isValid, error: validationError } = validateEmail(
-      normalizedEmailAddress,
-    );
+    const { isValid, error: validationError } = validateEmail(normalizedEmailAddress);
 
     if (!isValid) {
       setSubscribeStatus("error");
@@ -35,9 +33,7 @@ export default function InlineNewsletter() {
       const result = await subscribeToNewsletter(normalizedEmailAddress);
 
       if (!result.success) {
-        throw new Error(
-          result.error || "An error occurred. Please try again later.",
-        );
+        throw new Error(result.error || "An error occurred. Please try again later.");
       }
 
       setSubscribeStatus("success");
@@ -46,9 +42,7 @@ export default function InlineNewsletter() {
     } catch (error) {
       setSubscribeStatus("error");
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "An error occurred. Please try again later.",
+        error instanceof Error ? error.message : "An error occurred. Please try again later.",
       );
     } finally {
       setTimeout(() => setSubscribeStatus("idle"), 5000);
@@ -115,9 +109,7 @@ export default function InlineNewsletter() {
         {subscribeStatus === "success" && (
           <div className="flex items-center gap-2 text-green-600 text-xs bg-green-50 dark:bg-green-950/20 p-2 rounded-lg">
             <Check className="w-3 h-3" />
-            <span>
-              Successfully subscribed! Thank you for joining our newsletter.
-            </span>
+            <span>Successfully subscribed! Thank you for joining our newsletter.</span>
           </div>
         )}
         {subscribeStatus === "error" && (

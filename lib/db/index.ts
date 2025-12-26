@@ -18,8 +18,7 @@ if (!connectionString && !isBuildTime) {
 // Only create database connection if we have a valid connection string
 // During build, we'll use a placeholder connection that won't actually be used
 export const db = createDatabase({
-  connectionString:
-    connectionString || "postgresql://localhost:5432/placeholder",
+  connectionString: connectionString || "postgresql://localhost:5432/placeholder",
 });
 
 export const isDatabaseEnabled = !!connectionString && !isBuildTime;

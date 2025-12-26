@@ -1,13 +1,7 @@
 import { db } from "@/lib/db";
 import { publishedExamples, products } from "@/lib/db/schema";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -53,9 +47,7 @@ export default async function PublishedExamplesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Published Examples
-          </h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Published Examples</h1>
           <p className="text-sm text-muted-foreground">
             Track successful guest posts for client testimonials and credibility
           </p>
@@ -72,16 +64,13 @@ export default async function PublishedExamplesPage() {
         <CardHeader>
           <CardTitle>Success Cases</CardTitle>
           <CardDescription>
-            Published guest posts (admin-only, used for testimonials on service
-            page)
+            Published guest posts (admin-only, used for testimonials on service page)
           </CardDescription>
         </CardHeader>
         <CardContent>
           {examples.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">
-                No published examples yet
-              </p>
+              <p className="text-muted-foreground mb-4">No published examples yet</p>
               <Button asChild variant="outline">
                 <Link href="/dashboard/examples/new">
                   <Plus className="mr-2 h-4 w-4" />
@@ -106,9 +95,7 @@ export default async function PublishedExamplesPage() {
                   {examples.map((example) => (
                     <TableRow key={example.id}>
                       <TableCell>
-                        <div className="font-medium">
-                          {example.productName || "Unknown Site"}
-                        </div>
+                        <div className="font-medium">{example.productName || "Unknown Site"}</div>
                         {example.productUrl && (
                           <a
                             href={example.productUrl}
@@ -134,25 +121,18 @@ export default async function PublishedExamplesPage() {
                       </TableCell>
                       <TableCell>
                         {example.clientNiche ? (
-                          <Badge variant="secondary">
-                            {example.clientNiche}
-                          </Badge>
+                          <Badge variant="secondary">{example.clientNiche}</Badge>
                         ) : (
-                          <span className="text-muted-foreground text-sm">
-                            Not specified
-                          </span>
+                          <span className="text-muted-foreground text-sm">Not specified</span>
                         )}
                       </TableCell>
                       <TableCell>
                         {example.publishedDate
-                          ? new Date(example.publishedDate).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              },
-                            )
+                          ? new Date(example.publishedDate).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })
                           : "N/A"}
                       </TableCell>
                       <TableCell>
@@ -163,11 +143,7 @@ export default async function PublishedExamplesPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Button variant="ghost" size="sm" asChild>
-                            <Link
-                              href={`/dashboard/examples/${example.id}/edit`}
-                            >
-                              Edit
-                            </Link>
+                            <Link href={`/dashboard/examples/${example.id}/edit`}>Edit</Link>
                           </Button>
                         </div>
                       </TableCell>

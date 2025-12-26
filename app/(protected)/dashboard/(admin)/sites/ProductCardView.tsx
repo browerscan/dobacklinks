@@ -2,12 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ProductWithCategories } from "@/types/product";
 import { ExternalLink } from "lucide-react";
@@ -17,12 +12,7 @@ import { ProductActions } from "./ProductActions";
 
 const statusBadgeStyle = {
   live: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-  pending_review:
-    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-  pending_payment:
-    "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
-  cancelled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-  expired: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+  pending_review: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
 };
 
 interface ProductCardViewProps {

@@ -50,9 +50,7 @@ function getConnectionString(): string {
 // Create default database connection (for Node.js runtime)
 const connectionString = getConnectionString();
 
-export const db = connectionString
-  ? createDatabaseEdge({ connectionString })
-  : null;
+export const db = connectionString ? createDatabaseEdge({ connectionString }) : null;
 
 export const isDatabaseEnabled = !!connectionString;
 

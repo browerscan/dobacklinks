@@ -22,9 +22,7 @@ export type ProductForNotification = {
  * @param product - The product data required for the notification.
  * @throws Will throw an error if sending the email fails for reasons other than an invalid email address.
  */
-export async function sendProductApprovedNotification(
-  product: ProductForNotification,
-) {
+export async function sendProductApprovedNotification(product: ProductForNotification) {
   try {
     const userResults = await db
       .select({ email: usersSchema.email })
@@ -60,14 +58,9 @@ export async function sendProductApprovedNotification(
       },
     });
 
-    console.log(
-      `Approval email sent successfully for product "${product.name}" to ${userEmail}`,
-    );
+    console.log(`Approval email sent successfully for product "${product.name}" to ${userEmail}`);
   } catch (error) {
-    console.error(
-      `Failed to send approval email for product "${product.name}":`,
-      error,
-    );
+    console.error(`Failed to send approval email for product "${product.name}":`, error);
     // Re-throw to allow the caller to handle it.
     throw error;
   }

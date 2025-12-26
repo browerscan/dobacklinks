@@ -23,9 +23,7 @@ type Params = Promise<{
 type MetadataProps = {
   params: Params;
 };
-export async function generateMetadata({
-  params,
-}: MetadataProps): Promise<Metadata> {
+export async function generateMetadata({ params }: MetadataProps): Promise<Metadata> {
   const { slug } = await params;
   const { post, errorCode } = await getPostBySlug(slug);
 
@@ -46,6 +44,7 @@ export async function generateMetadata({
     description: post.description,
     images: post.featuredImageUrl ? [post.featuredImageUrl] : [],
     path: fullPath,
+    canonicalUrl: fullPath, // Explicit canonical URL
   });
 }
 
@@ -121,9 +120,7 @@ export default async function BlogPage({ params }: { params: Params }) {
           </div>
         )}
 
-        <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
-          {post.title}
-        </h1>
+        <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">{post.title}</h1>
 
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-8">
           <div className="flex items-center">
@@ -139,9 +136,7 @@ export default async function BlogPage({ params }: { params: Params }) {
         </div>
 
         {post.description && (
-          <div className="bg-muted rounded-lg p-6 text-lg mb-8">
-            {post.description}
-          </div>
+          <div className="bg-muted rounded-lg p-6 text-lg mb-8">{post.description}</div>
         )}
       </header>
 
@@ -182,12 +177,8 @@ export default async function BlogPage({ params }: { params: Params }) {
             headline: post.title,
             description: post.description || "",
             image: post.featuredImageUrl || `${siteConfig.url}/og-image.png`,
-            datePublished: post.publishedAt
-              ? new Date(post.publishedAt).toISOString()
-              : undefined,
-            dateModified: post.publishedAt
-              ? new Date(post.publishedAt).toISOString()
-              : undefined,
+            datePublished: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+            dateModified: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
             author: {
               "@type": "Organization",
               name: siteConfig.name,
@@ -268,8 +259,6 @@ export async function generateStaticParams() {
     });
   }
 
-  const uniqueParams = Array.from(
-    new Map(allParams.map((p) => [p.slug, p])).values(),
-  );
+  const uniqueParams = Array.from(new Map(allParams.map((p) => [p.slug, p])).values());
   return uniqueParams;
 }

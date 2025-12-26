@@ -68,6 +68,11 @@ const footerLinks: FooterLink[] = [
         name: "Blog",
         href: "/blog",
       },
+      {
+        id: "contact",
+        name: "outreach@dobacklinks.com",
+        href: "mailto:outreach@dobacklinks.com",
+      },
     ],
   },
 ];
@@ -82,12 +87,7 @@ export default async function Footer() {
               <div className="space-y-4 flex-1">
                 <div className="items-center space-x-2 flex">
                   <div className="text-gray-50 text-2xl font-semibold flex items-center gap-2">
-                    <Image
-                      src="/logo.png"
-                      alt={siteConfig.name}
-                      width={32}
-                      height={32}
-                    />
+                    <Image src="/logo.png" alt={siteConfig.name} width={32} height={32} />
                     {siteConfig.name}
                   </div>
                 </div>
@@ -166,9 +166,7 @@ export default async function Footer() {
 
             {footerLinks.map((section) => (
               <div key={section.title} className="flex-1">
-                <div className="text-white text-lg font-semibold mb-4">
-                  {section.title}
-                </div>
+                <div className="text-white text-lg font-semibold mb-4">{section.title}</div>
                 <ul className="space-y-2 text-sm">
                   {section.links.map((link) => (
                     <li key={link.href}>
@@ -195,8 +193,7 @@ export default async function Footer() {
 
           <div className="border-t border-gray-800 py-6 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} {siteConfig.name}. All rights
-              reserved.
+              © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link

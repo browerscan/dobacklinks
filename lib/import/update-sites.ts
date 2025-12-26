@@ -22,9 +22,7 @@ interface UpdateStats {
   failed: number;
 }
 
-export async function updateSites(
-  options: UpdateOptions,
-): Promise<UpdateStats> {
+export async function updateSites(options: UpdateOptions): Promise<UpdateStats> {
   const {
     sourcePath,
     batchSize = 50,
@@ -80,9 +78,7 @@ export async function updateSites(
   });
 
   if (!systemUser && !dryRun) {
-    throw new Error(
-      "System user not found. Please create system@dobacklinks.com user first.",
-    );
+    throw new Error("System user not found. Please create system@dobacklinks.com user first.");
   }
 
   // 6. Get default category
@@ -106,9 +102,7 @@ export async function updateSites(
   }
 
   // 7. Process in batches
-  console.log(
-    `\n🚀 Processing ${sitesToProcess.length} sites in batches of ${batchSize}...`,
-  );
+  console.log(`\n🚀 Processing ${sitesToProcess.length} sites in batches of ${batchSize}...`);
 
   for (let i = 0; i < sitesToProcess.length; i += batchSize) {
     const batch = sitesToProcess.slice(i, i + batchSize);
@@ -149,12 +143,7 @@ export async function updateSites(
         toUpdate.push({ id: existing.id, data: updateData });
       } else {
         // Insert new product
-        const insertData = buildInsertData(
-          site,
-          quality,
-          status,
-          systemUser?.id || "",
-        );
+        const insertData = buildInsertData(site, quality, status, systemUser?.id || "");
         toInsert.push(insertData);
       }
     }
@@ -162,9 +151,7 @@ export async function updateSites(
     if (dryRun) {
       stats.updated += toUpdate.length;
       stats.added += toInsert.length;
-      console.log(
-        `   Batch ${batchNum}: Would update ${toUpdate.length}, add ${toInsert.length}`,
-      );
+      console.log(`   Batch ${batchNum}: Would update ${toUpdate.length}, add ${toInsert.length}`);
       continue;
     }
 
@@ -185,10 +172,7 @@ export async function updateSites(
             productId: p.id,
             categoryId: defaultCategory!.id,
           }));
-          await db
-            .insert(productCategories)
-            .values(categoryLinks)
-            .onConflictDoNothing();
+          await db.insert(productCategories).values(categoryLinks).onConflictDoNothing();
         }
         stats.added += inserted.length;
       }
@@ -381,9 +365,7 @@ function generateDescription(site: ScrapedSite): string {
 
   if (site.data.maxLinks) {
     const maxLinks = parseInt(site.data.maxLinks);
-    parts.push(
-      `Allows up to ${maxLinks} dofollow link${maxLinks > 1 ? "s" : ""}.`,
-    );
+    parts.push(`Allows up to ${maxLinks} dofollow link${maxLinks > 1 ? "s" : ""}.`);
   }
 
   if (site.data.googleNews === "Yes") {
@@ -402,44 +384,11 @@ function inferNiche(domain: string, description: string = ""): string {
   const text = (domain + " " + (description || "")).toLowerCase();
 
   const niches: Record<string, string[]> = {
-    Technology: [
-      "tech",
-      "software",
-      "digital",
-      "app",
-      "ai",
-      "dev",
-      "code",
-      "cyber",
-      "data",
-    ],
-    Finance: [
-      "finance",
-      "money",
-      "invest",
-      "crypto",
-      "trading",
-      "bank",
-      "fintech",
-      "payment",
-    ],
-    Health: [
-      "health",
-      "medical",
-      "wellness",
-      "fitness",
-      "care",
-      "medicine",
-      "doctor",
-    ],
+    Technology: ["tech", "software", "digital", "app", "ai", "dev", "code", "cyber", "data"],
+    Finance: ["finance", "money", "invest", "crypto", "trading", "bank", "fintech", "payment"],
+    Health: ["health", "medical", "wellness", "fitness", "care", "medicine", "doctor"],
     Marketing: ["marketing", "seo", "social", "brand", "advertising", "growth"],
-    Business: [
-      "business",
-      "startup",
-      "entrepreneur",
-      "corporate",
-      "enterprise",
-    ],
+    Business: ["business", "startup", "entrepreneur", "corporate", "enterprise"],
     News: ["news", "daily", "times", "post", "press", "media", "journal"],
     Lifestyle: ["life", "style", "fashion", "travel", "food", "home", "living"],
     "Real Estate": ["real estate", "property", "housing", "realty"],
@@ -455,11 +404,7 @@ function inferNiche(domain: string, description: string = ""): string {
 }
 
 function formatPriceRange(data: ScrapedSite["data"]): string | null {
-  const prices = [
-    data.contentPlacementPrice,
-    data.writingPlacementPrice,
-    data.specialTopicPrice,
-  ]
+  const prices = [data.contentPlacementPrice, data.writingPlacementPrice, data.specialTopicPrice]
     .map((p) => parseFloat(p || "0"))
     .filter((p) => p > 0);
 

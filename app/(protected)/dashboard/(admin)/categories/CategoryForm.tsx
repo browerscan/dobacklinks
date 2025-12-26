@@ -33,11 +33,7 @@ interface CategoryFormProps {
   category: Category | null;
 }
 
-export function CategoryForm({
-  isOpen,
-  setIsOpen,
-  category,
-}: CategoryFormProps) {
+export function CategoryForm({ isOpen, setIsOpen, category }: CategoryFormProps) {
   const {
     register,
     handleSubmit,
@@ -134,12 +130,8 @@ export function CategoryForm({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>
-            {category ? "Edit Category" : "Create Category"}
-          </DialogTitle>
-          <DialogDescription>
-            Fill in the details for the category.
-          </DialogDescription>
+          <DialogTitle>{category ? "Edit Category" : "Create Category"}</DialogTitle>
+          <DialogDescription>Fill in the details for the category.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
@@ -150,9 +142,7 @@ export function CategoryForm({
               placeholder="Category name"
               disabled={isSubmitting}
             />
-            {errors.name && (
-              <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
-            )}
+            {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>}
           </div>
 
           <div>
@@ -174,9 +164,7 @@ export function CategoryForm({
                 Generate
               </Button>
             </div>
-            {errors.slug && (
-              <p className="text-sm text-red-500 mt-1">{errors.slug.message}</p>
-            )}
+            {errors.slug && <p className="text-sm text-red-500 mt-1">{errors.slug.message}</p>}
           </div>
 
           <div>
@@ -208,9 +196,7 @@ export function CategoryForm({
               disabled={isSubmitting}
             />
             {errors.displayOrder && (
-              <p className="text-sm text-red-500 mt-1">
-                {errors.displayOrder.message}
-              </p>
+              <p className="text-sm text-red-500 mt-1">{errors.displayOrder.message}</p>
             )}
           </div>
 
@@ -223,9 +209,7 @@ export function CategoryForm({
             </div>
             <Switch
               {...register("isActive")}
-              onCheckedChange={(checked: boolean) =>
-                setValue("isActive", checked)
-              }
+              onCheckedChange={(checked: boolean) => setValue("isActive", checked)}
               defaultChecked={true}
               disabled={isSubmitting}
             />

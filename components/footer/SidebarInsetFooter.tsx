@@ -15,11 +15,7 @@ export default function SidebarInsetFooter() {
           <Link href="/privacy-policy" title="Privacy Policy" prefetch={false}>
             Privacy
           </Link>
-          <Link
-            href="/terms-of-service"
-            title="Terms of Service"
-            prefetch={false}
-          >
+          <Link href="/terms-of-service" title="Terms of Service" prefetch={false}>
             Terms
           </Link>
         </div>

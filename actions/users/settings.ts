@@ -2,11 +2,7 @@
 
 import { actionResponse } from "@/lib/action-response";
 import { getSession } from "@/lib/auth/server";
-import {
-  deleteFile,
-  generateR2Key,
-  serverUploadFile,
-} from "@/lib/cloudflare/r2";
+import { deleteFile, generateR2Key, serverUploadFile } from "@/lib/cloudflare/r2";
 import { db } from "@/lib/db";
 import { user as userSchema } from "@/lib/db/schema";
 import { getErrorMessage } from "@/lib/error-utils";
@@ -25,9 +21,7 @@ interface UpdateUserSettingsParams {
   formData: FormData;
 }
 
-export async function updateUserSettingsAction({
-  formData,
-}: UpdateUserSettingsParams) {
+export async function updateUserSettingsAction({ formData }: UpdateUserSettingsParams) {
   try {
     const session = await getSession();
     const authUser = session?.user;
@@ -76,10 +70,7 @@ export async function updateUserSettingsAction({
         if (authUser.image) {
           try {
             const oldAvatarUrl = authUser.image as string;
-            const oldPath = new URL(oldAvatarUrl).pathname
-              .split("/")
-              .slice(-3)
-              .join("/");
+            const oldPath = new URL(oldAvatarUrl).pathname.split("/").slice(-3).join("/");
 
             if (oldPath.startsWith(`avatars/${authUser.id}/`)) {
               await deleteFile(oldPath);
@@ -114,8 +105,6 @@ export async function updateUserSettingsAction({
   } catch (error) {
     console.error("Update user settings action error:", error);
     const errorMessage = getErrorMessage(error);
-    return actionResponse.error(
-      errorMessage || "An unexpected error occurred.",
-    );
+    return actionResponse.error(errorMessage || "An unexpected error occurred.");
   }
 }

@@ -7,8 +7,7 @@ interface MagicLinkEmailProps {
 
 const styles = {
   container: {
-    fontFamily:
-      "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     maxWidth: "600px",
     margin: "0 auto",
     backgroundColor: "#f8fafc",
@@ -88,25 +87,15 @@ const styles = {
   },
 };
 
-export const MagicLinkEmail: React.FC<Readonly<MagicLinkEmailProps>> = ({
-  url,
-}) => (
+export const MagicLinkEmail: React.FC<Readonly<MagicLinkEmailProps>> = ({ url }) => (
   <div style={styles.container}>
     <div style={styles.card}>
       <div style={styles.logo}>
-        <img
-          src={`${siteConfig.url}/logo.png`}
-          alt={siteConfig.name}
-          width={80}
-          height={80}
-        />
+        <img src={`${siteConfig.url}/logo.png`} alt={siteConfig.name} width={80} height={80} />
       </div>
 
       <h1 style={styles.headerTitle}>
-        <a
-          href={siteConfig.url}
-          style={{ textDecoration: "none", color: "#3b82f6" }}
-        >
+        <a href={siteConfig.url} style={{ textDecoration: "none", color: "#3b82f6" }}>
           {siteConfig.name}
         </a>
       </h1>
@@ -123,9 +112,7 @@ export const MagicLinkEmail: React.FC<Readonly<MagicLinkEmailProps>> = ({
         </a>
       </div>
 
-      <p style={styles.ignoreText}>
-        If you didn't request this, you can safely ignore this email.
-      </p>
+      <p style={styles.ignoreText}>If you didn't request this, you can safely ignore this email.</p>
     </div>
 
     <div style={styles.footer}>

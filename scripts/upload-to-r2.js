@@ -69,9 +69,7 @@ console.log("Configuration:");
 console.log(
   `   Account ID: ${CLOUDFLARE_ACCOUNT_ID ? "✅ " + CLOUDFLARE_ACCOUNT_ID.substring(0, 10) + "..." : "❌ Missing"}`,
 );
-console.log(
-  `   API Token: ${CLOUDFLARE_API_TOKEN ? "✅ Found" : "❌ Missing"}`,
-);
+console.log(`   API Token: ${CLOUDFLARE_API_TOKEN ? "✅ Found" : "❌ Missing"}`);
 console.log(`   Bucket: ${R2_BUCKET_NAME}`);
 console.log(`   Target: ${singleFile || targetDir}`);
 console.log("═".repeat(80));
@@ -207,17 +205,7 @@ async function main() {
           walkDir(fullPath, baseDir);
         } else {
           const ext = path.extname(entry.name).toLowerCase();
-          if (
-            [
-              ".png",
-              ".jpg",
-              ".jpeg",
-              ".gif",
-              ".webp",
-              ".svg",
-              ".avif",
-            ].includes(ext)
-          ) {
+          if ([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".avif"].includes(ext)) {
             const relPath = path.relative(baseDir, fullPath);
             files.push({ path: fullPath, key: R2_PREFIX + relPath });
           }

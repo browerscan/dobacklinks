@@ -18,18 +18,13 @@ import { getScreenshotEnrichmentService } from "../lib/services/screenshot-enric
 // Parse command line arguments
 const args = process.argv.slice(2);
 const limitIndex = args.indexOf("--limit");
-const limit =
-  limitIndex !== -1 && args[limitIndex + 1]
-    ? parseInt(args[limitIndex + 1])
-    : 10;
+const limit = limitIndex !== -1 && args[limitIndex + 1] ? parseInt(args[limitIndex + 1]) : 10;
 const all = args.includes("--all");
 
 async function main() {
   console.log("🚀 Batch Screenshot Capture\n");
   console.log("═".repeat(80));
-  console.log(
-    `📋 Processing: ${all ? "ALL pending products" : `Up to ${limit} products`}`,
-  );
+  console.log(`📋 Processing: ${all ? "ALL pending products" : `Up to ${limit} products`}`);
   console.log("═".repeat(80));
   console.log("");
 
@@ -40,15 +35,9 @@ async function main() {
     console.log("📊 Current Status:");
     const statsBefore = await service.getEnrichmentStats();
     console.log(`   Total: ${statsBefore.total}`);
-    console.log(
-      `   Pending: ${statsBefore.pending} (${statsBefore.pendingPercentage}%)`,
-    );
-    console.log(
-      `   Captured: ${statsBefore.captured} (${statsBefore.capturedPercentage}%)`,
-    );
-    console.log(
-      `   Failed: ${statsBefore.failed} (${statsBefore.failedPercentage}%)`,
-    );
+    console.log(`   Pending: ${statsBefore.pending} (${statsBefore.pendingPercentage}%)`);
+    console.log(`   Captured: ${statsBefore.captured} (${statsBefore.capturedPercentage}%)`);
+    console.log(`   Failed: ${statsBefore.failed} (${statsBefore.failedPercentage}%)`);
     console.log("");
 
     if (statsBefore.pending === 0) {
@@ -94,15 +83,9 @@ async function main() {
     // Get stats after processing
     console.log("\n📊 Updated Status:");
     const statsAfter = await service.getEnrichmentStats();
-    console.log(
-      `   Pending: ${statsAfter.pending} (${statsAfter.pendingPercentage}%)`,
-    );
-    console.log(
-      `   Captured: ${statsAfter.captured} (${statsAfter.capturedPercentage}%)`,
-    );
-    console.log(
-      `   Failed: ${statsAfter.failed} (${statsAfter.failedPercentage}%)`,
-    );
+    console.log(`   Pending: ${statsAfter.pending} (${statsAfter.pendingPercentage}%)`);
+    console.log(`   Captured: ${statsAfter.captured} (${statsAfter.capturedPercentage}%)`);
+    console.log(`   Failed: ${statsAfter.failed} (${statsAfter.failedPercentage}%)`);
     console.log("═".repeat(80));
   } catch (error) {
     console.error("\n❌ Batch processing failed:", error);

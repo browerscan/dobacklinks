@@ -13,12 +13,7 @@ interface HireMeCTAProps {
   ctaText?: string;
 }
 
-export function HireMeCTA({
-  variant = "sidebar",
-  title,
-  description,
-  ctaText,
-}: HireMeCTAProps) {
+export function HireMeCTA({ variant = "sidebar", title, description, ctaText }: HireMeCTAProps) {
   const handleCTAClick = (ctaName: string, ctaUrl: string) => {
     trackCTAClick(ctaName, variant, ctaUrl);
   };
@@ -41,10 +36,7 @@ export function HireMeCTA({
 
           <div className="space-y-2">
             <Button asChild className="w-full">
-              <Link
-                href="/services"
-                onClick={() => handleCTAClick("Hire Me", "/services")}
-              >
+              <Link href="/services" onClick={() => handleCTAClick("Hire Me", "/services")}>
                 <Sparkles className="w-4 h-4 mr-2" />
                 {ctaText || "Hire Me"}
               </Link>
@@ -53,9 +45,7 @@ export function HireMeCTA({
             <Button variant="outline" asChild className="w-full">
               <a
                 href="mailto:outreach@dobacklinks.com"
-                onClick={() =>
-                  handleCTAClick("Email Me", "mailto:outreach@dobacklinks.com")
-                }
+                onClick={() => handleCTAClick("Email Me", "mailto:outreach@dobacklinks.com")}
               >
                 <Mail className="w-4 h-4 mr-2" />
                 Email Me
@@ -82,9 +72,7 @@ export function HireMeCTA({
             </div>
 
             <div className="flex-1 text-center md:text-left">
-              <h3 className="font-semibold mb-1">
-                {title || "Can't find what you need?"}
-              </h3>
+              <h3 className="font-semibold mb-1">{title || "Can't find what you need?"}</h3>
               <p className="text-sm text-muted-foreground">
                 {description ||
                   "Hire me for custom research and personal outreach to 1,000+ publishers"}
@@ -93,19 +81,14 @@ export function HireMeCTA({
 
             <div className="flex gap-2 flex-shrink-0">
               <Button asChild>
-                <Link
-                  href="/services"
-                  onClick={() => handleCTAClick("Learn More", "/services")}
-                >
+                <Link href="/services" onClick={() => handleCTAClick("Learn More", "/services")}>
                   {ctaText || "Learn More"}
                 </Link>
               </Button>
               <Button variant="outline" asChild>
                 <a
                   href="mailto:outreach@dobacklinks.com"
-                  onClick={() =>
-                    handleCTAClick("Contact", "mailto:outreach@dobacklinks.com")
-                  }
+                  onClick={() => handleCTAClick("Contact", "mailto:outreach@dobacklinks.com")}
                 >
                   Contact
                 </a>

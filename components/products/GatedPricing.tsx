@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lock, DollarSign } from "lucide-react";
+import { Lock, DollarSign, Eye, Mail, Clock, CheckCircle2, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -10,57 +10,91 @@ export function GatedPricing() {
   const pathname = usePathname();
 
   return (
-    <Card className="border-dashed border-2 border-muted-foreground/30 relative overflow-hidden">
-      {/* Blurred background effect */}
-      <div className="absolute inset-0 backdrop-blur-sm bg-background/80 z-10" />
-
-      <CardHeader className="relative z-20">
+    <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 relative overflow-hidden">
+      <CardHeader className="relative z-20 pb-4">
         <CardTitle className="flex items-center gap-2">
-          <DollarSign className="w-5 h-5 text-muted-foreground" />
-          <span className="text-muted-foreground">Pricing Information</span>
+          <DollarSign className="w-5 h-5 text-primary" />
+          <span>Pricing & Contact Information</span>
         </CardTitle>
       </CardHeader>
 
       <CardContent className="relative z-20">
-        <div className="text-center py-8 space-y-4">
-          <div className="w-fit mx-auto p-4 rounded-full bg-muted">
-            <Lock className="w-8 h-8 text-muted-foreground" />
+        <div className="space-y-6">
+          {/* Value Preview - What's inside */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-background/60 border">
+              <div className="p-2 rounded-md bg-green-100 dark:bg-green-900/30">
+                <DollarSign className="w-4 h-4 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm">Exact Pricing</h4>
+                <p className="text-xs text-muted-foreground">Price ranges and breakdowns</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-background/60 border">
+              <div className="p-2 rounded-md bg-blue-100 dark:bg-blue-900/30">
+                <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm">Direct Contact</h4>
+                <p className="text-xs text-muted-foreground">Email for direct outreach</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-background/60 border">
+              <div className="p-2 rounded-md bg-amber-100 dark:bg-amber-900/30">
+                <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm">Turnaround Time</h4>
+                <p className="text-xs text-muted-foreground">How fast they publish</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-background/60 border">
+              <div className="p-2 rounded-md bg-purple-100 dark:bg-purple-900/30">
+                <Eye className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm">Sample Posts</h4>
+                <p className="text-xs text-muted-foreground">See published examples</p>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <h3 className="font-semibold text-lg mb-2">
-              Sign in to see pricing and contact info
-            </h3>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              Get access to detailed pricing, turnaround times, and direct
-              contact information by signing in with your account.
-            </p>
+          {/* Trust Indicators */}
+          <div className="flex items-center justify-center gap-4 py-2 border-y border-dashed">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+              <span>9,700+ Sites</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <TrendingUp className="w-3.5 h-3.5 text-primary" />
+              <span>Verified Metrics</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+              <span>Free Account</span>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button asChild>
+          {/* CTA */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            <Button asChild size="lg" className="shadow-lg">
               <Link href={`/login?returnUrl=${encodeURIComponent(pathname)}`}>
-                Sign In to View Pricing
+                <Eye className="w-4 h-4 mr-2" />
+                Sign In to Reveal Pricing
               </Link>
             </Button>
-            <Button variant="outline" asChild>
-              <Link href="/services">Or Hire Our Outreach Service</Link>
+            <Button variant="outline" size="lg" asChild>
+              <Link href="/services">Hire Our Outreach Service Instead</Link>
             </Button>
           </div>
 
-          <p className="text-xs text-muted-foreground">
-            Free to create an account • No credit card required
+          <p className="text-center text-xs text-muted-foreground">
+            Free account • No credit card required • Instant access
           </p>
-        </div>
-
-        {/* Fake blurred content in background */}
-        <div className="absolute inset-0 z-0 opacity-20">
-          <div className="p-6 space-y-3">
-            <div className="h-4 bg-muted rounded w-1/3" />
-            <div className="h-8 bg-muted rounded w-2/3" />
-            <div className="h-4 bg-muted rounded w-1/2" />
-            <div className="h-4 bg-muted rounded w-1/4" />
-          </div>
         </div>
       </CardContent>
     </Card>

@@ -1,10 +1,7 @@
 "use client";
 
 import { updateMyProductAction } from "@/actions/products/user";
-import {
-  ProductFormValues,
-  productSchema,
-} from "@/app/(basic-layout)/submit/schema";
+import { ProductFormValues, productSchema } from "@/app/(basic-layout)/submit/schema";
 import ProductForm from "@/components/products/ProductForm";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -54,10 +51,7 @@ export default function EditProductClient({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-6xl mx-auto py-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-6xl mx-auto py-4">
         <ProductForm form={form} categories={categories} isEditing />
         <div className="flex justify-end gap-2 py-8">
           <Button

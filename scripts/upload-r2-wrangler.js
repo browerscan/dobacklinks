@@ -22,9 +22,7 @@ const { execSync } = require("child_process");
 
 // Configuration from .env.local
 const envPath = path.join(__dirname, "..", ".env.local");
-const envContent = fs.existsSync(envPath)
-  ? fs.readFileSync(envPath, "utf-8")
-  : "";
+const envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, "utf-8") : "";
 
 const getEnvValue = (key) => {
   const match = envContent.match(new RegExp(`^${key}=(.*)$`, "m"));
@@ -121,10 +119,9 @@ function uploadFile(filePath, r2Key) {
   }
 
   try {
-    execSync(
-      `wrangler r2 object put "${fullKey}" --file="${filePath}" --remote`,
-      { stdio: "pipe" },
-    );
+    execSync(`wrangler r2 object put "${fullKey}" --file="${filePath}" --remote`, {
+      stdio: "pipe",
+    });
     return { success: true, key: r2Key };
   } catch (e) {
     return { success: false, key: r2Key, error: e.message };
@@ -178,17 +175,7 @@ async function main() {
           walkDir(fullPath, baseDir);
         } else {
           const ext = path.extname(entry.name).toLowerCase();
-          if (
-            [
-              ".png",
-              ".jpg",
-              ".jpeg",
-              ".gif",
-              ".webp",
-              ".svg",
-              ".avif",
-            ].includes(ext)
-          ) {
+          if ([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".avif"].includes(ext)) {
             const relPath = path.relative(baseDir, fullPath);
             // Use forward slashes for R2 keys
             const r2Key = relPath.split(path.sep).join("/");
@@ -277,9 +264,7 @@ async function main() {
 
   console.log("\n✅ Done!");
   if (successCount > 0) {
-    console.log(
-      `\nAccess your files at: https://pub-${R2_BUCKET_NAME}.r2.dev/`,
-    );
+    console.log(`\nAccess your files at: https://pub-${R2_BUCKET_NAME}.r2.dev/`);
   }
   console.log("═".repeat(80));
 }

@@ -27,9 +27,7 @@ export default async function AdminProductsPage() {
     return (
       <div className="space-y-4 p-4 md:p-8">
         <h1 className="text-2xl font-semibold">Sites Management</h1>
-        <p className="text-destructive">
-          {`Error: ${productsResponse.error ?? "Unknown error"}`}
-        </p>
+        <p className="text-destructive">{`Error: ${productsResponse.error ?? "Unknown error"}`}</p>
       </div>
     );
   }
@@ -52,9 +50,7 @@ export default async function AdminProductsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Sites Management
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Sites Management</h1>
         <Button asChild>
           <Link href="/dashboard/sites/new">
             <Plus className="mr-2 h-4 w-4" />

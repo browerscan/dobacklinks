@@ -53,10 +53,7 @@ export interface EnrichmentResult {
 // ============================================================================
 
 export class ScreenshotEnrichmentService {
-  private readonly BATCH_SIZE = parsePositiveInt(
-    process.env.SCREENSHOT_BATCH_SIZE,
-    8,
-  ); // 平衡：每批 8 个（避免 API 限流）
+  private readonly BATCH_SIZE = parsePositiveInt(process.env.SCREENSHOT_BATCH_SIZE, 8); // 平衡：每批 8 个（避免 API 限流）
   private readonly MAX_PROCESSING_TIME = parsePositiveInt(
     process.env.SCREENSHOT_MAX_PROCESSING_TIME_MS,
     55000,
@@ -65,10 +62,7 @@ export class ScreenshotEnrichmentService {
     process.env.SCREENSHOT_DELAY_BETWEEN_BATCHES_MS,
     800,
   ); // 默认 800ms（避免限流）
-  private readonly STAGGER_DELAY = parsePositiveInt(
-    process.env.SCREENSHOT_STAGGER_DELAY_MS,
-    100,
-  ); // 默认 100ms（错开请求）
+  private readonly STAGGER_DELAY = parsePositiveInt(process.env.SCREENSHOT_STAGGER_DELAY_MS, 100); // 默认 100ms（错开请求）
   private readonly CLAIM_TTL_MS = parsePositiveInt(
     process.env.SCREENSHOT_CLAIM_TTL_MS,
     10 * 60 * 1000,
@@ -149,8 +143,7 @@ export class ScreenshotEnrichmentService {
         captured,
         failed,
         pendingPercentage: total > 0 ? Math.round((pending / total) * 100) : 0,
-        capturedPercentage:
-          total > 0 ? Math.round((captured / total) * 100) : 0,
+        capturedPercentage: total > 0 ? Math.round((captured / total) * 100) : 0,
         failedPercentage: total > 0 ? Math.round((failed / total) * 100) : 0,
         lastCapturedAt: lastCapturedProduct?.screenshotCapturedAt || null,
       };
@@ -177,7 +170,7 @@ export class ScreenshotEnrichmentService {
     try {
       // 1) 预估 total（用于进度显示）。多 Worker 下这个数字只是近似值。
       const maxToProcess =
-        productIds === "pending" ? limit ?? 50 : productIds === "all" ? limit : limit;
+        productIds === "pending" ? (limit ?? 50) : productIds === "all" ? limit : limit;
 
       let estimatedTotal = 0;
       try {
@@ -186,9 +179,7 @@ export class ScreenshotEnrichmentService {
           estimatedTotal = Math.min(maxToProcess ?? 50, stats.pending);
         } else if (productIds === "all") {
           estimatedTotal =
-            maxToProcess !== undefined
-              ? Math.min(maxToProcess, stats.pending)
-              : stats.pending;
+            maxToProcess !== undefined ? Math.min(maxToProcess, stats.pending) : stats.pending;
         } else {
           estimatedTotal = productIds.length;
         }
@@ -196,8 +187,7 @@ export class ScreenshotEnrichmentService {
         // ignore stats errors; continue processing
       }
 
-      const totalBatches =
-        estimatedTotal > 0 ? Math.ceil(estimatedTotal / this.BATCH_SIZE) : 0;
+      const totalBatches = estimatedTotal > 0 ? Math.ceil(estimatedTotal / this.BATCH_SIZE) : 0;
 
       console.log(
         `🚀 Starting screenshot enrichment: ~${estimatedTotal || "?"} products, ~${totalBatches || "?"} batches`,
@@ -214,9 +204,7 @@ export class ScreenshotEnrichmentService {
         batch: Array<{ id: string; url: string; name: string }>,
         currentBatch: number,
       ) => {
-        console.log(
-          `\n📦 Batch ${currentBatch}/${totalBatches || "?"} (${batch.length} products)`,
-        );
+        console.log(`\n📦 Batch ${currentBatch}/${totalBatches || "?"} (${batch.length} products)`);
 
         if (onProgress) {
           onProgress({
@@ -233,21 +221,15 @@ export class ScreenshotEnrichmentService {
         const processingPromises = batch.map(async (product, index) => {
           try {
             if (index > 0) {
-              await new Promise((resolve) =>
-                setTimeout(resolve, this.STAGGER_DELAY * index),
-              );
+              await new Promise((resolve) => setTimeout(resolve, this.STAGGER_DELAY * index));
             }
 
             console.log(`  📸 Processing: ${product.name} (${product.url})`);
 
             const domain = storage.extractDomain(product.url);
-            const { screenshot, seoMetadata } =
-              await browserClient.captureFullData(product.url);
+            const { screenshot, seoMetadata } = await browserClient.captureFullData(product.url);
 
-            const { fullUrl, thumbnailUrl } = await storage.saveScreenshot(
-              screenshot,
-              domain,
-            );
+            const { fullUrl, thumbnailUrl } = await storage.saveScreenshot(screenshot, domain);
 
             await db
               .update(products)
@@ -276,8 +258,7 @@ export class ScreenshotEnrichmentService {
             console.log(`  ✅ Captured: ${domain}`);
             return { success: true, domain };
           } catch (error) {
-            const errorMessage =
-              error instanceof Error ? error.message : "Unknown error";
+            const errorMessage = error instanceof Error ? error.message : "Unknown error";
             const domain = storage.extractDomain(product.url);
 
             await db
@@ -307,9 +288,7 @@ export class ScreenshotEnrichmentService {
           }
         }
 
-        console.log(
-          `  📊 Batch complete: ${captured} captured, ${failed} failed`,
-        );
+        console.log(`  📊 Batch complete: ${captured} captured, ${failed} failed`);
       };
 
       if (productIds !== "all" && productIds !== "pending") {
@@ -351,9 +330,7 @@ export class ScreenshotEnrichmentService {
           await processBatch(batch, currentBatch);
 
           if (i + this.BATCH_SIZE < productsToEnrich.length) {
-            await new Promise((resolve) =>
-              setTimeout(resolve, this.DELAY_BETWEEN_REQUESTS),
-            );
+            await new Promise((resolve) => setTimeout(resolve, this.DELAY_BETWEEN_REQUESTS));
           }
         }
       } else {
@@ -367,14 +344,11 @@ export class ScreenshotEnrichmentService {
             break;
           }
 
-          const remaining =
-            productIds === "pending" ? (limit ?? 50) - processed : limit;
+          const remaining = productIds === "pending" ? (limit ?? 50) - processed : limit;
           if (remaining !== undefined && remaining <= 0) break;
 
           const batchLimit =
-            remaining !== undefined
-              ? Math.min(this.BATCH_SIZE, remaining)
-              : this.BATCH_SIZE;
+            remaining !== undefined ? Math.min(this.BATCH_SIZE, remaining) : this.BATCH_SIZE;
 
           const batch = await this.claimPendingProducts(batchLimit);
           if (batch.length === 0) break;
@@ -383,9 +357,7 @@ export class ScreenshotEnrichmentService {
           processed += batch.length;
           await processBatch(batch, currentBatch);
 
-          await new Promise((resolve) =>
-            setTimeout(resolve, this.DELAY_BETWEEN_REQUESTS),
-          );
+          await new Promise((resolve) => setTimeout(resolve, this.DELAY_BETWEEN_REQUESTS));
         }
       }
 
@@ -450,15 +422,10 @@ export class ScreenshotEnrichmentService {
       console.log(`📸 Enriching single product: ${product.name}`);
 
       // 捕获数据
-      const { screenshot, seoMetadata } = await browserClient.captureFullData(
-        product.url,
-      );
+      const { screenshot, seoMetadata } = await browserClient.captureFullData(product.url);
 
       // 保存到本地
-      const { fullUrl, thumbnailUrl } = await storage.saveScreenshot(
-        screenshot,
-        domain,
-      );
+      const { fullUrl, thumbnailUrl } = await storage.saveScreenshot(screenshot, domain);
 
       // 更新数据库
       await db
@@ -504,8 +471,7 @@ export class ScreenshotEnrichmentService {
         .update(products)
         .set({
           screenshotStatus: "failed",
-          screenshotError:
-            error instanceof Error ? error.message : "Unknown error",
+          screenshotError: error instanceof Error ? error.message : "Unknown error",
           screenshotNextCaptureAt: null,
           updatedAt: new Date(),
         })
@@ -540,12 +506,7 @@ export class ScreenshotEnrichmentService {
             screenshotNextCaptureAt: null,
             updatedAt: new Date(),
           })
-          .where(
-            and(
-              inArray(products.id, productIds),
-              eq(products.screenshotStatus, "failed"),
-            ),
-          )
+          .where(and(inArray(products.id, productIds), eq(products.screenshotStatus, "failed")))
           .returning({ id: products.id });
       } else {
         result = await db

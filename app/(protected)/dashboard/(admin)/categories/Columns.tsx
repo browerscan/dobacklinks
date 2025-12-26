@@ -74,19 +74,13 @@ export const columns: ColumnDef<Category>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                (table.options.meta as any)?.editCategory(category)
-              }
-            >
+            <DropdownMenuItem onClick={() => (table.options.meta as any)?.editCategory(category)}>
               Edit
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-red-500"
-              onClick={() =>
-                (table.options.meta as any)?.deleteCategory(category)
-              }
+              onClick={() => (table.options.meta as any)?.deleteCategory(category)}
             >
               Delete
             </DropdownMenuItem>

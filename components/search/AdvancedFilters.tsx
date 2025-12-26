@@ -49,10 +49,7 @@ function applySortToParams(params: URLSearchParams, sort: SortValue) {
     return;
   }
 
-  const [sortBy, sortOrder] = sort.split("_") as [
-    "dr" | "da" | "traffic",
-    "asc" | "desc",
-  ];
+  const [sortBy, sortOrder] = sort.split("_") as ["dr" | "da" | "traffic", "asc" | "desc"];
   params.set("sortBy", sortBy);
   params.set("sortOrder", sortOrder);
 }
@@ -70,30 +67,16 @@ export function AdvancedFilters({ onApply }: AdvancedFiltersProps) {
     parseInt(searchParams.get("minDa") || "0"),
     parseInt(searchParams.get("maxDa") || "100"),
   ]);
-  const [linkType, setLinkType] = useState<string>(
-    searchParams.get("linkType") || "all",
-  );
-  const [niche, setNiche] = useState<string>(
-    searchParams.get("niche") || "all",
-  );
-  const [minTraffic, setMinTraffic] = useState<string>(
-    searchParams.get("minTraffic") || "0",
-  );
+  const [linkType, setLinkType] = useState<string>(searchParams.get("linkType") || "all");
+  const [niche, setNiche] = useState<string>(searchParams.get("niche") || "all");
+  const [minTraffic, setMinTraffic] = useState<string>(searchParams.get("minTraffic") || "0");
   const [maxSpamScore, setMaxSpamScore] = useState<string>(
     searchParams.get("maxSpamScore") || "none",
   );
-  const [googleNews, setGoogleNews] = useState<string>(
-    searchParams.get("googleNews") || "all",
-  );
-  const [verified, setVerified] = useState<string>(
-    searchParams.get("verified") || "all",
-  );
-  const [featured, setFeatured] = useState<string>(
-    searchParams.get("featured") || "all",
-  );
-  const [sort, setSort] = useState<SortValue>(
-    getSortValueFromParams(searchParams),
-  );
+  const [googleNews, setGoogleNews] = useState<string>(searchParams.get("googleNews") || "all");
+  const [verified, setVerified] = useState<string>(searchParams.get("verified") || "all");
+  const [featured, setFeatured] = useState<string>(searchParams.get("featured") || "all");
+  const [sort, setSort] = useState<SortValue>(getSortValueFromParams(searchParams));
 
   // Update state when URL params change
   useEffect(() => {
@@ -403,11 +386,7 @@ export function AdvancedFilters({ onApply }: AdvancedFiltersProps) {
             Apply Filters
           </Button>
           {hasActiveFilters && (
-            <Button
-              variant="outline"
-              onClick={handleResetFilters}
-              className="w-full"
-            >
+            <Button variant="outline" onClick={handleResetFilters} className="w-full">
               <RotateCcw className="w-4 h-4 mr-2" />
               Reset Filters
             </Button>

@@ -11,17 +11,7 @@ import {
 } from "@/lib/db/schema";
 import { getErrorMessage } from "@/lib/error-utils";
 import { Tag } from "@/types/blog";
-import {
-  and,
-  count,
-  desc,
-  eq,
-  getTableColumns,
-  ilike,
-  inArray,
-  or,
-  sql,
-} from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns, ilike, inArray, or, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -73,8 +63,7 @@ export async function listPostsAction({
       );
     }
 
-    const whereCondition =
-      conditions.length > 0 ? and(...conditions) : undefined;
+    const whereCondition = conditions.length > 0 ? and(...conditions) : undefined;
 
     const postsQuery = db
       .select({
@@ -96,10 +85,7 @@ export async function listPostsAction({
       .limit(pageSize)
       .offset(pageIndex * pageSize);
 
-    const countQuery = db
-      .select({ value: count() })
-      .from(postsSchema)
-      .where(whereCondition);
+    const countQuery = db.select({ value: count() }).from(postsSchema).where(whereCondition);
 
     const [postsData, countData] = await Promise.all([postsQuery, countQuery]);
 
@@ -163,9 +149,7 @@ interface GetPostResult {
   error?: string;
 }
 
-export async function getPostByIdAction({
-  postId,
-}: GetPostByIdParams): Promise<GetPostResult> {
+export async function getPostByIdAction({ postId }: GetPostByIdParams): Promise<GetPostResult> {
   if (!(await isAdmin())) {
     return actionResponse.forbidden("Admin privileges required.");
   }
@@ -175,11 +159,7 @@ export async function getPostByIdAction({
   }
 
   try {
-    const postData = await db
-      .select()
-      .from(postsSchema)
-      .where(eq(postsSchema.id, postId))
-      .limit(1);
+    const postData = await db.select().from(postsSchema).where(eq(postsSchema.id, postId)).limit(1);
 
     if (!postData || postData.length === 0) {
       return actionResponse.notFound("Post not found.");
@@ -225,15 +205,10 @@ interface ActionResult {
   error?: string;
 }
 
-export async function createPostAction({
-  data,
-}: CreatePostParams): Promise<ActionResult> {
+export async function createPostAction({ data }: CreatePostParams): Promise<ActionResult> {
   const validatedFields = postActionSchema.safeParse(data);
   if (!validatedFields.success) {
-    console.error(
-      "Validation Error:",
-      validatedFields.error.flatten().fieldErrors,
-    );
+    console.error("Validation Error:", validatedFields.error.flatten().fieldErrors);
     return actionResponse.badRequest("Invalid input data.");
   }
 
@@ -247,8 +222,7 @@ export async function createPostAction({
   const authorId = user.id;
 
   const { tags: inputTags, ...postData } = validatedFields.data;
-  const finalFeaturedImageUrl =
-    postData.featuredImageUrl === "" ? null : postData.featuredImageUrl;
+  const finalFeaturedImageUrl = postData.featuredImageUrl === "" ? null : postData.featuredImageUrl;
 
   try {
     const newPost = await db
@@ -286,9 +260,7 @@ export async function createPostAction({
     console.error("Create Post Action Failed:", error);
     const errorMessage = getErrorMessage(error);
     if ((error as any)?.cause?.code === "23505") {
-      return actionResponse.conflict(
-        `Slug '${validatedFields.data.slug}' already exists.`,
-      );
+      return actionResponse.conflict(`Slug '${validatedFields.data.slug}' already exists.`);
     }
     return actionResponse.error(errorMessage);
   }
@@ -298,9 +270,7 @@ interface UpdatePostParams {
   data: PostActionInput;
 }
 
-export async function updatePostAction({
-  data,
-}: UpdatePostParams): Promise<ActionResult> {
+export async function updatePostAction({ data }: UpdatePostParams): Promise<ActionResult> {
   if (!(await isAdmin())) {
     return actionResponse.forbidden("Admin privileges required.");
   }
@@ -312,23 +282,14 @@ export async function updatePostAction({
     .safeParse(data);
 
   if (!validatedFields.success) {
-    console.error(
-      "Validation Error:",
-      validatedFields.error.flatten().fieldErrors,
-    );
+    console.error("Validation Error:", validatedFields.error.flatten().fieldErrors);
     return actionResponse.badRequest("Invalid input data for update.");
   }
 
-  const {
-    id: postId,
-    tags: inputTags,
-    ...postUpdateData
-  } = validatedFields.data;
+  const { id: postId, tags: inputTags, ...postUpdateData } = validatedFields.data;
 
   const finalFeaturedImageUrl =
-    postUpdateData.featuredImageUrl === ""
-      ? null
-      : postUpdateData.featuredImageUrl;
+    postUpdateData.featuredImageUrl === "" ? null : postUpdateData.featuredImageUrl;
 
   try {
     const currentPostData = await db
@@ -378,9 +339,7 @@ export async function updatePostAction({
     console.error("Update Post Action Failed:", error);
     const errorMessage = getErrorMessage(error);
     if ((error as any)?.cause?.code === "23505") {
-      return actionResponse.conflict(
-        `Slug '${validatedFields.data.slug}' already exists.`,
-      );
+      return actionResponse.conflict(`Slug '${validatedFields.data.slug}' already exists.`);
     }
     return actionResponse.error(errorMessage);
   }
@@ -390,9 +349,7 @@ interface DeletePostParams {
   postId: string;
 }
 
-export async function deletePostAction({
-  postId,
-}: DeletePostParams): Promise<ActionResult> {
+export async function deletePostAction({ postId }: DeletePostParams): Promise<ActionResult> {
   if (!(await isAdmin())) {
     return actionResponse.forbidden("Admin privileges required.");
   }
@@ -484,12 +441,8 @@ export async function listPublishedPostsAction({
       db
         .select({
           ...getTableColumns(postsSchema),
-          tag_ids: sql<string[]>`array_agg(${postTagsSchema.tagId})`.as(
-            "tag_ids",
-          ),
-          tag_names: sql<string[]>`array_agg(${tagsSchema.name})`.as(
-            "tag_names",
-          ),
+          tag_ids: sql<string[]>`array_agg(${postTagsSchema.tagId})`.as("tag_ids"),
+          tag_names: sql<string[]>`array_agg(${tagsSchema.name})`.as("tag_names"),
         })
         .from(postsSchema)
         .leftJoin(postTagsSchema, eq(postsSchema.id, postTagsSchema.postId))
@@ -499,10 +452,7 @@ export async function listPublishedPostsAction({
     );
 
     let query = db.with(postsSubquery).select().from(postsSubquery);
-    let countQuery = db
-      .with(postsSubquery)
-      .select({ value: count() })
-      .from(postsSubquery);
+    let countQuery = db.with(postsSubquery).select({ value: count() }).from(postsSubquery);
 
     if (tagId) {
       query.where(sql`${tagId} = ANY(tag_ids)`);
@@ -581,9 +531,7 @@ export async function getPublishedPostBySlugAction({
     const postData = await db
       .select()
       .from(postsSchema)
-      .where(
-        and(eq(postsSchema.slug, slug), eq(postsSchema.status, "published")),
-      )
+      .where(and(eq(postsSchema.slug, slug), eq(postsSchema.status, "published")))
       .limit(1);
 
     if (!postData || postData.length === 0) {
@@ -618,18 +566,12 @@ export async function getPublishedPostBySlugAction({
     };
 
     if (restrictionCustomCode) {
-      return actionResponse.success(
-        { post: postResultData },
-        restrictionCustomCode,
-      );
+      return actionResponse.success({ post: postResultData }, restrictionCustomCode);
     }
 
     return actionResponse.success({ post: postResultData });
   } catch (error) {
-    console.error(
-      `Get Published Post By Slug Action Failed for slug ${slug}:`,
-      error,
-    );
+    console.error(`Get Published Post By Slug Action Failed for slug ${slug}:`, error);
     const errorMessage = getErrorMessage(error);
     return actionResponse.error(errorMessage);
   }

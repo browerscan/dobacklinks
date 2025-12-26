@@ -8,8 +8,7 @@ module.exports = [
   ...nextCoreWebVitals,
   {
     rules: {
-      "react-hooks/exhaustive-deps":
-        process.env.NODE_ENV === "production" ? "off" : "warn",
+      "react-hooks/exhaustive-deps": process.env.NODE_ENV === "production" ? "off" : "warn",
       // React Compiler-related rules can be noisy in non-compiler projects.
       "react-hooks/incompatible-library": "off",
       "react-hooks/preserve-manual-memoization": "off",

@@ -18,19 +18,11 @@ interface HMACSignatureParams {
  * @param secret - Secret key for signing
  * @returns HMAC signature (hex string)
  */
-export function generateHMACSignature(
-  params: HMACSignatureParams,
-  secret: string,
-): string {
+export function generateHMACSignature(params: HMACSignatureParams, secret: string): string {
   const { method, path, timestamp, body = "" } = params;
 
   // Create canonical string: METHOD|PATH|TIMESTAMP|BODY
-  const canonicalString = [
-    method.toUpperCase(),
-    path,
-    timestamp.toString(),
-    body,
-  ].join("|");
+  const canonicalString = [method.toUpperCase(), path, timestamp.toString(), body].join("|");
 
   // Generate HMAC-SHA256 signature
   const hmac = crypto.createHmac("sha256", secret);
@@ -82,10 +74,7 @@ export function verifyHMACSignature(
   const expectedSignature = generateHMACSignature(params, secret);
 
   // 3. Compare signatures using constant-time comparison to prevent timing attacks
-  const valid = crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature),
-  );
+  const valid = crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
 
   if (!valid) {
     return {

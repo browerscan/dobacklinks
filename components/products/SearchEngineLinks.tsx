@@ -23,8 +23,7 @@ const SEARCH_ENGINES = [
   },
   {
     name: "DuckDuckGo",
-    getUrl: (domain: string) =>
-      `https://duckduckgo.com/?q=site%3A${encodeURIComponent(domain)}`,
+    getUrl: (domain: string) => `https://duckduckgo.com/?q=site%3A${encodeURIComponent(domain)}`,
   },
 ];
 

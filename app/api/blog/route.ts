@@ -1,9 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { postActionSchema } from "@/app/(protected)/dashboard/(admin)/blog/schema";
-import {
-  verifyHMACSignature,
-  extractHMACSignature,
-} from "@/lib/security/hmac-auth";
+import { verifyHMACSignature, extractHMACSignature } from "@/lib/security/hmac-auth";
 import { env } from "@/lib/env";
 import { db } from "@/lib/db";
 import {
@@ -13,7 +10,17 @@ import {
 } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { getErrorMessage } from "@/lib/error-utils";
+import {
+  withApiHandler,
+  apiSuccessResponse,
+  unauthorized,
+  badRequest,
+  notFound,
+  ConflictError,
+  DatabaseError,
+} from "@/lib/api-wrapper";
+import { logger } from "@/lib/logger";
+import { reportMessage } from "@/lib/error-handler";
 
 export const maxDuration = 60; // 60 seconds timeout
 export const dynamic = "force-dynamic";
@@ -33,116 +40,89 @@ export const dynamic = "force-dynamic";
  *
  * Body: PostActionInput (see schema.ts)
  */
-export async function POST(request: NextRequest) {
-  // 1. Verify HMAC signature
-  const authHeader = request.headers.get("authorization");
-  const timestampHeader = request.headers.get("x-timestamp");
-  const secret = env.CRON_SECRET;
+export const POST = withApiHandler(
+  {
+    requireAuth: false, // Using HMAC auth instead
+    log: true,
+  },
+  async (request, { requestId }) => {
+    // 1. Verify HMAC signature
+    const authHeader = request.headers.get("authorization");
+    const timestampHeader = request.headers.get("x-timestamp");
+    const secret = env.CRON_SECRET;
 
-  // Extract signature from Authorization header
-  const signature = extractHMACSignature(authHeader);
-  if (!signature) {
-    console.warn("⚠️ [/api/blogs] Missing or invalid Authorization header");
-    return NextResponse.json(
+    // Extract signature from Authorization header
+    const signature = extractHMACSignature(authHeader);
+    if (!signature) {
+      reportMessage("[/api/blogs] Missing or invalid Authorization header", "warning", {
+        requestId,
+      });
+      throw unauthorized(
+        'Missing or invalid Authorization header. Expected: "HMAC <signature>"',
+        "HMAC_REQUIRED",
+      );
+    }
+
+    // Parse timestamp
+    const timestamp = timestampHeader ? parseInt(timestampHeader, 10) : null;
+    if (!timestamp || isNaN(timestamp)) {
+      reportMessage("[/api/blogs] Missing or invalid X-Timestamp header", "warning", { requestId });
+      throw unauthorized("Missing or invalid X-Timestamp header", "TIMESTAMP_REQUIRED");
+    }
+
+    // Read body for HMAC verification
+    let bodyText = "";
+    try {
+      bodyText = await request.text();
+    } catch (error) {
+      logger.error("[/api/blogs] Failed to read request body", { requestId }, error as Error);
+      throw badRequest("Failed to read request body", "BODY_READ_FAILED");
+    }
+
+    // Verify HMAC signature
+    const { pathname } = new URL(request.url);
+    const verification = verifyHMACSignature(
+      signature,
       {
-        success: false,
-        error:
-          'Missing or invalid Authorization header. Expected: "HMAC <signature>"',
+        method: "POST",
+        path: pathname,
+        timestamp,
+        body: bodyText,
       },
-      { status: 401 },
+      secret,
+      { maxAgeSeconds: 300 }, // 5 minutes replay protection
     );
-  }
 
-  // Parse timestamp
-  const timestamp = timestampHeader ? parseInt(timestampHeader, 10) : null;
-  if (!timestamp || isNaN(timestamp)) {
-    console.warn("⚠️ [/api/blogs] Missing or invalid X-Timestamp header");
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Missing or invalid X-Timestamp header",
-      },
-      { status: 401 },
-    );
-  }
+    if (!verification.valid) {
+      reportMessage(`[/api/blogs] HMAC verification failed: ${verification.error}`, "warning", {
+        requestId,
+        timestamp,
+        path: pathname,
+      });
+      throw unauthorized(`Authentication failed: ${verification.error}`, "HMAC_INVALID");
+    }
 
-  // Read body for HMAC verification
-  let bodyText = "";
-  try {
-    bodyText = await request.text();
-  } catch (error) {
-    console.error("⚠️ [/api/blogs] Failed to read request body:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to read request body",
-      },
-      { status: 400 },
-    );
-  }
+    logger.info("[/api/blogs] Request authenticated via HMAC signature", { requestId });
 
-  // Verify HMAC signature
-  const { pathname } = new URL(request.url);
-  const verification = verifyHMACSignature(
-    signature,
-    {
-      method: "POST",
-      path: pathname,
-      timestamp,
-      body: bodyText,
-    },
-    secret,
-    { maxAgeSeconds: 300 }, // 5 minutes replay protection
-  );
+    // 2. Parse and validate request body
+    let requestData;
+    try {
+      requestData = JSON.parse(bodyText);
+    } catch (error) {
+      logger.warn("[/api/blogs] Invalid JSON in request body", { requestId });
+      throw badRequest("Invalid JSON in request body", "JSON_PARSE_FAILED");
+    }
 
-  if (!verification.valid) {
-    console.warn(
-      `⚠️ [/api/blogs] HMAC verification failed: ${verification.error}`,
-    );
-    return NextResponse.json(
-      {
-        success: false,
-        error: `Authentication failed: ${verification.error}`,
-      },
-      { status: 401 },
-    );
-  }
+    const validatedFields = postActionSchema.safeParse(requestData);
+    if (!validatedFields.success) {
+      reportMessage("[/api/blogs] Validation error", "warning", {
+        requestId,
+        errors: validatedFields.error.flatten().fieldErrors,
+      });
+      throw badRequest("Invalid input data", "VALIDATION_FAILED");
+    }
 
-  console.log("📝 [/api/blogs] Request authenticated via HMAC signature");
-
-  // 2. Parse and validate request body
-  let requestData;
-  try {
-    requestData = JSON.parse(bodyText);
-  } catch (error) {
-    console.error("⚠️ [/api/blogs] Invalid JSON in request body:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Invalid JSON in request body",
-      },
-      { status: 400 },
-    );
-  }
-
-  const validatedFields = postActionSchema.safeParse(requestData);
-  if (!validatedFields.success) {
-    console.error(
-      "⚠️ [/api/blogs] Validation error:",
-      validatedFields.error.flatten().fieldErrors,
-    );
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Invalid input data",
-        details: validatedFields.error.flatten().fieldErrors,
-      },
-      { status: 400 },
-    );
-  }
-
-  // 3. Get or create system user as author
-  try {
+    // 3. Get or create system user as author
     let systemUser;
     const existingSystemUsers = await db
       .select()
@@ -165,10 +145,10 @@ export async function POST(request: NextRequest) {
         .returning();
 
       if (!newUsers || newUsers.length === 0) {
-        throw new Error("Failed to create system user");
+        throw new DatabaseError("Failed to create system user", "create user");
       }
       systemUser = newUsers[0];
-      console.log("✅ [/api/blogs] Created system user");
+      logger.info("[/api/blogs] Created system user", { requestId });
     }
 
     const authorId = systemUser.id;
@@ -178,75 +158,77 @@ export async function POST(request: NextRequest) {
     const finalFeaturedImageUrl =
       postData.featuredImageUrl === "" ? null : postData.featuredImageUrl;
 
-    const newPost = await db
-      .insert(postsSchema)
-      .values({
-        ...postData,
-        authorId: authorId,
-        featuredImageUrl: finalFeaturedImageUrl,
-        content: postData.content || null,
-        description: postData.description || null,
-        isPinned: postData.isPinned || false,
-      })
-      .returning({ id: postsSchema.id, slug: postsSchema.slug });
+    try {
+      const newPost = await db
+        .insert(postsSchema)
+        .values({
+          ...postData,
+          authorId: authorId,
+          featuredImageUrl: finalFeaturedImageUrl,
+          content: postData.content || null,
+          description: postData.description || null,
+          isPinned: postData.isPinned || false,
+        })
+        .returning({ id: postsSchema.id, slug: postsSchema.slug });
 
-    if (!newPost || newPost.length === 0 || !newPost[0].id) {
-      throw new Error("Failed to create post: No ID returned");
-    }
+      if (!newPost || newPost.length === 0 || !newPost[0].id) {
+        throw new DatabaseError("Failed to create post: No ID returned", "insert post");
+      }
 
-    const postId = newPost[0].id;
-    const postSlug = newPost[0].slug;
+      const postId = newPost[0].id;
+      const postSlug = newPost[0].slug;
 
-    // 5. Associate tags if provided
-    if (inputTags && inputTags.length > 0) {
-      const tagAssociations = inputTags.map((tag) => ({
-        postId: postId,
-        tagId: tag.id,
-      }));
-      await db.insert(postTagsSchema).values(tagAssociations);
-      console.log(`✅ [/api/blogs] Associated ${inputTags.length} tags`);
-    }
+      // 5. Associate tags if provided
+      if (inputTags && inputTags.length > 0) {
+        const tagAssociations = inputTags.map((tag) => ({
+          postId: postId,
+          tagId: tag.id,
+        }));
+        await db.insert(postTagsSchema).values(tagAssociations);
+        logger.info("[/api/blogs] Associated tags with post", {
+          requestId,
+          postId,
+          tagCount: inputTags.length,
+        });
+      }
 
-    // 6. Revalidate paths if published
-    if (postData.status === "published") {
-      revalidatePath(`/blog`);
-      revalidatePath(`/blog/${postSlug}`);
-      console.log(`✅ [/api/blog] Revalidated paths for published post`);
-    }
+      // 6. Revalidate paths if published
+      if (postData.status === "published") {
+        revalidatePath(`/blog`);
+        revalidatePath(`/blog/${postSlug}`);
+      }
 
-    console.log(
-      `✅ [/api/blogs] Post created successfully: ${postId} (${postSlug})`,
-    );
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        postId: postId,
+      logger.info("[/api/blogs] Post created successfully", {
+        requestId,
+        postId,
         slug: postSlug,
-      },
-    });
-  } catch (error) {
-    console.error("❌ [/api/blogs] Create post failed:", error);
-    const errorMessage = getErrorMessage(error);
+        status: postData.status,
+      });
 
-    // Handle duplicate slug error
-    if ((error as any)?.cause?.code === "23505") {
-      return NextResponse.json(
+      return apiSuccessResponse(
         {
-          success: false,
-          error: `Slug '${validatedFields.data.slug}' already exists`,
+          postId: postId,
+          slug: postSlug,
         },
-        { status: 409 },
+        201,
+      );
+    } catch (error) {
+      // Handle duplicate slug error
+      if ((error as any)?.cause?.code === "23505") {
+        throw new ConflictError(`Slug '${validatedFields.data.slug}' already exists`);
+      }
+
+      // Re-throw if already a known error type
+      if (error instanceof ConflictError || error instanceof DatabaseError) {
+        throw error;
+      }
+
+      // Wrap unknown errors
+      throw new DatabaseError(
+        "Failed to create post",
+        "insert post",
+        error instanceof Error ? error : undefined,
       );
     }
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to create post",
-        details: errorMessage,
-      },
-      { status: 500 },
-    );
-  }
-}
+  },
+);

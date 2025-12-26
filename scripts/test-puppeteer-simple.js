@@ -198,11 +198,7 @@ async function main() {
         console.log("\n💾 Test 4: Save to Local Storage");
         console.log("-".repeat(40));
         const saveStart = Date.now();
-        const { fullUrl, thumbnailUrl } = await saveScreenshot(
-          screenshot,
-          thumbnail,
-          url,
-        );
+        const { fullUrl, thumbnailUrl } = await saveScreenshot(screenshot, thumbnail, url);
         const saveTime = Date.now() - saveStart;
         console.log("✅ Screenshots saved:");
         console.log(`   Full: ${fullUrl}`);
@@ -210,8 +206,7 @@ async function main() {
         console.log(`⏱️  Time: ${saveTime}ms`);
 
         // 总计时间
-        const totalTime =
-          navTime + seoTime + screenshotTime + thumbTime + saveTime;
+        const totalTime = navTime + seoTime + screenshotTime + thumbTime + saveTime;
         console.log("\n📊 Performance Summary:");
         console.log("-".repeat(40));
         console.log(`   Navigation:  ${navTime}ms`);

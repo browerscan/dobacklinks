@@ -73,11 +73,7 @@ export function BlogListActions({ post }: BlogListActionsProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem asChild>
-            <Link
-              href={`/dashboard/blog/${post.id}/edit`}
-              title="Edit"
-              prefetch={false}
-            >
+            <Link href={`/dashboard/blog/${post.id}/edit`} title="Edit" prefetch={false}>
               <Pencil className="mr-2 h-4 w-4" /> Edit
             </Link>
           </DropdownMenuItem>
@@ -98,12 +94,10 @@ export function BlogListActions({ post }: BlogListActionsProps) {
 
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Are you sure you want to delete this post?
-          </AlertDialogTitle>
+          <AlertDialogTitle>Are you sure you want to delete this post?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the post
-            titled &quot;{post.title}&quot;.
+            This action cannot be undone. This will permanently delete the post titled &quot;
+            {post.title}&quot;.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -30,8 +30,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
     tokenValidation = await validateToken(token);
     if (!tokenValidation.isValid) {
       tokenValidation.error =
-        tokenValidation.error ||
-        "The unsubscribe token is invalid or has expired.";
+        tokenValidation.error || "The unsubscribe token is invalid or has expired.";
     }
   }
 
@@ -40,9 +39,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
       <div className="max-w-md mx-auto">
         <div className="bg-card border border-border rounded-xl shadow-xl overflow-hidden backdrop-blur-sm">
           <div className="bg-gradient-to-r from-indigo-500 to-cyan-500 p-6 text-center">
-            <h1 className="text-2xl font-bold text-white">
-              Unsubscribe from Newsletter
-            </h1>
+            <h1 className="text-2xl font-bold text-white">Unsubscribe from Newsletter</h1>
           </div>
 
           <div className="p-6">
@@ -61,8 +58,8 @@ export default async function Page(props: { searchParams: SearchParams }) {
                 </div>
 
                 <p className="text-muted-foreground">
-                  If you believe this is a mistake, or if you continue to
-                  receive emails, please contact us.
+                  If you believe this is a mistake, or if you continue to receive emails, please
+                  contact us.
                 </p>
 
                 <div className="pt-4 mt-6 border-t border-border">

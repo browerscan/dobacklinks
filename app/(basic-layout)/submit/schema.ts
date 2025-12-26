@@ -1,26 +1,14 @@
 import { z } from "zod";
 
 export const productSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Site name is required")
-    .max(80, "Site name is too long"),
+  name: z.string().min(1, "Site name is required").max(80, "Site name is too long"),
   url: z.string().url("Please enter a valid URL"),
-  tagline: z
-    .string()
-    .min(1, "Short summary is required")
-    .max(160, "Summary is too long"),
+  tagline: z.string().min(1, "Short summary is required").max(160, "Summary is too long"),
   description: z
     .string()
-    .min(
-      200,
-      "Please add at least 200 characters (guest post guidelines, topics, rules).",
-    )
+    .min(200, "Please add at least 200 characters (guest post guidelines, topics, rules).")
     .max(3000, "Description is too long"),
-  logoUrl: z
-    .string()
-    .min(1, "Logo is required.")
-    .url("Logo must be a valid URL"),
+  logoUrl: z.string().min(1, "Logo is required.").url("Logo must be a valid URL"),
   appImages: z
     .array(z.string().url("Each screenshot must be a valid URL"))
     .max(4, "You can upload a maximum of 4 images.")

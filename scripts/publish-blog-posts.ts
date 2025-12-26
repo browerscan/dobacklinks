@@ -37,12 +37,7 @@ function generateHMACSignature(
   body: string,
   secret: string,
 ): string {
-  const canonicalString = [
-    method.toUpperCase(),
-    path,
-    timestamp.toString(),
-    body,
-  ].join("|");
+  const canonicalString = [method.toUpperCase(), path, timestamp.toString(), body].join("|");
 
   const hmac = crypto.createHmac("sha256", secret);
   hmac.update(canonicalString);
@@ -59,13 +54,7 @@ async function createBlogPost(postData: any) {
   const body = JSON.stringify(postData);
 
   // Generate HMAC signature
-  const signature = generateHMACSignature(
-    "POST",
-    apiPath,
-    timestamp,
-    body,
-    CRON_SECRET!,
-  );
+  const signature = generateHMACSignature("POST", apiPath, timestamp, body, CRON_SECRET!);
 
   console.log(`   🔐 Authenticating with HMAC...`);
 
@@ -90,9 +79,7 @@ async function createBlogPost(postData: any) {
     } else {
       console.error(`   ❌ Error: HTTP ${response.status}`);
       console.error(`   Response:`, JSON.stringify(result, null, 2));
-      throw new Error(
-        `Failed to publish: ${result.error || response.statusText}`,
-      );
+      throw new Error(`Failed to publish: ${result.error || response.statusText}`);
     }
   } catch (error) {
     console.error(`   ❌ Request failed:`, error);

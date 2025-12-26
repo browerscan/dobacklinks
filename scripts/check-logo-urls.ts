@@ -26,9 +26,7 @@ async function main() {
   console.log(`Google URLs: ${googleCount[0]?.count || 0}`);
 
   // Total count
-  const totalCount = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(products);
+  const totalCount = await db.select({ count: sql<number>`count(*)` }).from(products);
 
   console.log(`Total products: ${totalCount[0]?.count || 0}\n`);
 

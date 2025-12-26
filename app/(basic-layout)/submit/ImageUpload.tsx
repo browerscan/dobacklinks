@@ -73,28 +73,21 @@ export function ImageUpload({
       }
 
       try {
-        const presignedUrlActionResponse =
-          await generatePublicPresignedUploadUrl({
-            fileName: file.name,
-            contentType: file.type,
-            prefix: filenamePrefix,
-            path,
-          });
+        const presignedUrlActionResponse = await generatePublicPresignedUploadUrl({
+          fileName: file.name,
+          contentType: file.type,
+          prefix: filenamePrefix,
+          path,
+        });
 
-        if (
-          !presignedUrlActionResponse.success ||
-          !presignedUrlActionResponse.data
-        ) {
+        if (!presignedUrlActionResponse.success || !presignedUrlActionResponse.data) {
           toast.error("Upload Error", {
-            description:
-              presignedUrlActionResponse.error ||
-              "Failed to generate presigned URL.",
+            description: presignedUrlActionResponse.error || "Failed to generate presigned URL.",
           });
           return null;
         }
 
-        const { presignedUrl, publicObjectUrl } =
-          presignedUrlActionResponse.data;
+        const { presignedUrl, publicObjectUrl } = presignedUrlActionResponse.data;
 
         const uploadResponse = await fetch(presignedUrl, {
           method: "PUT",
@@ -116,10 +109,7 @@ export function ImageUpload({
         return publicObjectUrl;
       } catch (error) {
         console.error("MDX Image Upload failed:", error);
-        toast.error(
-          getErrorMessage(error) ||
-            "An unexpected error occurred during upload.",
-        );
+        toast.error(getErrorMessage(error) || "An unexpected error occurred during upload.");
         return null;
       }
     });
@@ -129,11 +119,7 @@ export function ImageUpload({
       const successfulUrls = results.filter((url): url is string => !!url);
 
       if (successfulUrls.length > 0) {
-        const currentUrls = value
-          ? Array.isArray(value)
-            ? value
-            : [value]
-          : [];
+        const currentUrls = value ? (Array.isArray(value) ? value : [value]) : [];
         const newUrls = [...currentUrls, ...successfulUrls];
         if (multiple) {
           onChange(newUrls);
@@ -214,9 +200,7 @@ export function ImageUpload({
         <div className="text-center">
           <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
           <p className="mt-2 text-sm text-foreground">
-            {isDragActive
-              ? "Drop the image(s) here..."
-              : "Drag & drop or click to upload"}
+            {isDragActive ? "Drop the image(s) here..." : "Drag & drop or click to upload"}
           </p>
           <p className="text-xs text-muted-foreground">
             PNG, JPG, WEBP
@@ -228,16 +212,9 @@ export function ImageUpload({
   );
 
   const renderPreviews = () => (
-    <div
-      className={`mt-2 grid gap-4 ${
-        multiple ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-1"
-      }`}
-    >
+    <div className={`mt-2 grid gap-4 ${multiple ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-1"}`}>
       {previews.map((url, index) => (
-        <div
-          key={url}
-          className="relative group aspect-video w-full max-h-[160px]"
-        >
+        <div key={url} className="relative group aspect-video w-full max-h-[160px]">
           <ImagePreview>
             <Image
               src={url}
@@ -267,8 +244,7 @@ export function ImageUpload({
   return (
     <div className="w-full">
       {previews.length > 0 && renderPreviews()}
-      {(multiple ? previews.length < maxFiles : previews.length === 0) &&
-        renderUploader()}
+      {(multiple ? previews.length < maxFiles : previews.length === 0) && renderUploader()}
     </div>
   );
 }

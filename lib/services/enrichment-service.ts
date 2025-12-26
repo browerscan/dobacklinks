@@ -103,17 +103,12 @@ export class EnrichmentService {
         enriched,
         failed,
         pendingPercentage: total > 0 ? Math.round((pending / total) * 100) : 0,
-        enrichedPercentage:
-          total > 0 ? Math.round((enriched / total) * 100) : 0,
+        enrichedPercentage: total > 0 ? Math.round((enriched / total) * 100) : 0,
         failedPercentage: total > 0 ? Math.round((failed / total) * 100) : 0,
         lastEnrichedAt: lastEnrichedProduct?.enrichedAt || null,
       };
     } catch (error) {
-      log.error(
-        "Error getting stats",
-        {},
-        error instanceof Error ? error : undefined,
-      );
+      log.error("Error getting stats", {}, error instanceof Error ? error : undefined);
       throw error;
     }
   }
@@ -230,8 +225,7 @@ export class EnrichmentService {
             // Accept data if we have monthly_visits OR global_rank (many smaller sites only have rank)
             if (
               result.data &&
-              (result.data.monthly_visits !== null ||
-                result.data.global_rank !== null)
+              (result.data.monthly_visits !== null || result.data.global_rank !== null)
             ) {
               // Successfully enriched
               try {
@@ -244,8 +238,7 @@ export class EnrichmentService {
                     globalRank: result.data.global_rank,
                     countryRank: result.data.country_rank,
                     bounceRate: result.data.bounce_rate?.toString() || null,
-                    pagesPerVisit:
-                      result.data.pages_per_visit?.toString() || null,
+                    pagesPerVisit: result.data.pages_per_visit?.toString() || null,
                     avgVisitDuration: result.data.avg_visit_duration,
                     trafficSources: result.data.traffic_sources,
                     similarwebData: result.data.raw_data,
@@ -527,11 +520,7 @@ export class EnrichmentService {
       log.info("Reset failed products to pending", { count });
       return count;
     } catch (error) {
-      log.error(
-        "Error resetting failed products",
-        {},
-        error instanceof Error ? error : undefined,
-      );
+      log.error("Error resetting failed products", {}, error instanceof Error ? error : undefined);
       throw error;
     }
   }

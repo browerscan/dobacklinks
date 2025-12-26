@@ -27,9 +27,7 @@ async function main() {
   let batchNumber = 1;
 
   while (totalProcessed < TARGET) {
-    console.log(
-      `\n📦 批次 ${batchNumber} - 已处理: ${totalProcessed}/${TARGET}`,
-    );
+    console.log(`\n📦 批次 ${batchNumber} - 已处理: ${totalProcessed}/${TARGET}`);
     console.log("-".repeat(80));
 
     try {
@@ -60,9 +58,7 @@ async function main() {
       totalFailed += result.stats.failed;
       totalProcessed += result.stats.captured + result.stats.failed;
 
-      console.log(
-        `\n批次完成: +${result.stats.captured} 成功, +${result.stats.failed} 失败`,
-      );
+      console.log(`\n批次完成: +${result.stats.captured} 成功, +${result.stats.failed} 失败`);
 
       if (result.failedDomains && result.failedDomains.length > 0) {
         console.log(`失败域名: ${result.failedDomains.join(", ")}`);

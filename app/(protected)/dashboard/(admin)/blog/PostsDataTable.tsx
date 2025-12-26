@@ -62,11 +62,7 @@ export function PostsDataTable<TData, TValue>({
   }, [debouncedGlobalFilter]);
 
   useEffect(() => {
-    if (
-      hasUsedInitialData &&
-      pagination.pageIndex === 0 &&
-      !debouncedGlobalFilter
-    ) {
+    if (hasUsedInitialData && pagination.pageIndex === 0 && !debouncedGlobalFilter) {
       setHasUsedInitialData(false);
       return;
     }
@@ -87,9 +83,7 @@ export function PostsDataTable<TData, TValue>({
         }
 
         setData(result.data?.posts as TData[]);
-        setPageCount(
-          Math.ceil((result.data?.count || 0) / pagination.pageSize),
-        );
+        setPageCount(Math.ceil((result.data?.count || 0) / pagination.pageSize));
       } catch (error: any) {
         toast.error("Failed to fetch posts.", {
           description: error.message,
@@ -142,11 +136,7 @@ export function PostsDataTable<TData, TValue>({
         <div className="flex space-x-2">
           <TagManagementDrawer />
           <Button asChild className="highlight-bg text-white">
-            <Link
-              href="/dashboard/blog/new"
-              title="Create New Blog"
-              prefetch={false}
-            >
+            <Link href="/dashboard/blog/new" title="Create New Blog" prefetch={false}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Create New Blog
             </Link>
@@ -169,10 +159,7 @@ export function PostsDataTable<TData, TValue>({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
@@ -182,26 +169,17 @@ export function PostsDataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   {isLoading ? "" : "No results."}
                 </TableCell>
               </TableRow>
@@ -212,8 +190,8 @@ export function PostsDataTable<TData, TValue>({
 
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()} ({totalPosts} Posts)
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} ({totalPosts}{" "}
+          Posts)
         </div>
         <div className="space-x-2">
           <Button

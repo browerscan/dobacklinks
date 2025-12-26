@@ -7,23 +7,15 @@ import { CategoriesSidebar } from "./CategoriesSidebar";
 
 export const revalidate = 600;
 
-export default async function SidebarLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function SidebarLayout({ children }: { children: React.ReactNode }) {
   const [categoriesResponse, productCountResponse] = await Promise.all([
     getActiveCategoriesWithCounts(),
     getLiveProductsCount(),
   ]);
 
-  const categories = categoriesResponse.success
-    ? (categoriesResponse.data ?? [])
-    : [];
+  const categories = categoriesResponse.success ? (categoriesResponse.data ?? []) : [];
 
-  const productCount = productCountResponse.success
-    ? (productCountResponse.data ?? 0)
-    : 0;
+  const productCount = productCountResponse.success ? (productCountResponse.data ?? 0) : 0;
 
   return (
     <SidebarProvider>

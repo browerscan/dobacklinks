@@ -35,10 +35,7 @@ export default function LoginButton() {
       </Button>
 
       {process.env.NEXT_PUBLIC_LOGIN_MODE === "dialog" && (
-        <LoginDialog
-          open={isLoginDialogOpen}
-          onOpenChange={setIsLoginDialogOpen}
-        />
+        <LoginDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen} />
       )}
     </>
   );

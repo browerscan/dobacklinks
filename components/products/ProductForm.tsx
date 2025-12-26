@@ -23,13 +23,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { PRODUCTS_LOGO_PATH, PRODUCTS_SCREENSHOTS_PATH } from "@/config/common";
 import { Category } from "@/types/product";
-import {
-  Info,
-  Link as LinkIcon,
-  Rocket,
-  ShieldCheck,
-  Clock3,
-} from "lucide-react";
+import { Info, Link as LinkIcon, Rocket, ShieldCheck, Clock3 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -39,11 +33,7 @@ interface ProductFormProps {
   isEditing?: boolean;
 }
 
-export default function ProductForm({
-  form,
-  categories,
-  isEditing = false,
-}: ProductFormProps) {
+export default function ProductForm({ form, categories, isEditing = false }: ProductFormProps) {
   const { control } = form;
   const [isAutoFillEnabled, setIsAutoFillEnabled] = useState(false);
 
@@ -191,8 +181,7 @@ export default function ProductForm({
                   />
                 </FormControl>
                 <FormDescription className="text-xs text-muted-foreground">
-                  {field.value?.length || 0}/3000 (minimum 200). Markdown
-                  supported.
+                  {field.value?.length || 0}/3000 (minimum 200). Markdown supported.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -229,9 +218,7 @@ export default function ProductForm({
             name="appImages"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium">
-                  Screenshots
-                </FormLabel>
+                <FormLabel className="text-sm font-medium">Screenshots</FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value}
@@ -244,8 +231,7 @@ export default function ProductForm({
                   />
                 </FormControl>
                 <FormDescription className="text-xs text-muted-foreground">
-                  Up to 4 images (homepage, “write for us” page, sample
-                  article).
+                  Up to 4 images (homepage, “write for us” page, sample article).
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -332,15 +318,9 @@ export default function ProductForm({
               name="traffic"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">
-                    Monthly Traffic
-                  </FormLabel>
+                  <FormLabel className="text-sm font-medium">Monthly Traffic</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="e.g. 50k+, 10k-50k"
-                      className="h-11"
-                      {...field}
-                    />
+                    <Input placeholder="e.g. 50k+, 10k-50k" className="h-11" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -354,9 +334,7 @@ export default function ProductForm({
               name="priceRange"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">
-                    Price / Status
-                  </FormLabel>
+                  <FormLabel className="text-sm font-medium">Price / Status</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Free, $80, Sponsored, Exchange"
@@ -373,13 +351,8 @@ export default function ProductForm({
               name="linkType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">
-                    Link Type
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                  >
+                  <FormLabel className="text-sm font-medium">Link Type</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
                     <FormControl>
                       <SelectTrigger className="h-11">
                         <SelectValue placeholder="dofollow / nofollow" />
@@ -406,11 +379,7 @@ export default function ProductForm({
                     Turnaround Time <Clock3 className="w-4 h-4" />
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="e.g. 2-3 days, 1 week"
-                      className="h-11"
-                      {...field}
-                    />
+                    <Input placeholder="e.g. 2-3 days, 1 week" className="h-11" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -449,8 +418,8 @@ export default function ProductForm({
             <h3 className="text-lg font-semibold">Ready to submit</h3>
           </div>
           <p className="text-sm text-muted-foreground">
-            We review each site for relevance and quality. Free submissions are
-            accepted; verified badges are added after manual review.
+            We review each site for relevance and quality. Free submissions are accepted; verified
+            badges are added after manual review.
           </p>
         </div>
       </div>

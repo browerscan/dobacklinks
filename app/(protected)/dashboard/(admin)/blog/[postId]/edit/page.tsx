@@ -8,9 +8,7 @@ type MetadataProps = {
   params: Params;
 };
 
-export async function generateMetadata({
-  params,
-}: MetadataProps): Promise<Metadata> {
+export async function generateMetadata({ params }: MetadataProps): Promise<Metadata> {
   const { postId } = await params;
 
   return constructMetadata({

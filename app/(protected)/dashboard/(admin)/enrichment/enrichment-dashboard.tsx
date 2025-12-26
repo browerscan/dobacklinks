@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -24,14 +18,7 @@ import {
   getEnrichmentStatsAction,
   getProductsWithEnrichmentStatusAction,
 } from "@/actions/enrichment";
-import {
-  Database,
-  RefreshCw,
-  RotateCcw,
-  TrendingUp,
-  XCircle,
-  Clock,
-} from "lucide-react";
+import { Database, RefreshCw, RotateCcw, TrendingUp, XCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { EnrichmentStats } from "@/lib/services/enrichment-service";
 
@@ -39,9 +26,7 @@ interface EnrichmentDashboardProps {
   initialStats: EnrichmentStats | null;
 }
 
-export function EnrichmentDashboard({
-  initialStats,
-}: EnrichmentDashboardProps) {
+export function EnrichmentDashboard({ initialStats }: EnrichmentDashboardProps) {
   const [stats, setStats] = useState<EnrichmentStats | null>(initialStats);
   const [isEnriching, setIsEnriching] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
@@ -80,9 +65,7 @@ export function EnrichmentDashboard({
       if (result.success) {
         if (result.data) {
           const { stats } = result.data;
-          toast.success(
-            `Enrichment complete: ${stats.enriched} enriched, ${stats.failed} failed`,
-          );
+          toast.success(`Enrichment complete: ${stats.enriched} enriched, ${stats.failed} failed`);
         }
         // Refresh statistics
         await refreshStats();
@@ -110,9 +93,7 @@ export function EnrichmentDashboard({
 
       if (result.success) {
         if (result.data) {
-          toast.success(
-            `Reset ${result.data.count} failed products to pending`,
-          );
+          toast.success(`Reset ${result.data.count} failed products to pending`);
         }
         await refreshStats();
       } else {
@@ -135,16 +116,11 @@ export function EnrichmentDashboard({
     );
   }
 
-  const totalProducts =
-    stats.total + stats.pending + stats.enriched + stats.failed;
+  const totalProducts = stats.total + stats.pending + stats.enriched + stats.failed;
   const enrichedPercentage =
-    totalProducts > 0
-      ? ((stats.enriched / totalProducts) * 100).toFixed(1)
-      : "0.0";
+    totalProducts > 0 ? ((stats.enriched / totalProducts) * 100).toFixed(1) : "0.0";
   const failedPercentage =
-    totalProducts > 0
-      ? ((stats.failed / totalProducts) * 100).toFixed(1)
-      : "0.0";
+    totalProducts > 0 ? ((stats.failed / totalProducts) * 100).toFixed(1) : "0.0";
 
   return (
     <>
@@ -152,18 +128,12 @@ export function EnrichmentDashboard({
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Products
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
             <Database className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {totalProducts.toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              All guest post sites
-            </p>
+            <div className="text-2xl font-bold">{totalProducts.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">All guest post sites</p>
           </CardContent>
         </Card>
 
@@ -173,9 +143,7 @@ export function EnrichmentDashboard({
             <Clock className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.pending.toLocaleString()}
-            </div>
+            <div className="text-2xl font-bold">{stats.pending.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               {((stats.pending / totalProducts) * 100).toFixed(1)}% of total
             </p>
@@ -188,12 +156,8 @@ export function EnrichmentDashboard({
             <TrendingUp className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.enriched.toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {enrichedPercentage}% success rate
-            </p>
+            <div className="text-2xl font-bold">{stats.enriched.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">{enrichedPercentage}% success rate</p>
           </CardContent>
         </Card>
 
@@ -203,12 +167,8 @@ export function EnrichmentDashboard({
             <XCircle className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.failed.toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {failedPercentage}% no data available
-            </p>
+            <div className="text-2xl font-bold">{stats.failed.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">{failedPercentage}% no data available</p>
           </CardContent>
         </Card>
       </div>
@@ -217,9 +177,7 @@ export function EnrichmentDashboard({
       <Card>
         <CardHeader>
           <CardTitle>Actions</CardTitle>
-          <CardDescription>
-            Manage SimilarWeb data collection for guest post sites
-          </CardDescription>
+          <CardDescription>Manage SimilarWeb data collection for guest post sites</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-3">
@@ -260,12 +218,7 @@ export function EnrichmentDashboard({
               )}
             </Button>
 
-            <Button
-              onClick={refreshStats}
-              disabled={isRefreshing}
-              variant="ghost"
-              size="lg"
-            >
+            <Button onClick={refreshStats} disabled={isRefreshing} variant="ghost" size="lg">
               {isRefreshing ? (
                 <RefreshCw className="h-4 w-4 animate-spin" />
               ) : (
@@ -278,20 +231,18 @@ export function EnrichmentDashboard({
             <p className="font-medium">💡 How it works:</p>
             <ul className="list-disc list-inside space-y-1 text-muted-foreground">
               <li>
-                <strong>Enrich</strong>: Processes 100 pending products, fetches
-                traffic data from SimilarWeb API (~60-70 seconds)
+                <strong>Enrich</strong>: Processes 100 pending products, fetches traffic data from
+                SimilarWeb API (~60-70 seconds)
               </li>
               <li>
-                <strong>Success rate</strong>: ~7-11% (most small sites don't
-                have SimilarWeb data)
+                <strong>Success rate</strong>: ~7-11% (most small sites don't have SimilarWeb data)
               </li>
               <li>
-                <strong>Failed products</strong>: Hidden on frontend (no traffic
-                data shown to users)
+                <strong>Failed products</strong>: Hidden on frontend (no traffic data shown to
+                users)
               </li>
               <li>
-                <strong>Reset</strong>: Retry failed products if SimilarWeb adds
-                new data
+                <strong>Reset</strong>: Retry failed products if SimilarWeb adds new data
               </li>
             </ul>
           </div>
@@ -302,9 +253,7 @@ export function EnrichmentDashboard({
       <Card>
         <CardHeader>
           <CardTitle>Status Distribution</CardTitle>
-          <CardDescription>
-            Overview of enrichment status across all products
-          </CardDescription>
+          <CardDescription>Overview of enrichment status across all products</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -313,9 +262,7 @@ export function EnrichmentDashboard({
                 <Badge variant="outline" className="bg-yellow-50">
                   Pending
                 </Badge>
-                <span className="text-sm text-muted-foreground">
-                  Awaiting enrichment
-                </span>
+                <span className="text-sm text-muted-foreground">Awaiting enrichment</span>
               </div>
               <span className="text-sm font-medium">
                 {stats.pending.toLocaleString()} (
@@ -328,9 +275,7 @@ export function EnrichmentDashboard({
                 <Badge variant="outline" className="bg-green-50">
                   Enriched
                 </Badge>
-                <span className="text-sm text-muted-foreground">
-                  Has traffic data
-                </span>
+                <span className="text-sm text-muted-foreground">Has traffic data</span>
               </div>
               <span className="text-sm font-medium">
                 {stats.enriched.toLocaleString()} ({enrichedPercentage}%)
@@ -342,9 +287,7 @@ export function EnrichmentDashboard({
                 <Badge variant="outline" className="bg-red-50">
                   Failed
                 </Badge>
-                <span className="text-sm text-muted-foreground">
-                  No data available
-                </span>
+                <span className="text-sm text-muted-foreground">No data available</span>
               </div>
               <span className="text-sm font-medium">
                 {stats.failed.toLocaleString()} ({failedPercentage}%)

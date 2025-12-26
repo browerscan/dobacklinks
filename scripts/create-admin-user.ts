@@ -24,11 +24,7 @@ async function createAdminUser() {
     console.log("Creating admin user...");
 
     // Check if user already exists
-    const existingUser = await db
-      .select()
-      .from(user)
-      .where(eq(user.email, ADMIN_EMAIL))
-      .limit(1);
+    const existingUser = await db.select().from(user).where(eq(user.email, ADMIN_EMAIL)).limit(1);
 
     if (existingUser.length > 0) {
       console.log("❌ User already exists with email:", ADMIN_EMAIL);
@@ -37,10 +33,7 @@ async function createAdminUser() {
 
       // Update to admin if not already
       if (existingUser[0].role !== "admin") {
-        await db
-          .update(user)
-          .set({ role: "admin" })
-          .where(eq(user.id, existingUser[0].id));
+        await db.update(user).set({ role: "admin" }).where(eq(user.id, existingUser[0].id));
         console.log("✅ Updated user role to admin");
       }
 
@@ -78,11 +71,7 @@ async function createAdminUser() {
     console.log("✅ Account created with password authentication");
 
     // Verify creation
-    const createdUser = await db
-      .select()
-      .from(user)
-      .where(eq(user.email, ADMIN_EMAIL))
-      .limit(1);
+    const createdUser = await db.select().from(user).where(eq(user.email, ADMIN_EMAIL)).limit(1);
 
     console.log("\n📋 Admin User Details:");
     console.log("  ID:", createdUser[0].id);

@@ -57,11 +57,7 @@ export function DataTable<TData, TValue>({
   }, [debouncedGlobalFilter]);
 
   useEffect(() => {
-    if (
-      hasUsedInitialData &&
-      pagination.pageIndex === 0 &&
-      !debouncedGlobalFilter
-    ) {
+    if (hasUsedInitialData && pagination.pageIndex === 0 && !debouncedGlobalFilter) {
       setHasUsedInitialData(false);
       return;
     }
@@ -77,9 +73,7 @@ export function DataTable<TData, TValue>({
           filter: debouncedGlobalFilter,
         });
         setData(result.data?.users as TData[]);
-        setPageCount(
-          Math.ceil((result.data?.totalCount || 0) / pagination.pageSize),
-        );
+        setPageCount(Math.ceil((result.data?.totalCount || 0) / pagination.pageSize));
       } catch (error: any) {
         toast.error("Failed to fetch data", {
           description: error.message,
@@ -143,10 +137,7 @@ export function DataTable<TData, TValue>({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
@@ -156,26 +147,17 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   {isLoading ? "" : "No results."}
                 </TableCell>
               </TableRow>
@@ -185,8 +167,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </div>
         <div className="space-x-2">
           <Button

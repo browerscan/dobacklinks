@@ -23,8 +23,7 @@ export default function Error({
       </div>
       <h2 className="text-2xl font-semibold mb-2">Something went wrong</h2>
       <p className="text-muted-foreground mb-6 text-center max-w-md">
-        We couldn&apos;t load this site&apos;s details. This might be a
-        temporary issue.
+        We couldn&apos;t load this site&apos;s details. This might be a temporary issue.
       </p>
       <div className="flex gap-4">
         <Button onClick={() => reset()} variant="default">
@@ -40,9 +39,7 @@ export default function Error({
       </div>
       {process.env.NODE_ENV === "development" && error.message && (
         <div className="mt-8 p-4 bg-muted rounded-lg max-w-lg">
-          <p className="text-sm font-mono text-muted-foreground break-all">
-            {error.message}
-          </p>
+          <p className="text-sm font-mono text-muted-foreground break-all">{error.message}</p>
         </div>
       )}
     </div>

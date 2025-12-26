@@ -31,9 +31,7 @@ export function CategoriesDataTable({ data }: CategoriesDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
-  );
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   const table = useReactTable({
     data,
@@ -65,9 +63,7 @@ export function CategoriesDataTable({ data }: CategoriesDataTableProps) {
     <div className="w-full">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Categories Management
-          </h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Categories Management</h1>
         </div>
         <Button className="highlight-button" onClick={handleNewCategory}>
           <PlusIcon className="w-4 h-4" />
@@ -75,11 +71,7 @@ export function CategoriesDataTable({ data }: CategoriesDataTableProps) {
         </Button>
       </div>
 
-      <CategoryForm
-        isOpen={isFormOpen}
-        setIsOpen={setIsFormOpen}
-        category={selectedCategory}
-      />
+      <CategoryForm isOpen={isFormOpen} setIsOpen={setIsFormOpen} category={selectedCategory} />
 
       <DeleteCategoryDialog
         isOpen={isDeleteDialogOpen}
@@ -97,10 +89,7 @@ export function CategoriesDataTable({ data }: CategoriesDataTableProps) {
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
@@ -110,26 +99,17 @@ export function CategoriesDataTable({ data }: CategoriesDataTableProps) {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

@@ -19,11 +19,7 @@ function escapeCSVField(field: any): string {
   const stringValue = String(field);
 
   // If field contains comma, quotes, or newlines, wrap in quotes and escape internal quotes
-  if (
-    stringValue.includes(",") ||
-    stringValue.includes('"') ||
-    stringValue.includes("\n")
-  ) {
+  if (stringValue.includes(",") || stringValue.includes('"') || stringValue.includes("\n")) {
     return `"${stringValue.replace(/"/g, '""')}"`;
   }
 
@@ -61,10 +57,7 @@ export function arrayToCSV<T extends Record<string, any>>(
 /**
  * Trigger CSV file download in browser
  */
-export function downloadCSV(
-  csvContent: string,
-  filename: string = "export.csv",
-): void {
+export function downloadCSV(csvContent: string, filename: string = "export.csv"): void {
   // Add BOM for proper UTF-8 encoding in Excel
   const BOM = "\uFEFF";
   const blob = new Blob([BOM + csvContent], {
@@ -95,7 +88,6 @@ export function exportToCSV<T extends Record<string, any>>(
   options: CSVExportOptions = {},
 ): void {
   const csvContent = arrayToCSV(data, options);
-  const filename =
-    options.filename || `export_${new Date().toISOString().split("T")[0]}.csv`;
+  const filename = options.filename || `export_${new Date().toISOString().split("T")[0]}.csv`;
   downloadCSV(csvContent, filename);
 }

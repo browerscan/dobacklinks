@@ -31,11 +31,7 @@ export default async function RedirectErrorPage({
         <h1 className="text-2xl font-bold text-red-600 mb-4">{title}</h1>
         <p className="mb-6">{description}</p>
         {message && <p className="mb-6">{message}</p>}
-        <Link
-          href="/"
-          title="Go to Home"
-          className="px-4 py-2 highlight-bg text-white rounded-md"
-        >
+        <Link href="/" title="Go to Home" className="px-4 py-2 highlight-bg text-white rounded-md">
           Go to Home
         </Link>
         <Link

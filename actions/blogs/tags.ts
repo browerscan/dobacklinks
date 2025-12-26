@@ -31,16 +31,9 @@ interface DeleteTagResponse {
   error?: string;
 }
 
-export async function listTagsAction({
-  query,
-}: {
-  query?: string;
-}): Promise<ListTagsResponse> {
+export async function listTagsAction({ query }: { query?: string }): Promise<ListTagsResponse> {
   try {
-    let queryBuilder = db
-      .select()
-      .from(tagsSchema)
-      .orderBy(asc(tagsSchema.name));
+    let queryBuilder = db.select().from(tagsSchema).orderBy(asc(tagsSchema.name));
 
     if (query) {
       queryBuilder.where(ilike(tagsSchema.name, `%${query}%`));
@@ -59,11 +52,7 @@ export async function listTagsAction({
   }
 }
 
-export async function createTagAction({
-  name,
-}: {
-  name: string;
-}): Promise<CreateTagResponse> {
+export async function createTagAction({ name }: { name: string }): Promise<CreateTagResponse> {
   if (!(await isAdmin())) {
     return actionResponse.forbidden("Admin privileges required.");
   }
@@ -93,9 +82,7 @@ export async function createTagAction({
   } catch (error) {
     console.error("Create tag action failed:", error);
     const errorMessage = getErrorMessage(error);
-    if (
-      errorMessage.includes("duplicate key value violates unique constraint")
-    ) {
+    if (errorMessage.includes("duplicate key value violates unique constraint")) {
       return actionResponse.conflict(`Tag "${name}" already exists.`);
     }
     if (errorMessage.includes("permission denied")) {
@@ -128,9 +115,7 @@ export async function updateTagAction({
       .limit(1);
 
     if (existingTag.length > 0) {
-      return actionResponse.conflict(
-        `Another tag with the name "${name}" already exists.`,
-      );
+      return actionResponse.conflict(`Another tag with the name "${name}" already exists.`);
     }
 
     const updatedTag = await db
@@ -147,12 +132,8 @@ export async function updateTagAction({
   } catch (error) {
     console.error("Update tag action failed:", error);
     const errorMessage = getErrorMessage(error);
-    if (
-      errorMessage.includes("duplicate key value violates unique constraint")
-    ) {
-      return actionResponse.conflict(
-        `Tag name "${name}" is already in use by another tag.`,
-      );
+    if (errorMessage.includes("duplicate key value violates unique constraint")) {
+      return actionResponse.conflict(`Tag name "${name}" is already in use by another tag.`);
     }
     if (errorMessage.includes("permission denied")) {
       return actionResponse.forbidden("Permission denied to update tags.");
@@ -161,11 +142,7 @@ export async function updateTagAction({
   }
 }
 
-export async function deleteTagAction({
-  id,
-}: {
-  id: string;
-}): Promise<DeleteTagResponse> {
+export async function deleteTagAction({ id }: { id: string }): Promise<DeleteTagResponse> {
   if (!(await isAdmin())) {
     return actionResponse.forbidden("Admin privileges required.");
   }

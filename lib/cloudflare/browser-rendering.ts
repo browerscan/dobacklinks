@@ -66,14 +66,9 @@ export class BrowserRenderingClient {
    *
    * 使用 Cloudflare Browser Rendering REST API
    */
-  async captureScreenshot(
-    url: string,
-    options: ScreenshotOptions = {},
-  ): Promise<Buffer> {
-    const {
-      width = env.SCREENSHOT_VIEWPORT_WIDTH,
-      height = env.SCREENSHOT_VIEWPORT_HEIGHT,
-    } = options;
+  async captureScreenshot(url: string, options: ScreenshotOptions = {}): Promise<Buffer> {
+    const { width = env.SCREENSHOT_VIEWPORT_WIDTH, height = env.SCREENSHOT_VIEWPORT_HEIGHT } =
+      options;
 
     const endpoint = `${this.baseUrl}/accounts/${this.accountId}/browser-rendering/screenshot`;
 
@@ -98,9 +93,7 @@ export class BrowserRenderingClient {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(
-          `Screenshot API error (${response.status}): ${errorText}`,
-        );
+        throw new Error(`Screenshot API error (${response.status}): ${errorText}`);
       }
 
       // Check if response is JSON error
@@ -155,14 +148,8 @@ export class BrowserRenderingClient {
       // 简单的 HTML 解析（使用正则表达式）
       const getMeta = (name: string): string | null => {
         const patterns = [
-          new RegExp(
-            `<meta\\s+name=["']${name}["']\\s+content=["']([^"']+)["']`,
-            "i",
-          ),
-          new RegExp(
-            `<meta\\s+content=["']([^"']+)["']\\s+name=["']${name}["']`,
-            "i",
-          ),
+          new RegExp(`<meta\\s+name=["']${name}["']\\s+content=["']([^"']+)["']`, "i"),
+          new RegExp(`<meta\\s+content=["']([^"']+)["']\\s+name=["']${name}["']`, "i"),
         ];
         for (const pattern of patterns) {
           const match = html.match(pattern);
@@ -173,14 +160,8 @@ export class BrowserRenderingClient {
 
       const getProperty = (property: string): string | null => {
         const patterns = [
-          new RegExp(
-            `<meta\\s+property=["']${property}["']\\s+content=["']([^"']+)["']`,
-            "i",
-          ),
-          new RegExp(
-            `<meta\\s+content=["']([^"']+)["']\\s+property=["']${property}["']`,
-            "i",
-          ),
+          new RegExp(`<meta\\s+property=["']${property}["']\\s+content=["']([^"']+)["']`, "i"),
+          new RegExp(`<meta\\s+content=["']([^"']+)["']\\s+property=["']${property}["']`, "i"),
         ];
         for (const pattern of patterns) {
           const match = html.match(pattern);

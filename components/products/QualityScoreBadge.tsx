@@ -125,14 +125,11 @@ export function QualityScoreBadge({ product }: QualityScoreBadgeProps) {
 
   // Get breakdown of score components
   const breakdown = [];
-  if (product.dr != null)
-    breakdown.push({ label: "Domain Rating", icon: TrendingUp });
-  if (product.da != null)
-    breakdown.push({ label: "Domain Authority", icon: Award });
+  if (product.dr != null) breakdown.push({ label: "Domain Rating", icon: TrendingUp });
+  if (product.da != null) breakdown.push({ label: "Domain Authority", icon: Award });
   if (product.spamScore != null && product.spamScore <= 20)
     breakdown.push({ label: "Low Spam Score", icon: Shield });
-  if (product.googleNews === true)
-    breakdown.push({ label: "Google News", icon: CheckCircle });
+  if (product.googleNews === true) breakdown.push({ label: "Google News", icon: CheckCircle });
 
   return (
     <Card className={`border-2 ${grade.bgColor}`}>
@@ -178,25 +175,19 @@ export function QualityScoreBadge({ product }: QualityScoreBadgeProps) {
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className={`text-2xl font-bold ${grade.color}`}>
-                  {score}
-                </span>
+                <span className={`text-2xl font-bold ${grade.color}`}>{score}</span>
               </div>
             </div>
 
             <div className="flex-1">
-              <p className="text-sm text-muted-foreground">
-                {grade.description}
-              </p>
+              <p className="text-sm text-muted-foreground">{grade.description}</p>
             </div>
           </div>
 
           {/* Score Breakdown */}
           {breakdown.length > 0 && (
             <div className="pt-3 border-t">
-              <div className="text-xs font-medium mb-2 text-muted-foreground">
-                Quality Factors:
-              </div>
+              <div className="text-xs font-medium mb-2 text-muted-foreground">Quality Factors:</div>
               <div className="flex flex-wrap gap-2">
                 {breakdown.map((item, index) => {
                   const Icon = item.icon;

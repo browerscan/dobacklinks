@@ -14,12 +14,7 @@ import {
   SidebarMenuSkeleton,
   useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { siteConfig } from "@/config/site";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,10 +25,7 @@ interface CategoriesSidebarProps {
   productCount: number;
 }
 
-export function CategoriesSidebar({
-  categories,
-  productCount,
-}: CategoriesSidebarProps) {
+export function CategoriesSidebar({ categories, productCount }: CategoriesSidebarProps) {
   const { state } = useSidebar();
   const params = useParams();
   const currentCategory = (params.slug as string) || null;
@@ -44,16 +36,8 @@ export function CategoriesSidebar({
     <Sidebar variant="sidebar" collapsible="icon">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1">
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={28}
-            height={28}
-            className="rounded-md"
-          />
-          {!isCollapsed && (
-            <span className="text-md font-medium">{siteConfig.name}</span>
-          )}
+          <Image src="/logo.png" alt="Logo" width={28} height={28} className="rounded-md" />
+          {!isCollapsed && <span className="text-md font-medium">{siteConfig.name}</span>}
         </div>
       </SidebarHeader>
 
@@ -67,11 +51,7 @@ export function CategoriesSidebar({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <SidebarMenuButton asChild isActive={!currentCategory}>
-                        <Link
-                          href="/"
-                          title="All Products"
-                          className="flex items-center gap-2"
-                        >
+                        <Link href="/" title="All Products" className="flex items-center gap-2">
                           <DynamicIcon name="House" className="h-4 w-4" />
                           {!isCollapsed && (
                             <span>
@@ -110,20 +90,14 @@ export function CategoriesSidebar({
                       <SidebarMenuItem key={category.id}>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <SidebarMenuButton
-                              asChild
-                              isActive={currentCategory === category.slug}
-                            >
+                            <SidebarMenuButton asChild isActive={currentCategory === category.slug}>
                               <Link
                                 href={`/categories/${category.slug}`}
                                 title={category.name}
                                 className="flex items-center gap-2"
                               >
                                 {category.icon ? (
-                                  <DynamicIcon
-                                    name={category.icon}
-                                    className="h-4 w-4"
-                                  />
+                                  <DynamicIcon name={category.icon} className="h-4 w-4" />
                                 ) : (
                                   <div className="h-4 w-4 rounded bg-muted flex items-center justify-center text-xs">
                                     {category.name.charAt(0).toUpperCase()}

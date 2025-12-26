@@ -45,11 +45,7 @@ export async function getScreenshotStatsAction(): Promise<
 // Capture Single Product Screenshot
 // ============================================================================
 
-export async function captureScreenshotAction({
-  productId,
-}: {
-  productId: string;
-}): Promise<
+export async function captureScreenshotAction({ productId }: { productId: string }): Promise<
   ActionResult<{
     screenshotUrl: string | null;
     seoTitle: string | null;
@@ -106,11 +102,7 @@ export async function batchCaptureScreenshotsAction({
 
   try {
     const service = getScreenshotEnrichmentService();
-    const result = await service.enrichProducts(
-      productIds || "pending",
-      undefined,
-      limit,
-    );
+    const result = await service.enrichProducts(productIds || "pending", undefined, limit);
 
     if (!result.success) {
       return actionResponse.error(result.error || "Batch capture failed");

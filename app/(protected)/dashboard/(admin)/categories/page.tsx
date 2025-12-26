@@ -6,8 +6,7 @@ import { CategoriesDataTable } from "./CategoriesDataTable";
 export async function generateMetadata(): Promise<Metadata> {
   return constructMetadata({
     title: "Categories Management",
-    description:
-      "Here you can create, edit, and manage your product categories.",
+    description: "Here you can create, edit, and manage your product categories.",
     path: `/dashboard/categories`,
   });
 }

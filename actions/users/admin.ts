@@ -38,10 +38,7 @@ export async function getUsers({
     const conditions = [];
     if (filter) {
       conditions.push(
-        or(
-          ilike(userSchema.email, `%${filter}%`),
-          ilike(userSchema.name, `%${filter}%`),
-        ),
+        or(ilike(userSchema.email, `%${filter}%`), ilike(userSchema.name, `%${filter}%`)),
       );
     }
 
@@ -58,10 +55,7 @@ export async function getUsers({
       .from(userSchema)
       .where(conditions.length > 0 ? or(...conditions) : undefined);
 
-    const [results, totalCountResult] = await Promise.all([
-      usersQuery,
-      totalCountQuery,
-    ]);
+    const [results, totalCountResult] = await Promise.all([usersQuery, totalCountQuery]);
 
     const totalCount = totalCountResult[0].value;
 
@@ -119,11 +113,7 @@ export async function banUser({
   }
 }
 
-export async function unbanUser({
-  userId,
-}: {
-  userId: string;
-}): Promise<ActionResult> {
+export async function unbanUser({ userId }: { userId: string }): Promise<ActionResult> {
   if (!(await isAdmin())) {
     return actionResponse.forbidden("Admin privileges required.");
   }

@@ -5,10 +5,7 @@ import { headers } from "next/headers";
 let redis: Redis | null = null;
 const limiters = new Map<string, Ratelimit>();
 
-if (
-  process.env.UPSTASH_REDIS_REST_URL &&
-  process.env.UPSTASH_REDIS_REST_TOKEN
-) {
+if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
   redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL,
     token: process.env.UPSTASH_REDIS_REST_TOKEN,
@@ -25,13 +22,18 @@ interface RateLimitConfig {
 
 /**
  * Fallback behavior when Redis is unavailable
+ *
+ * SECURITY: The default fallback mode is MEMORY_FALLBACK to ensure
+ * basic rate limiting protection even when Redis is unavailable.
+ * Using ALLOW_ALL would completely disable rate limiting on Redis failure,
+ * creating a critical security vulnerability.
  */
 export enum RedisFallbackMode {
-  /** Allow all requests (current behavior - less secure) */
+  /** Allow all requests (INSECURE - only for specific opt-in scenarios) */
   ALLOW_ALL = "allow_all",
   /** Block all requests (most secure - may impact availability) */
   BLOCK_ALL = "block_all",
-  /** Use in-memory rate limiting as fallback (balanced approach) */
+  /** Use in-memory rate limiting as fallback (balanced approach - DEFAULT) */
   MEMORY_FALLBACK = "memory_fallback",
 }
 
@@ -73,10 +75,7 @@ export function getRateLimiter(config: RateLimitConfig): Ratelimit | null {
 
     const limiter = new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(
-        config.maxRequests,
-        config.window as Duration,
-      ),
+      limiter: Ratelimit.slidingWindow(config.maxRequests, config.window as Duration),
       prefix: config.prefix,
     });
 
@@ -91,10 +90,7 @@ export function getRateLimiter(config: RateLimitConfig): Ratelimit | null {
  * WARNING: This is per-process only and not distributed across multiple server instances
  * Use only as a fallback when Redis is unavailable
  */
-function checkMemoryRateLimit(
-  identifier: string,
-  config: RateLimitConfig,
-): boolean {
+function checkMemoryRateLimit(identifier: string, config: RateLimitConfig): boolean {
   const now = Date.now();
   const [amount, duration] = config.window.split(" ");
 
@@ -142,13 +138,13 @@ function checkMemoryRateLimit(
  * Check if the rate limit is exceeded
  * @param identifier Identifier (e.g. IP address)
  * @param config Rate limit configuration
- * @param fallbackMode Behavior when Redis is unavailable (default: ALLOW_ALL)
+ * @param fallbackMode Behavior when Redis is unavailable (default: MEMORY_FALLBACK)
  * @returns Whether the request is allowed
  */
 export async function checkRateLimit(
   identifier: string,
   config: RateLimitConfig,
-  fallbackMode: RedisFallbackMode = RedisFallbackMode.ALLOW_ALL,
+  fallbackMode: RedisFallbackMode = RedisFallbackMode.MEMORY_FALLBACK,
 ): Promise<boolean> {
   const limiter = getRateLimiter(config);
 
@@ -161,15 +157,11 @@ export async function checkRateLimit(
   // Redis is unavailable - use fallback strategy
   switch (fallbackMode) {
     case RedisFallbackMode.BLOCK_ALL:
-      console.warn(
-        `[RateLimit] Redis unavailable - blocking request to ${config.prefix}`,
-      );
+      console.warn(`[RateLimit] Redis unavailable - blocking request to ${config.prefix}`);
       return false;
 
     case RedisFallbackMode.MEMORY_FALLBACK:
-      console.warn(
-        `[RateLimit] Redis unavailable - using in-memory fallback for ${config.prefix}`,
-      );
+      console.warn(`[RateLimit] Redis unavailable - using in-memory fallback for ${config.prefix}`);
       return checkMemoryRateLimit(identifier, config);
 
     case RedisFallbackMode.ALLOW_ALL:

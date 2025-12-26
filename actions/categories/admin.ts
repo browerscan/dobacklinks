@@ -19,27 +19,23 @@ interface CategoryFormData {
   isActive: boolean;
 }
 
-export const getAllCategories = cache(
-  async (): Promise<ActionResult<Category[]>> => {
-    if (!(await isAdmin())) {
-      return actionResponse.unauthorized();
-    }
-    try {
-      const data = await db
-        .select()
-        .from(categoriesSchema)
-        .orderBy(desc(categoriesSchema.displayOrder));
+export const getAllCategories = cache(async (): Promise<ActionResult<Category[]>> => {
+  if (!(await isAdmin())) {
+    return actionResponse.unauthorized();
+  }
+  try {
+    const data = await db
+      .select()
+      .from(categoriesSchema)
+      .orderBy(desc(categoriesSchema.displayOrder));
 
-      return actionResponse.success(data);
-    } catch (error) {
-      return actionResponse.error((error as Error).message);
-    }
-  },
-);
+    return actionResponse.success(data);
+  } catch (error) {
+    return actionResponse.error((error as Error).message);
+  }
+});
 
-export async function upsertCategory(
-  formData: CategoryFormData,
-): Promise<ActionResult<null>> {
+export async function upsertCategory(formData: CategoryFormData): Promise<ActionResult<null>> {
   if (!(await isAdmin())) {
     return actionResponse.unauthorized();
   }
@@ -64,10 +60,7 @@ export async function upsertCategory(
 
   try {
     if (id) {
-      await db
-        .update(categoriesSchema)
-        .set(cleanData)
-        .where(eq(categoriesSchema.id, id));
+      await db.update(categoriesSchema).set(cleanData).where(eq(categoriesSchema.id, id));
     } else {
       await db.insert(categoriesSchema).values(cleanData);
     }

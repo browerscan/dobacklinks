@@ -1,10 +1,7 @@
 "use client";
 
 import { createProductAsAdminAction } from "@/actions/products/admin";
-import {
-  ProductFormValues,
-  productSchema,
-} from "@/app/(basic-layout)/submit/schema";
+import { ProductFormValues, productSchema } from "@/app/(basic-layout)/submit/schema";
 import ProductForm from "@/components/products/ProductForm";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -38,9 +35,7 @@ const defaultValues: Partial<ProductFormValues> = {
   contactEmail: "",
 };
 
-export default function CreateProductClient({
-  categories,
-}: CreateProductClientProps) {
+export default function CreateProductClient({ categories }: CreateProductClientProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -68,10 +63,7 @@ export default function CreateProductClient({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-6xl mx-auto py-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-6xl mx-auto py-4">
         <ProductForm form={form} categories={categories} />
         <div className="flex justify-end gap-2 py-8">
           <Button

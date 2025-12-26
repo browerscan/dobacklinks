@@ -29,10 +29,7 @@ export default function FeatureBadge({
 
       {href && (
         <div className="pr-3 transition-transform duration-300 group-hover:translate-x-1">
-          <ArrowRight
-            name="ArrowRight"
-            className="h-4 w-4 text-gray-400 dark:text-gray-500"
-          />
+          <ArrowRight name="ArrowRight" className="h-4 w-4 text-gray-400 dark:text-gray-500" />
         </div>
       )}
     </div>

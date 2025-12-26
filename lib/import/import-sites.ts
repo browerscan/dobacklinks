@@ -54,9 +54,7 @@ export async function importSites(options: ImportOptions) {
 
   // 5. Stats
   const liveCount = sitesToImport.filter((s) => s.status === "live").length;
-  const pendingCount = sitesToImport.filter(
-    (s) => s.status === "pending_review",
-  ).length;
+  const pendingCount = sitesToImport.filter((s) => s.status === "pending_review").length;
 
   console.log(`\n📈 Import Summary:`);
   console.log(`   Total sites: ${sitesToImport.length}`);
@@ -64,8 +62,7 @@ export async function importSites(options: ImportOptions) {
   console.log(`   Pending: ${pendingCount}`);
   console.log(
     `   Average score: ${(
-      sitesToImport.reduce((sum, s) => sum + s.quality.score, 0) /
-      sitesToImport.length
+      sitesToImport.reduce((sum, s) => sum + s.quality.score, 0) / sitesToImport.length
     ).toFixed(1)}`,
   );
 
@@ -73,11 +70,7 @@ export async function importSites(options: ImportOptions) {
     console.log("\n🏃 Dry run mode - no data will be inserted");
     console.log("\nTop 10 sites:");
     sitesToImport.slice(0, 10).forEach((s, i) => {
-      console.log(
-        `${i + 1}. ${s.site.domain} (score: ${s.quality.score}, status: ${
-          s.status
-        })`,
-      );
+      console.log(`${i + 1}. ${s.site.domain} (score: ${s.quality.score}, status: ${s.status})`);
     });
     return { success: true, imported: 0, liveCount: 0, pendingCount: 0 };
   }
@@ -88,9 +81,7 @@ export async function importSites(options: ImportOptions) {
   });
 
   if (!defaultCategory) {
-    console.warn(
-      '\n⚠️  Default category "guest-posts" not found. Creating it...',
-    );
+    console.warn('\n⚠️  Default category "guest-posts" not found. Creating it...');
     const [newCategory] = await db
       .insert(categories)
       .values({
@@ -138,9 +129,7 @@ export async function importSites(options: ImportOptions) {
         da: parseInt(site.data.mozDA || "0"),
         dr: parseInt(site.data.ahrefsDR || "0"),
         traffic: null, // Will be enriched later
-        linkType: site.data.linkAttributionType
-          ?.toLowerCase()
-          .includes("dofollow")
+        linkType: site.data.linkAttributionType?.toLowerCase().includes("dofollow")
           ? "dofollow"
           : "nofollow",
         priceRange,
@@ -206,9 +195,7 @@ export async function importSites(options: ImportOptions) {
       });
 
       if (!systemUser) {
-        throw new Error(
-          "System user not found. Please create system@dobacklinks.com user first.",
-        );
+        throw new Error("System user not found. Please create system@dobacklinks.com user first.");
       }
 
       // Check for existing products in this batch
@@ -224,9 +211,7 @@ export async function importSites(options: ImportOptions) {
       const existingSlugs = new Set(existingProducts.map((p) => p.slug));
 
       // Filter out existing products
-      const newProductData = productData.filter(
-        (p) => !existingSlugs.has(p.slug),
-      );
+      const newProductData = productData.filter((p) => !existingSlugs.has(p.slug));
 
       if (newProductData.length === 0) {
         console.log(
@@ -242,10 +227,7 @@ export async function importSites(options: ImportOptions) {
       }));
 
       // Insert products
-      const insertedProducts = await db
-        .insert(products)
-        .values(productsWithUserId)
-        .returning();
+      const insertedProducts = await db.insert(products).values(productsWithUserId).returning();
 
       // Link to default category
       const categoryLinks = insertedProducts.map((p) => ({
@@ -260,17 +242,12 @@ export async function importSites(options: ImportOptions) {
         `   ✓ Imported batch ${Math.floor(i / batchSize) + 1} (${insertedProducts.length} new, ${skipped} duplicates, total: ${imported}/${sitesToImport.length})`,
       );
     } catch (error) {
-      console.error(
-        `   ✗ Failed batch ${Math.floor(i / batchSize) + 1}:`,
-        error,
-      );
+      console.error(`   ✗ Failed batch ${Math.floor(i / batchSize) + 1}:`, error);
       failed += batch.length;
     }
   }
 
-  console.log(
-    `\n✅ Import complete! ${imported} sites imported, ${failed} failed.`,
-  );
+  console.log(`\n✅ Import complete! ${imported} sites imported, ${failed} failed.`);
 
   return {
     success: true,
@@ -332,9 +309,7 @@ function generateDescription(site: ScrapedSite): string {
 
   if (site.data.maxLinks) {
     const maxLinks = parseInt(site.data.maxLinks);
-    parts.push(
-      `Allows up to ${maxLinks} dofollow link${maxLinks > 1 ? "s" : ""}.`,
-    );
+    parts.push(`Allows up to ${maxLinks} dofollow link${maxLinks > 1 ? "s" : ""}.`);
   }
 
   if (site.data.googleNews === "Yes") {
@@ -355,45 +330,10 @@ function inferNiche(domain: string, description: string = ""): string {
   const text = (domain + " " + description).toLowerCase();
 
   const niches: Record<string, string[]> = {
-    Technology: [
-      "tech",
-      "software",
-      "digital",
-      "app",
-      "ai",
-      "dev",
-      "code",
-      "cyber",
-      "data",
-    ],
-    Finance: [
-      "finance",
-      "money",
-      "invest",
-      "crypto",
-      "trading",
-      "bank",
-      "fintech",
-      "payment",
-    ],
-    Health: [
-      "health",
-      "medical",
-      "wellness",
-      "fitness",
-      "care",
-      "medicine",
-      "doctor",
-    ],
-    Marketing: [
-      "marketing",
-      "seo",
-      "social",
-      "business",
-      "startup",
-      "brand",
-      "advertising",
-    ],
+    Technology: ["tech", "software", "digital", "app", "ai", "dev", "code", "cyber", "data"],
+    Finance: ["finance", "money", "invest", "crypto", "trading", "bank", "fintech", "payment"],
+    Health: ["health", "medical", "wellness", "fitness", "care", "medicine", "doctor"],
+    Marketing: ["marketing", "seo", "social", "business", "startup", "brand", "advertising"],
     News: ["news", "daily", "times", "post", "press", "media", "journal"],
     Lifestyle: ["life", "style", "fashion", "travel", "food", "home", "living"],
     "Real Estate": ["real estate", "property", "home", "housing", "realty"],
@@ -409,11 +349,7 @@ function inferNiche(domain: string, description: string = ""): string {
 }
 
 function formatPriceRange(data: ScrapedSite["data"]): string | null {
-  const prices = [
-    data.contentPlacementPrice,
-    data.writingPlacementPrice,
-    data.specialTopicPrice,
-  ]
+  const prices = [data.contentPlacementPrice, data.writingPlacementPrice, data.specialTopicPrice]
     .map((p) => parseFloat(p || "0"))
     .filter((p) => p > 0);
 

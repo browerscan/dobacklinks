@@ -15,11 +15,7 @@ export function LatestProductCard({ product }: ProductCardProps) {
 
   return (
     <div className="relative">
-      <Link
-        href={`/sites/${product.slug}`}
-        title={product.name}
-        className="block h-full"
-      >
+      <Link href={`/sites/${product.slug}`} title={product.name} className="block h-full">
         <div className="relative pt-3 h-full">
           <div
             className={cn(
@@ -52,9 +48,7 @@ export function LatestProductCard({ product }: ProductCardProps) {
                   />
                 ) : (
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700">
-                    <span className="text-white font-bold text-sm">
-                      {product.name.charAt(0)}
-                    </span>
+                    <span className="text-white font-bold text-sm">{product.name.charAt(0)}</span>
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
@@ -127,9 +121,9 @@ export function LatestProductCard({ product }: ProductCardProps) {
                 </div>
               )}
               <div>
-                <div className="text-muted-foreground">Price</div>
-                <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">
-                  {product.priceRange || "Contact"}
+                <div className="text-muted-foreground">Link Type</div>
+                <div className="font-semibold text-gray-900 dark:text-gray-100 capitalize">
+                  {product.linkType === "dofollow" ? "Dofollow" : "Nofollow"}
                 </div>
               </div>
             </div>

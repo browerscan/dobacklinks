@@ -35,11 +35,7 @@ async function CategoryTable({ categoryPrefix }: { categoryPrefix: string }) {
       categoryPrefix,
       initialResult.error,
     );
-    return (
-      <div className="text-red-500">
-        Error loading images: {initialResult.error}
-      </div>
-    );
+    return <div className="text-red-500">Error loading images: {initialResult.error}</div>;
   }
 
   const { files: initialFiles, nextContinuationToken } = initialResult.data;

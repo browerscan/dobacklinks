@@ -24,12 +24,8 @@ const CLOUDFLARE_API_TOKEN = getEnvValue("CLOUDFLARE_API_TOKEN");
 
 console.log("🚀 Cloudflare Browser Rendering API Test\n");
 console.log("📋 Configuration:");
-console.log(
-  `   Account ID: ${CLOUDFLARE_ACCOUNT_ID ? "✅ Found" : "❌ Missing"}`,
-);
-console.log(
-  `   API Token: ${CLOUDFLARE_API_TOKEN ? "✅ Found" : "❌ Missing"}\n`,
-);
+console.log(`   Account ID: ${CLOUDFLARE_ACCOUNT_ID ? "✅ Found" : "❌ Missing"}`);
+console.log(`   API Token: ${CLOUDFLARE_API_TOKEN ? "✅ Found" : "❌ Missing"}\n`);
 
 if (!CLOUDFLARE_ACCOUNT_ID || !CLOUDFLARE_API_TOKEN) {
   console.error("❌ Missing Cloudflare credentials in .env.local");
@@ -55,9 +51,7 @@ async function testBrowserRendering() {
   console.log("\n⚠️  Important Note:");
   console.log("Cloudflare Browser Rendering 需要部署 Worker 才能使用。");
   console.log("它不是直接的 REST API，而是通过 Workers 的 Puppeteer binding。");
-  console.log(
-    "\n📖 文档: https://developers.cloudflare.com/browser-rendering/",
-  );
+  console.log("\n📖 文档: https://developers.cloudflare.com/browser-rendering/");
   console.log("\n💡 替代方案:");
   console.log("1. 部署一个 Cloudflare Worker 来处理截图请求");
   console.log("2. 使用其他截图服务（如 Puppeteer on VPS）");

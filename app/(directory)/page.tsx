@@ -1,8 +1,5 @@
 import { ContentHeader } from "@/app/(directory)/ContentHeader";
-import {
-  getFeaturedProducts,
-  getLatestProducts,
-} from "@/actions/products/user";
+import { getFeaturedProducts, getLatestProducts } from "@/actions/products/user";
 import { FeaturedProductsList } from "@/components/products/FeaturedProductsList";
 import { LatestProductsList } from "@/components/products/LatestProductsList";
 import { ProductsSkeleton } from "@/components/products/ProductsSkeleton";
@@ -29,24 +26,15 @@ async function Products() {
     getLatestProducts({ pageIndex: 0 }),
   ]);
 
-  const featuredProducts = featuredResponse.success
-    ? (featuredResponse.data?.products ?? [])
-    : [];
+  const featuredProducts = featuredResponse.success ? (featuredResponse.data?.products ?? []) : [];
 
-  const latestProducts = latestResponse.success
-    ? (latestResponse.data?.products ?? [])
-    : [];
-  const latestTotalCount = latestResponse.success
-    ? (latestResponse.data?.count ?? 0)
-    : 0;
+  const latestProducts = latestResponse.success ? (latestResponse.data?.products ?? []) : [];
+  const latestTotalCount = latestResponse.success ? (latestResponse.data?.count ?? 0) : 0;
 
   return (
     <>
       <FeaturedProductsList products={featuredProducts} />
-      <LatestProductsList
-        initialProducts={latestProducts}
-        totalCount={latestTotalCount}
-      />
+      <LatestProductsList initialProducts={latestProducts} totalCount={latestTotalCount} />
     </>
   );
 }

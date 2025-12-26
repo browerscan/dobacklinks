@@ -71,9 +71,7 @@ export function EnhancedSampleUrls({ product }: EnhancedSampleUrlsProps) {
     return null;
   }
 
-  const displayUrls = showAll
-    ? product.sampleUrls
-    : product.sampleUrls.slice(0, 3);
+  const displayUrls = showAll ? product.sampleUrls : product.sampleUrls.slice(0, 3);
   const hasMore = product.sampleUrls.length > 3;
 
   return (
@@ -107,9 +105,7 @@ export function EnhancedSampleUrls({ product }: EnhancedSampleUrlsProps) {
                   {/* Content */}
                   <div className="flex-1 min-w-0 space-y-1">
                     {/* Title (derived from slug) */}
-                    <div className="font-medium text-sm line-clamp-1">
-                      {title}
-                    </div>
+                    <div className="font-medium text-sm line-clamp-1">{title}</div>
 
                     {/* URL */}
                     <Link
@@ -132,13 +128,10 @@ export function EnhancedSampleUrls({ product }: EnhancedSampleUrlsProps) {
                       {metadata.estimatedDate && (
                         <Badge variant="outline" className="text-xs">
                           <Calendar className="w-3 h-3 mr-1" />
-                          {new Date(metadata.estimatedDate).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "short",
-                              year: "numeric",
-                            },
-                          )}
+                          {new Date(metadata.estimatedDate).toLocaleDateString("en-US", {
+                            month: "short",
+                            year: "numeric",
+                          })}
                         </Badge>
                       )}
                     </div>
@@ -172,9 +165,7 @@ export function EnhancedSampleUrls({ product }: EnhancedSampleUrlsProps) {
               onClick={() => setShowAll(!showAll)}
               className="w-full mt-2"
             >
-              {showAll
-                ? "Show Less"
-                : `Show ${product.sampleUrls.length - 3} More`}
+              {showAll ? "Show Less" : `Show ${product.sampleUrls.length - 3} More`}
             </Button>
           )}
         </div>
@@ -182,9 +173,8 @@ export function EnhancedSampleUrls({ product }: EnhancedSampleUrlsProps) {
         {/* Info Note */}
         <div className="mt-4 p-3 bg-muted rounded-lg">
           <p className="text-xs text-muted-foreground">
-            💡 <strong>Tip:</strong> Review these examples to understand the
-            site&apos;s content style and quality standards before submitting
-            your guest post.
+            💡 <strong>Tip:</strong> Review these examples to understand the site&apos;s content
+            style and quality standards before submitting your guest post.
           </p>
         </div>
       </CardContent>

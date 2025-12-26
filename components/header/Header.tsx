@@ -16,11 +16,7 @@ const Header = () => {
     <header className="py-2 px-6 backdrop-blur-md sticky top-0 z-50">
       <nav className="flex justify-between items-center w-full mx-auto">
         <div className="flex items-center space-x-6 md:space-x-12">
-          <Link
-            href="/"
-            title={siteConfig.name}
-            className="flex items-center space-x-1"
-          >
+          <Link href="/" title={siteConfig.name} className="flex items-center space-x-1">
             <Image src="/logo.png" alt="Logo" width={28} height={28} />
             <span className={cn("text-md font-medium")}>{siteConfig.name}</span>
           </Link>

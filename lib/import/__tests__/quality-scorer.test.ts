@@ -3,9 +3,7 @@ import { calculateQualityScore, scoreAllSites } from "../quality-scorer";
 import { ScrapedSite, ScrapedSiteData } from "../types";
 
 // Helper to create test site data
-function createTestSite(
-  dataOverrides: Partial<ScrapedSiteData> = {},
-): ScrapedSite {
+function createTestSite(dataOverrides: Partial<ScrapedSiteData> = {}): ScrapedSite {
   const defaultData: ScrapedSiteData = {
     spamScore: "100%",
     googleNews: "no",

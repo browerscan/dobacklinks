@@ -13,9 +13,7 @@ type Params = Promise<{
 type MetadataProps = {
   params: Params;
 };
-export async function generateMetadata({
-  params,
-}: MetadataProps): Promise<Metadata> {
+export async function generateMetadata({ params }: MetadataProps): Promise<Metadata> {
   const { slug } = await params;
   const result = await getProductBySlug(slug);
 

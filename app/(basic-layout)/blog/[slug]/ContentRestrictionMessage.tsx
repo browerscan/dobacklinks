@@ -31,18 +31,11 @@ export function ContentRestrictionMessage({
         </div>
 
         <h2 className="text-3xl font-bold text-center mb-4">{title}</h2>
-        <p className="text-center text-muted-foreground mb-8 max-w-md text-lg">
-          {message}
-        </p>
+        <p className="text-center text-muted-foreground mb-8 max-w-md text-lg">{message}</p>
 
         {(actionText || backText) && (
           <div className="flex flex-col sm:flex-row justify-center gap-4 w-full max-w-md">
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="w-full sm:flex-1 group"
-            >
+            <Button asChild variant="outline" size="lg" className="w-full sm:flex-1 group">
               <Link
                 href={backLink}
                 title={backText}

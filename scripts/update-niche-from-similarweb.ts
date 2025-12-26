@@ -79,12 +79,7 @@ async function updateNicheFromSimilarWeb() {
       similarwebData: products.similarwebData,
     })
     .from(products)
-    .where(
-      and(
-        eq(products.enrichmentStatus, "enriched"),
-        isNotNull(products.similarwebData),
-      ),
-    );
+    .where(and(eq(products.enrichmentStatus, "enriched"), isNotNull(products.similarwebData)));
 
   console.log(`📊 Found ${productsWithCategory.length} enriched products\n`);
 
@@ -127,14 +122,9 @@ async function updateNicheFromSimilarWeb() {
     }
 
     // Only update if current niche is "General" (inferred) or different
-    if (
-      product.currentNiche !== "General" &&
-      product.currentNiche !== newNiche
-    ) {
+    if (product.currentNiche !== "General" && product.currentNiche !== newNiche) {
       // Keep manually set niches, but track for review
-      console.log(
-        `⚠️  ${product.name}: ${product.currentNiche} → ${newNiche} (keeping original)`,
-      );
+      console.log(`⚠️  ${product.name}: ${product.currentNiche} → ${newNiche} (keeping original)`);
       skipped++;
       continue;
     }
@@ -156,9 +146,7 @@ async function updateNicheFromSimilarWeb() {
     summary[key] = (summary[key] || 0) + 1;
   }
 
-  for (const [change, count] of Object.entries(summary).sort(
-    (a, b) => b[1] - a[1],
-  )) {
+  for (const [change, count] of Object.entries(summary).sort((a, b) => b[1] - a[1])) {
     console.log(`  ${change}: ${count}`);
   }
 
@@ -179,16 +167,11 @@ async function updateNicheFromSimilarWeb() {
     const batch = updates.slice(i, i + batchSize);
 
     for (const update of batch) {
-      await db
-        .update(products)
-        .set({ niche: update.to })
-        .where(eq(products.id, update.id));
+      await db.update(products).set({ niche: update.to }).where(eq(products.id, update.id));
       updated++;
     }
 
-    console.log(
-      `  ✓ Updated ${Math.min(i + batchSize, updates.length)}/${updates.length}`,
-    );
+    console.log(`  ✓ Updated ${Math.min(i + batchSize, updates.length)}/${updates.length}`);
   }
 
   console.log(`

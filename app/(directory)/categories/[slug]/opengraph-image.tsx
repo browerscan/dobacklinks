@@ -9,18 +9,12 @@ export const size = {
 };
 export const contentType = "image/png";
 
-export default async function OGImage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function OGImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const categoryResponse = await getCategoryBySlug(slug);
   const category = categoryResponse.success ? categoryResponse.data : null;
 
-  const title = category
-    ? `Best ${category.name} Guest Post Sites`
-    : "Category Sites";
+  const title = category ? `Best ${category.name} Guest Post Sites` : "Category Sites";
   const description = category
     ? `Explore ${category.name.toLowerCase()} guest post opportunities with DR, traffic, and pricing details.`
     : "Discover guest post sites tailored to your niche.";

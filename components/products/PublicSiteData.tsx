@@ -66,9 +66,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
           )}
           <div className="flex-1">
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-            {product.tagline && (
-              <p className="text-muted-foreground">{product.tagline}</p>
-            )}
+            {product.tagline && <p className="text-muted-foreground">{product.tagline}</p>}
           </div>
         </div>
 
@@ -110,19 +108,16 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
       </div>
 
       {/* Description */}
-      {typeof product.description === "string" &&
-        product.description.trim().length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>About</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {product.description}
-              </p>
-            </CardContent>
-          </Card>
-        )}
+      {typeof product.description === "string" && product.description.trim().length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>About</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">{product.description}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Quick Stats */}
       <Card>
@@ -140,9 +135,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
                   <TrendingUp className="w-4 h-4" />
                   Domain Rating
                 </div>
-                <div className="text-3xl font-bold text-primary">
-                  {product.dr}
-                </div>
+                <div className="text-3xl font-bold text-primary">{product.dr}</div>
                 <div className="text-xs text-muted-foreground">Ahrefs DR</div>
               </div>
             )}
@@ -152,9 +145,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
                   <Award className="w-4 h-4" />
                   Domain Authority
                 </div>
-                <div className="text-3xl font-bold text-primary">
-                  {product.da}
-                </div>
+                <div className="text-3xl font-bold text-primary">{product.da}</div>
                 <div className="text-xs text-muted-foreground">Moz DA</div>
               </div>
             )}
@@ -232,9 +223,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
                         ? `${(product.ahrefsOrganicTraffic / 1000).toFixed(1)}K`
                         : product.ahrefsOrganicTraffic.toLocaleString()}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Monthly organic visits
-                  </div>
+                  <div className="text-xs text-muted-foreground">Monthly organic visits</div>
                 </div>
               )}
 
@@ -249,9 +238,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
                       ? `${(product.referralDomains / 1000).toFixed(1)}K`
                       : product.referralDomains.toLocaleString()}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Backlink sources
-                  </div>
+                  <div className="text-xs text-muted-foreground">Backlink sources</div>
                 </div>
               )}
 
@@ -267,12 +254,8 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
                     />
                     SEMrush Authority Score
                   </div>
-                  <div className="text-3xl font-bold text-primary">
-                    {product.semrushAS}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Domain authority (0-100)
-                  </div>
+                  <div className="text-3xl font-bold text-primary">{product.semrushAS}</div>
+                  <div className="text-xs text-muted-foreground">Domain authority (0-100)</div>
                 </div>
               )}
 
@@ -295,9 +278,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
                         ? `${(product.semrushTotalTraffic / 1000).toFixed(1)}K`
                         : product.semrushTotalTraffic.toLocaleString()}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Monthly total visits
-                  </div>
+                  <div className="text-xs text-muted-foreground">Monthly total visits</div>
                 </div>
               )}
 
@@ -314,9 +295,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
                         ? `${(product.similarwebTrafficScraper / 1000).toFixed(1)}K`
                         : product.similarwebTrafficScraper.toLocaleString()}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Monthly visitors
-                  </div>
+                  <div className="text-xs text-muted-foreground">Monthly visitors</div>
                 </div>
               )}
 
@@ -329,9 +308,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
                   <div className="text-2xl font-bold text-primary capitalize">
                     {product.language}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Site language
-                  </div>
+                  <div className="text-xs text-muted-foreground">Site language</div>
                 </div>
               )}
             </div>
@@ -340,9 +317,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
               <div className="mt-4 pt-4 border-t">
                 <div className="text-xs text-muted-foreground">
                   Platform approved:{" "}
-                  <span className="font-medium text-foreground">
-                    {product.approvedDate}
-                  </span>
+                  <span className="font-medium text-foreground">{product.approvedDate}</span>
                 </div>
               </div>
             )}
@@ -367,9 +342,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
                     <Link2 className="w-4 h-4" />
                     Max Links Allowed
                   </div>
-                  <div className="text-3xl font-bold text-primary">
-                    {product.maxLinks}
-                  </div>
+                  <div className="text-3xl font-bold text-primary">{product.maxLinks}</div>
                   <div className="text-xs text-muted-foreground">
                     {product.maxLinks === 1
                       ? "Single link only"
@@ -386,9 +359,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
                   <div className="text-3xl font-bold text-primary">
                     {product.requiredContentSize.toLocaleString()}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    words minimum
-                  </div>
+                  <div className="text-xs text-muted-foreground">words minimum</div>
                 </div>
               )}
             </div>
@@ -425,9 +396,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
               />
               <div className="flex-1 min-w-0">
                 <div className="font-medium">SEMrush</div>
-                <div className="text-xs text-muted-foreground truncate">
-                  Traffic & Keywords
-                </div>
+                <div className="text-xs text-muted-foreground truncate">Traffic & Keywords</div>
               </div>
               <ExternalLink className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             </Link>
@@ -448,9 +417,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
               />
               <div className="flex-1 min-w-0">
                 <div className="font-medium">Ahrefs</div>
-                <div className="text-xs text-muted-foreground truncate">
-                  Backlinks & DR
-                </div>
+                <div className="text-xs text-muted-foreground truncate">Backlinks & DR</div>
               </div>
               <ExternalLink className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             </Link>
@@ -471,9 +438,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
               />
               <div className="flex-1 min-w-0">
                 <div className="font-medium">Moz</div>
-                <div className="text-xs text-muted-foreground truncate">
-                  Domain Authority
-                </div>
+                <div className="text-xs text-muted-foreground truncate">Domain Authority</div>
               </div>
               <ExternalLink className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             </Link>
@@ -494,9 +459,7 @@ export function PublicSiteData({ product }: PublicSiteDataProps) {
               />
               <div className="flex-1 min-w-0">
                 <div className="font-medium">Majestic</div>
-                <div className="text-xs text-muted-foreground truncate">
-                  Trust Flow & Citations
-                </div>
+                <div className="text-xs text-muted-foreground truncate">Trust Flow & Citations</div>
               </div>
               <ExternalLink className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             </Link>

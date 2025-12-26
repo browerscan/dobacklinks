@@ -22,11 +22,7 @@ interface DeleteCategoryDialogProps {
   category: Category | null;
 }
 
-export function DeleteCategoryDialog({
-  isOpen,
-  setIsOpen,
-  category,
-}: DeleteCategoryDialogProps) {
+export function DeleteCategoryDialog({ isOpen, setIsOpen, category }: DeleteCategoryDialogProps) {
   const [isSubmitting, setIsDeleting] = useState(false);
   const router = useRouter();
 
@@ -56,19 +52,14 @@ export function DeleteCategoryDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            category
+            This action cannot be undone. This will permanently delete the category
             <span className="font-bold"> {category?.name}</span>.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
 
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={isSubmitting}
-          >
+          <Button variant="destructive" onClick={handleDelete} disabled={isSubmitting}>
             {isSubmitting ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (

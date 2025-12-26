@@ -9,7 +9,10 @@ import {
   EnrichmentStats,
   EnrichmentResult,
 } from "@/lib/services/enrichment-service";
-import { checkRateLimit, getClientIPFromHeaders } from "@/lib/upstash";
+import { checkRateLimit, getClientIPFromHeaders, RedisFallbackMode } from "@/lib/upstash";
+import { withErrorHandling, withAdminAction, type ActionHandler } from "@/lib/action-wrapper";
+import { ValidationError, RateLimitError, ExternalApiError } from "@/lib/error-handler";
+import { logger } from "@/lib/logger";
 import { and, count, desc, eq, ilike, or, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -54,70 +57,81 @@ export interface GetProductsWithEnrichmentStatusParams {
 }
 
 // ============================================================================
-// Server Actions
+// Internal Handlers
+// ============================================================================
+
+/**
+ * Internal handler: Get enrichment statistics
+ */
+const getEnrichmentStatsHandler: ActionHandler<EnrichmentStats> = async () => {
+  const service = getEnrichmentService();
+  const stats = await service.getEnrichmentStats();
+  return stats;
+};
+
+/**
+ * Internal handler: Enrich all pending products
+ */
+const enrichAllPendingHandler: ActionHandler<EnrichmentResult> = async () => {
+  const clientIP = await getClientIPFromHeaders();
+  const isAllowed = await checkRateLimit(
+    clientIP,
+    ENRICHMENT_BULK_RATE_LIMIT,
+    RedisFallbackMode.MEMORY_FALLBACK,
+  );
+  if (!isAllowed) {
+    throw new RateLimitError(3600); // 1 hour retry
+  }
+
+  logger.info("[enrichment] Starting bulk enrichment for all pending products");
+
+  const service = getEnrichmentService();
+  const result = await service.enrichProducts("pending", undefined, 100);
+
+  // Revalidate relevant pages
+  revalidatePath("/dashboard/enrichment");
+  revalidatePath("/dashboard/sites");
+
+  if (!result.success) {
+    throw new ExternalApiError("SimilarWeb", result.error ?? "Enrichment service returned failure");
+  }
+
+  return result;
+};
+
+/**
+ * Internal handler: Reset failed products to pending
+ */
+const resetFailedToPendingHandler: ActionHandler<{ count: number }> = async () => {
+  const service = getEnrichmentService();
+  const count = await service.resetFailedProducts(undefined);
+
+  // Revalidate relevant pages
+  revalidatePath("/dashboard/enrichment");
+  revalidatePath("/dashboard/sites");
+
+  logger.info(`[enrichment] Reset ${count} products to pending status`);
+
+  return { count };
+};
+
+// ============================================================================
+// Public Server Actions (with unified error handling)
 // ============================================================================
 
 /**
  * Get enrichment statistics for dashboard
  */
-export async function getEnrichmentStatsAction(): Promise<
-  ActionResult<EnrichmentStats>
-> {
-  if (!(await isAdmin())) {
-    return actionResponse.unauthorized("Admin access required");
-  }
-
-  try {
-    const service = getEnrichmentService();
-    const stats = await service.getEnrichmentStats();
-    return actionResponse.success(stats);
-  } catch (error) {
-    console.error("[getEnrichmentStatsAction] Error:", error);
-    return actionResponse.error("Failed to get enrichment statistics");
-  }
+export async function getEnrichmentStatsAction(): Promise<ActionResult<EnrichmentStats>> {
+  return withAdminAction("getEnrichmentStats", getEnrichmentStatsHandler);
 }
 
 /**
  * Trigger enrichment for all pending products
  * Note: Processes up to 100 products at a time to avoid timeout
  */
-export async function enrichAllPendingAction(): Promise<
-  ActionResult<EnrichmentResult>
-> {
-  if (!(await isAdmin())) {
-    return actionResponse.unauthorized("Admin access required");
-  }
-
-  // Rate limiting to prevent SimilarWeb API abuse
-  const clientIP = await getClientIPFromHeaders();
-  const isAllowed = await checkRateLimit(clientIP, ENRICHMENT_BULK_RATE_LIMIT);
-  if (!isAllowed) {
-    return actionResponse.badRequest(
-      "Rate limit exceeded. Max 10 bulk enrichments per hour.",
-    );
-  }
-
-  try {
-    console.log(
-      "[enrichAllPendingAction] Starting enrichment for all pending products",
-    );
-
-    const service = getEnrichmentService();
-    const result = await service.enrichProducts("pending", undefined, 100);
-
-    // Revalidate relevant pages
-    revalidatePath("/dashboard/enrichment");
-    revalidatePath("/dashboard/sites");
-
-    if (result.success) {
-      return actionResponse.success(result);
-    } else {
-      return actionResponse.error(result.error || "Enrichment failed");
-    }
-  } catch (error) {
-    console.error("[enrichAllPendingAction] Error:", error);
-    return actionResponse.error("Failed to enrich pending products");
-  }
+export async function enrichAllPendingAction(): Promise<ActionResult<EnrichmentResult>> {
+  return withAdminAction("enrichAllPending", enrichAllPendingHandler);
 }
 
 /**
@@ -126,18 +140,12 @@ export async function enrichAllPendingAction(): Promise<
 export async function enrichProductsAction(
   productIds: string[],
 ): Promise<ActionResult<EnrichmentResult>> {
-  if (!(await isAdmin())) {
-    return actionResponse.unauthorized("Admin access required");
-  }
-
   if (!productIds || productIds.length === 0) {
-    return actionResponse.badRequest("Product IDs are required");
+    throw new ValidationError("Product IDs are required");
   }
 
-  try {
-    console.log(
-      `[enrichProductsAction] Starting enrichment for ${productIds.length} products`,
-    );
+  return withAdminAction("enrichProducts", async () => {
+    logger.info(`[enrichment] Starting enrichment for ${productIds.length} products`);
 
     const service = getEnrichmentService();
     const result = await service.enrichProducts(productIds);
@@ -146,15 +154,15 @@ export async function enrichProductsAction(
     revalidatePath("/dashboard/enrichment");
     revalidatePath("/dashboard/sites");
 
-    if (result.success) {
-      return actionResponse.success(result);
-    } else {
-      return actionResponse.error(result.error || "Enrichment failed");
+    if (!result.success) {
+      throw new ExternalApiError(
+        "SimilarWeb",
+        result.error ?? "Enrichment service returned failure",
+      );
     }
-  } catch (error) {
-    console.error("[enrichProductsAction] Error:", error);
-    return actionResponse.error("Failed to enrich products");
-  }
+
+    return result;
+  });
 }
 
 /**
@@ -163,28 +171,22 @@ export async function enrichProductsAction(
 export async function enrichSingleProductAction(
   productId: string,
 ): Promise<ActionResult<EnrichmentResult>> {
-  if (!(await isAdmin())) {
-    return actionResponse.unauthorized("Admin access required");
-  }
-
   if (!productId) {
-    return actionResponse.badRequest("Product ID is required");
+    throw new ValidationError("Product ID is required");
   }
 
-  // Rate limiting to prevent SimilarWeb API abuse
-  const clientIP = await getClientIPFromHeaders();
-  const isAllowed = await checkRateLimit(
-    clientIP,
-    ENRICHMENT_SINGLE_RATE_LIMIT,
-  );
-  if (!isAllowed) {
-    return actionResponse.badRequest(
-      "Rate limit exceeded. Max 50 single enrichments per hour.",
+  return withAdminAction("enrichSingleProduct", async () => {
+    const clientIP = await getClientIPFromHeaders();
+    const isAllowed = await checkRateLimit(
+      clientIP,
+      ENRICHMENT_SINGLE_RATE_LIMIT,
+      RedisFallbackMode.MEMORY_FALLBACK,
     );
-  }
+    if (!isAllowed) {
+      throw new RateLimitError(3600);
+    }
 
-  try {
-    console.log(`[enrichSingleProductAction] Enriching product ${productId}`);
+    logger.info(`[enrichment] Enriching single product ${productId}`);
 
     const service = getEnrichmentService();
     const result = await service.enrichSingleProduct(productId);
@@ -194,15 +196,15 @@ export async function enrichSingleProductAction(
     revalidatePath("/dashboard/sites");
     revalidatePath(`/sites/${productId}`);
 
-    if (result.success) {
-      return actionResponse.success(result);
-    } else {
-      return actionResponse.error(result.error || "Enrichment failed");
+    if (!result.success) {
+      throw new ExternalApiError(
+        "SimilarWeb",
+        result.error ?? "Enrichment service returned failure",
+      );
     }
-  } catch (error) {
-    console.error("[enrichSingleProductAction] Error:", error);
-    return actionResponse.error("Failed to enrich product");
-  }
+
+    return result;
+  });
 }
 
 /**
@@ -211,26 +213,22 @@ export async function enrichSingleProductAction(
 export async function resetFailedToPendingAction(
   productIds?: string[],
 ): Promise<ActionResult<{ count: number }>> {
-  if (!(await isAdmin())) {
-    return actionResponse.unauthorized("Admin access required");
+  if (productIds && productIds.length > 0) {
+    return withAdminAction("resetFailedToPending", async () => {
+      const service = getEnrichmentService();
+      const count = await service.resetFailedProducts(productIds);
+
+      // Revalidate relevant pages
+      revalidatePath("/dashboard/enrichment");
+      revalidatePath("/dashboard/sites");
+
+      logger.info(`[enrichment] Reset ${count} products to pending status`);
+
+      return { count };
+    });
   }
 
-  try {
-    const service = getEnrichmentService();
-    const count = await service.resetFailedProducts(productIds);
-
-    // Revalidate relevant pages
-    revalidatePath("/dashboard/enrichment");
-    revalidatePath("/dashboard/sites");
-
-    console.log(
-      `[resetFailedToPendingAction] Reset ${count} products to pending`,
-    );
-    return actionResponse.success({ count });
-  } catch (error) {
-    console.error("[resetFailedToPendingAction] Error:", error);
-    return actionResponse.error("Failed to reset failed products");
-  }
+  return withAdminAction("resetFailedToPending", resetFailedToPendingHandler);
 }
 
 /**
@@ -238,21 +236,12 @@ export async function resetFailedToPendingAction(
  */
 export async function getProductsWithEnrichmentStatusAction(
   params: GetProductsWithEnrichmentStatusParams,
-): Promise<
-  ActionResult<{
-    products: EnrichmentProduct[];
-    total: number;
-  }>
-> {
-  if (!(await isAdmin())) {
-    return actionResponse.unauthorized("Admin access required");
-  }
+): Promise<ActionResult<{ products: EnrichmentProduct[]; total: number }>> {
+  return withAdminAction("getProductsWithEnrichmentStatus", async () => {
+    const pageIndex = params.pageIndex || 0;
+    const pageSize = params.pageSize || ENRICHMENT_PAGE_SIZE;
+    const start = pageIndex * pageSize;
 
-  const pageIndex = params.pageIndex || 0;
-  const pageSize = params.pageSize || ENRICHMENT_PAGE_SIZE;
-  const start = pageIndex * pageSize;
-
-  try {
     // Build where conditions
     const conditions = [];
 
@@ -264,20 +253,14 @@ export async function getProductsWithEnrichmentStatusAction(
     // Search by name or URL
     if (params.search) {
       conditions.push(
-        or(
-          ilike(products.name, `%${params.search}%`),
-          ilike(products.url, `%${params.search}%`),
-        ),
+        or(ilike(products.name, `%${params.search}%`), ilike(products.url, `%${params.search}%`)),
       );
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     // Get total count
-    const [totalResult] = await db
-      .select({ count: count() })
-      .from(products)
-      .where(whereClause);
+    const [totalResult] = await db.select({ count: count() }).from(products).where(whereClause);
 
     const total = totalResult?.count || 0;
 
@@ -298,14 +281,9 @@ export async function getProductsWithEnrichmentStatusAction(
       .limit(pageSize)
       .offset(start);
 
-    return actionResponse.success({
+    return {
       products: productsData,
       total,
-    });
-  } catch (error) {
-    console.error("[getProductsWithEnrichmentStatusAction] Error:", error);
-    return actionResponse.error(
-      "Failed to get products with enrichment status",
-    );
-  }
+    };
+  });
 }

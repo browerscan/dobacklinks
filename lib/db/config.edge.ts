@@ -21,10 +21,7 @@ interface DBConfig {
 // Detect runtime environment
 function detectRuntime() {
   // @ts-ignore - Cloudflare Workers global
-  if (
-    typeof navigator !== "undefined" &&
-    navigator.userAgent === "Cloudflare-Workers"
-  ) {
+  if (typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers") {
     return "cloudflare-workers";
   }
   if (process.env.VERCEL_ENV) return "vercel";
@@ -54,9 +51,7 @@ export function createDatabaseEdge(config: DBConfig) {
 
   // Cloudflare Workers without Hyperdrive - use Neon HTTP
   if (runtime === "cloudflare-workers") {
-    console.warn(
-      "⚠️ Hyperdrive not configured, using Neon HTTP (requires Neon database)",
-    );
+    console.warn("⚠️ Hyperdrive not configured, using Neon HTTP (requires Neon database)");
 
     // Check if using Neon
     if (!config.connectionString.includes("neon")) {
@@ -94,8 +89,7 @@ export function createDatabaseEdge(config: DBConfig) {
   const client = postgres(config.connectionString, {
     ...platformConfig,
     ssl:
-      config.connectionString.includes("supabase") ||
-      config.connectionString.includes("neon")
+      config.connectionString.includes("supabase") || config.connectionString.includes("neon")
         ? "require"
         : false,
     debug: config.debug ?? process.env.NODE_ENV === "development",

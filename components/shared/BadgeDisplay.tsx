@@ -48,9 +48,7 @@ export function BadgeDisplay({
   };
 
   const layoutClass =
-    layout === "vertical"
-      ? "flex flex-col gap-4"
-      : "flex items-center gap-4 flex-col md:flex-row";
+    layout === "vertical" ? "flex flex-col gap-4" : "flex items-center gap-4 flex-col md:flex-row";
 
   return (
     <div className={className}>

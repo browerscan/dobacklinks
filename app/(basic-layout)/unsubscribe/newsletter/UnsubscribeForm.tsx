@@ -1,13 +1,7 @@
 "use client";
 
 import { unsubscribeFromNewsletter } from "@/actions/newsletter";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  CheckCircle,
-  Loader2,
-  Mail,
-} from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle, Loader2, Mail } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -17,14 +11,8 @@ interface UnsubscribeFormProps {
   adminEmail: string;
 }
 
-export default function UnsubscribeForm({
-  token,
-  email,
-  adminEmail,
-}: UnsubscribeFormProps) {
-  const [status, setStatus] = useState<
-    "pending" | "loading" | "success" | "error"
-  >("pending");
+export default function UnsubscribeForm({ token, email, adminEmail }: UnsubscribeFormProps) {
+  const [status, setStatus] = useState<"pending" | "loading" | "success" | "error">("pending");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleUnsubscribe = async () => {
@@ -36,17 +24,13 @@ export default function UnsubscribeForm({
         setStatus("success");
       } else {
         setStatus("error");
-        setErrorMessage(
-          result.error || "An unexpected error occurred. Please try again.",
-        );
+        setErrorMessage(result.error || "An unexpected error occurred. Please try again.");
       }
     } catch (error) {
       console.error("Failed to unsubscribe:", error);
       setStatus("error");
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred. Please try again.",
+        error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
       );
     }
   };
@@ -71,14 +55,12 @@ export default function UnsubscribeForm({
         </div>
 
         <p className="text-muted-foreground">
-          We&apos;re sorry to see you go. You will no longer receive our
-          newsletters.
+          We&apos;re sorry to see you go. You will no longer receive our newsletters.
         </p>
 
         <div className="pt-4 border-t border-border">
           <p className="text-sm text-muted-foreground">
-            If this was a mistake, or if you have any questions, please contact
-            us at{" "}
+            If this was a mistake, or if you have any questions, please contact us at{" "}
             <Link
               href={`mailto:${adminEmail}`}
               title={adminEmail}
@@ -110,15 +92,12 @@ export default function UnsubscribeForm({
         <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-4 rounded-lg">
           <div className="flex items-start">
             <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mr-3 mt-0.5 flex-shrink-0" />
-            <p className="text-red-800 dark:text-red-300 font-medium">
-              {errorMessage}
-            </p>
+            <p className="text-red-800 dark:text-red-300 font-medium">{errorMessage}</p>
           </div>
         </div>
 
         <p className="text-muted-foreground">
-          Please try again, or if the problem persists, contact our support
-          team.
+          Please try again, or if the problem persists, contact our support team.
         </p>
 
         <div className="flex space-x-3">

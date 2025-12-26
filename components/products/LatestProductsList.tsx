@@ -37,9 +37,7 @@ export function LatestProductsList({
   );
   const [pageIndex, setPageIndex] = useState(0);
   const [hasMore, setHasMore] = useState(
-    useClientCache
-      ? cachedProducts.length < cachedTotalCount
-      : initialProducts.length < totalCount,
+    useClientCache ? cachedProducts.length < cachedTotalCount : initialProducts.length < totalCount,
   );
   const [loading, setLoading] = useState(false);
 
@@ -63,9 +61,7 @@ export function LatestProductsList({
         const newProducts = response.data.products;
         setProducts((prevProducts) => {
           const updatedProducts = [...prevProducts, ...newProducts];
-          const currentTotalCount = useClientCache
-            ? cachedTotalCount
-            : totalCount;
+          const currentTotalCount = useClientCache ? cachedTotalCount : totalCount;
           setHasMore(updatedProducts.length < currentTotalCount);
           return updatedProducts;
         });
@@ -79,15 +75,7 @@ export function LatestProductsList({
     } finally {
       setLoading(false);
     }
-  }, [
-    hasMore,
-    loading,
-    pageIndex,
-    categoryId,
-    useClientCache,
-    cachedTotalCount,
-    totalCount,
-  ]);
+  }, [hasMore, loading, pageIndex, categoryId, useClientCache, cachedTotalCount, totalCount]);
 
   // Update state when props change
   useEffect(() => {
@@ -100,14 +88,7 @@ export function LatestProductsList({
       setPageIndex(0);
       setHasMore(initialProducts.length < totalCount);
     }
-  }, [
-    useClientCache,
-    cachedProducts,
-    cachedTotalCount,
-    initialProducts,
-    totalCount,
-    categoryId,
-  ]);
+  }, [useClientCache, cachedProducts, cachedTotalCount, initialProducts, totalCount, categoryId]);
 
   useEffect(() => {
     if (inView && hasMore && !loading) {
@@ -119,15 +100,10 @@ export function LatestProductsList({
   if (cachedLoading && useClientCache && products.length === 0) {
     return (
       <div className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Latest
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Latest</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {[...Array(8)].map((_, i) => (
-            <div
-              key={i}
-              className="h-48 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"
-            />
+            <div key={i} className="h-48 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
           ))}
         </div>
       </div>
@@ -136,9 +112,7 @@ export function LatestProductsList({
 
   return (
     <div className="mb-8">
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-        Latest
-      </h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Latest</h2>
 
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
@@ -152,14 +126,10 @@ export function LatestProductsList({
             Be the first to list a site here!
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md">
-            No sites in this category yet. Add yours and reach more publishers
-            and marketers.
+            No sites in this category yet. Add yours and reach more publishers and marketers.
           </p>
 
-          <Button
-            asChild
-            className="shadow-lg hover:shadow-xl transition-shadow"
-          >
+          <Button asChild className="shadow-lg hover:shadow-xl transition-shadow">
             <Link href="/submit" className="flex items-center gap-2">
               <Rocket className="w-4 h-4" />
               Submit Your Site
@@ -175,9 +145,7 @@ export function LatestProductsList({
           </div>
           {hasMore && (
             <div ref={ref} className="text-center py-8">
-              <div className="text-sm text-gray-500">
-                {loading ? "Loading More..." : ""}
-              </div>
+              <div className="text-sm text-gray-500">{loading ? "Loading More..." : ""}</div>
             </div>
           )}
         </>

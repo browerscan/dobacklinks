@@ -27,16 +27,12 @@ export function StatCard({
   return (
     <Card className="bg-gradient-to-b from-background to-muted dark:to-muted/50">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-normal text-muted-foreground">
-          {title}
-        </CardTitle>
+        <CardTitle className="text-sm font-normal text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-2xl font-semibold tabular-nums">
-              {formatValue(today, unit)}
-            </div>
+            <div className="text-2xl font-semibold tabular-nums">{formatValue(today, unit)}</div>
             <p className="text-xs text-muted-foreground">
               {t("yesterday")}: {formatValue(yesterday, unit)}
             </p>
@@ -49,12 +45,8 @@ export function StatCard({
         {total !== undefined && (
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-lg font-semibold">
-                {formatValue(total, "count")}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {totalLabel || t("totalUsers")}
-              </p>
+              <div className="text-lg font-semibold">{formatValue(total, "count")}</div>
+              <p className="text-xs text-muted-foreground">{totalLabel || t("totalUsers")}</p>
             </div>
           </div>
         )}

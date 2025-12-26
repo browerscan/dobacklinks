@@ -47,8 +47,7 @@ export function TagSelectDialog({
   initialAvailableTags,
   isLoadingInitialTags,
 }: TagSelectDialogProps) {
-  const [currentAvailableTags, setCurrentAvailableTags] =
-    useState<Tag[]>(initialAvailableTags);
+  const [currentAvailableTags, setCurrentAvailableTags] = useState<Tag[]>(initialAvailableTags);
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
@@ -74,11 +73,7 @@ export function TagSelectDialog({
     if (!searchTerm.trim()) return;
     const newTagName = searchTerm.trim();
 
-    if (
-      currentAvailableTags.some(
-        (tag) => tag.name.toLowerCase() === newTagName.toLowerCase(),
-      )
-    ) {
+    if (currentAvailableTags.some((tag) => tag.name.toLowerCase() === newTagName.toLowerCase())) {
       toast.info(`Tag "${newTagName}" already exists.`);
       return;
     }
@@ -124,9 +119,7 @@ export function TagSelectDialog({
       <DialogContent className="sm:max-w-[600px] flex flex-col max-h-[80vh]">
         <DialogHeader>
           <DialogTitle>Select Tags</DialogTitle>
-          <DialogDescription>
-            Select up to 5 tags for your post.
-          </DialogDescription>
+          <DialogDescription>Select up to 5 tags for your post.</DialogDescription>
         </DialogHeader>
 
         {selectedTags.length > 0 && (

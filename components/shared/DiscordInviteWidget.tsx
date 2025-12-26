@@ -44,8 +44,7 @@ const DiscordInviteWidget: React.FC = () => {
           <SiDiscord
             className="w-8 h-8 text-white transition-transform duration-300"
             style={{
-              transform:
-                isVisible || isHovered ? "rotate(360deg)" : "rotate(270deg)",
+              transform: isVisible || isHovered ? "rotate(360deg)" : "rotate(270deg)",
             }}
           />
         </a>

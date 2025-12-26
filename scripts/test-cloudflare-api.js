@@ -32,9 +32,7 @@ console.log("📋 Configuration:");
 console.log(
   `   Account ID: ${CLOUDFLARE_ACCOUNT_ID ? "✅ " + CLOUDFLARE_ACCOUNT_ID.substring(0, 10) + "..." : "❌ Missing"}`,
 );
-console.log(
-  `   API Token: ${CLOUDFLARE_API_TOKEN ? "✅ Found" : "❌ Missing"}`,
-);
+console.log(`   API Token: ${CLOUDFLARE_API_TOKEN ? "✅ Found" : "❌ Missing"}`);
 console.log(`   Test URL: ${TEST_URL}`);
 console.log("═".repeat(80));
 console.log("");
@@ -95,13 +93,7 @@ async function testScreenshot() {
           console.log(`   Duration: ${duration}ms`);
 
           // Save to file
-          const outputDir = path.join(
-            __dirname,
-            "..",
-            "public",
-            "screenshots",
-            "full",
-          );
+          const outputDir = path.join(__dirname, "..", "public", "screenshots", "full");
           if (!fs.existsSync(outputDir)) {
             fs.mkdirSync(outputDir, { recursive: true });
           }
@@ -145,8 +137,7 @@ async function testSeoExtraction() {
         TEST_URL,
         {
           headers: {
-            "User-Agent":
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
           },
         },
         (res) => {
@@ -162,14 +153,8 @@ async function testSeoExtraction() {
             // Simple HTML parsing
             const getMeta = (name) => {
               const patterns = [
-                new RegExp(
-                  `<meta\\s+name=["']${name}["']\\s+content=["']([^"']+)["']`,
-                  "i",
-                ),
-                new RegExp(
-                  `<meta\\s+content=["']([^"']+)["']\\s+name=["']${name}["']`,
-                  "i",
-                ),
+                new RegExp(`<meta\\s+name=["']${name}["']\\s+content=["']([^"']+)["']`, "i"),
+                new RegExp(`<meta\\s+content=["']([^"']+)["']\\s+name=["']${name}["']`, "i"),
               ];
               for (const pattern of patterns) {
                 const match = html.match(pattern);
@@ -250,9 +235,7 @@ async function main() {
     console.log("Performance:");
     console.log(`   Screenshot: ${screenshotResult.duration}ms`);
     console.log(`   SEO Extraction: ${seoResult.duration}ms`);
-    console.log(
-      `   Total: ${screenshotResult.duration + seoResult.duration}ms`,
-    );
+    console.log(`   Total: ${screenshotResult.duration + seoResult.duration}ms`);
     console.log("");
     console.log("✅ Cloudflare Browser Rendering API is working!");
     console.log("");

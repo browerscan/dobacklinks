@@ -16,15 +16,9 @@ async function main() {
   const statsBefore = await service.getEnrichmentStats();
   console.log("📊 当前状态:");
   console.log(`   总数: ${statsBefore.total}`);
-  console.log(
-    `   已捕获: ${statsBefore.captured} (${statsBefore.capturedPercentage}%)`,
-  );
-  console.log(
-    `   失败: ${statsBefore.failed} (${statsBefore.failedPercentage}%)`,
-  );
-  console.log(
-    `   待处理: ${statsBefore.pending} (${statsBefore.pendingPercentage}%)`,
-  );
+  console.log(`   已捕获: ${statsBefore.captured} (${statsBefore.capturedPercentage}%)`);
+  console.log(`   失败: ${statsBefore.failed} (${statsBefore.failedPercentage}%)`);
+  console.log(`   待处理: ${statsBefore.pending} (${statsBefore.pendingPercentage}%)`);
   console.log("");
 
   if (statsBefore.failed === 0) {
@@ -40,12 +34,8 @@ async function main() {
   // 获取重置后的统计
   const statsAfter = await service.getEnrichmentStats();
   console.log("📊 重置后状态:");
-  console.log(
-    `   待处理: ${statsAfter.pending} (${statsAfter.pendingPercentage}%)`,
-  );
-  console.log(
-    `   失败: ${statsAfter.failed} (${statsAfter.failedPercentage}%)`,
-  );
+  console.log(`   待处理: ${statsAfter.pending} (${statsAfter.pendingPercentage}%)`);
+  console.log(`   失败: ${statsAfter.failed} (${statsAfter.failedPercentage}%)`);
   console.log("");
   console.log("✅ 状态重置完成！现在可以重新运行 worker 来处理这些产品。");
 }

@@ -28,6 +28,4 @@ export const AVATAR_FILE_CONFIG = {
 };
 export const AVATAR_ALLOWED_FILE_TYPES = Object.values(AVATAR_FILE_CONFIG);
 export const AVATAR_ALLOWED_EXTENSIONS = Object.keys(AVATAR_FILE_CONFIG);
-export const AVATAR_ACCEPT_ATTRIBUTE = AVATAR_ALLOWED_EXTENSIONS.map(
-  (ext) => `.${ext}`,
-).join(", ");
+export const AVATAR_ACCEPT_ATTRIBUTE = AVATAR_ALLOWED_EXTENSIONS.map((ext) => `.${ext}`).join(", ");

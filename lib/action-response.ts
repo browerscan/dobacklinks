@@ -10,28 +10,16 @@ export const actionResponse = {
     return { success: false, error: message, customCode };
   },
 
-  unauthorized: <T>(
-    message = "User not authenticated.",
-    customCode?: string,
-  ): ActionResult<T> => {
+  unauthorized: <T>(message = "User not authenticated.", customCode?: string): ActionResult<T> => {
     return actionResponse.error(message, customCode);
   },
-  badRequest: <T>(
-    message = "Bad Request",
-    customCode?: string,
-  ): ActionResult<T> => {
+  badRequest: <T>(message = "Bad Request", customCode?: string): ActionResult<T> => {
     return actionResponse.error(message, customCode);
   },
-  forbidden: <T>(
-    message = "Forbidden",
-    customCode?: string,
-  ): ActionResult<T> => {
+  forbidden: <T>(message = "Forbidden", customCode?: string): ActionResult<T> => {
     return actionResponse.error(message, customCode);
   },
-  notFound: <T>(
-    message = "Not Found",
-    customCode?: string,
-  ): ActionResult<T> => {
+  notFound: <T>(message = "Not Found", customCode?: string): ActionResult<T> => {
     return actionResponse.error(message, customCode);
   },
   conflict: <T>(message = "Conflict", customCode?: string): ActionResult<T> => {

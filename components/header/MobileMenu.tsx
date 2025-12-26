@@ -24,11 +24,7 @@ export default function MobileMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel>
-          <Link
-            href="/"
-            title={siteConfig.name}
-            className="flex items-center space-x-1 font-bold"
-          >
+          <Link href="/" title={siteConfig.name} className="flex items-center space-x-1 font-bold">
             <Image
               alt={siteConfig.name}
               src="/logo.svg"
@@ -46,14 +42,10 @@ export default function MobileMenu() {
               <Link
                 href={link.href}
                 title={link.name}
-                prefetch={
-                  link.target && link.target === "_blank" ? false : true
-                }
+                prefetch={link.target && link.target === "_blank" ? false : true}
                 target={link.target || "_self"}
                 rel={link.rel || undefined}
-                className={
-                  link.id === "hire-me" ? "font-semibold text-primary" : ""
-                }
+                className={link.id === "hire-me" ? "font-semibold text-primary" : ""}
               >
                 {link.name}
               </Link>

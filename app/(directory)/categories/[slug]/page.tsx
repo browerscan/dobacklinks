@@ -1,8 +1,5 @@
 import { getCategoryBySlug } from "@/actions/categories/user";
-import {
-  getFeaturedProducts,
-  getLatestProducts,
-} from "@/actions/products/user";
+import { getFeaturedProducts, getLatestProducts } from "@/actions/products/user";
 import { ContentHeader } from "@/app/(directory)/ContentHeader";
 import { FeaturedProductsList } from "@/components/products/FeaturedProductsList";
 import { LatestProductsList } from "@/components/products/LatestProductsList";
@@ -21,26 +18,25 @@ type MetadataProps = {
   params: PageParams;
 };
 
-export async function generateMetadata({
-  params,
-}: MetadataProps): Promise<Metadata> {
+export async function generateMetadata({ params }: MetadataProps): Promise<Metadata> {
   const { slug } = await params;
 
   const categoryResponse = await getCategoryBySlug(slug);
   const category = categoryResponse.success ? categoryResponse.data : null;
 
-  const title = category
-    ? `Best ${category.name} Guest Post Sites`
-    : "Category Sites";
+  const title = category ? `Best ${category.name} Guest Post Sites` : "Category Sites";
   const description = category
     ? `Explore ${category.name.toLowerCase()} guest post opportunities with DR, traffic, and pricing details.`
     : "Discover guest post sites tailored to your niche.";
+
+  const fullPath = `/categories/${slug}`;
 
   return constructMetadata({
     page: "Category",
     title,
     description,
-    path: `/categories/${slug}`,
+    path: fullPath,
+    canonicalUrl: fullPath, // Explicit canonical URL
   });
 }
 
@@ -53,16 +49,10 @@ async function Products({ categoryId }: { categoryId: string }) {
     }),
   ]);
 
-  const featuredProducts = featuredResponse.success
-    ? (featuredResponse.data?.products ?? [])
-    : [];
+  const featuredProducts = featuredResponse.success ? (featuredResponse.data?.products ?? []) : [];
 
-  const latestProducts = latestResponse.success
-    ? (latestResponse.data?.products ?? [])
-    : [];
-  const latestTotalCount = latestResponse.success
-    ? (latestResponse.data?.count ?? 0)
-    : 0;
+  const latestProducts = latestResponse.success ? (latestResponse.data?.products ?? []) : [];
+  const latestTotalCount = latestResponse.success ? (latestResponse.data?.count ?? 0) : 0;
 
   return (
     <>

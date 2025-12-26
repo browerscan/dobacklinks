@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
-import {
-  verifyHMACSignature,
-  extractHMACSignature,
-} from "@/lib/security/hmac-auth";
+import { verifyHMACSignature, extractHMACSignature } from "@/lib/security/hmac-auth";
 import { env } from "@/lib/env";
 
 /**
@@ -99,10 +96,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    return NextResponse.json(
-      { success: false, error: "Invalid request" },
-      { status: 400 },
-    );
+    return NextResponse.json({ success: false, error: "Invalid request" }, { status: 400 });
   } catch (error) {
     console.error("[Revalidate API] Error:", error);
     return NextResponse.json(

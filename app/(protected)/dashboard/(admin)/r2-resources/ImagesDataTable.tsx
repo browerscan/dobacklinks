@@ -71,14 +71,10 @@ export function ImagesDataTable({
       setError(null);
 
       const tokenForThisPage =
-        currentPageIndex === 0
-          ? undefined
-          : pageTokensRef.current[currentPageIndex - 1];
+        currentPageIndex === 0 ? undefined : pageTokensRef.current[currentPageIndex - 1];
 
       if (currentPageIndex > 0 && tokenForThisPage === undefined) {
-        console.warn(
-          `Token missing for page ${currentPageIndex}. Fetch aborted.`,
-        );
+        console.warn(`Token missing for page ${currentPageIndex}. Fetch aborted.`);
         setIsLoading(false);
         setHasMore(false);
         return;
@@ -106,9 +102,7 @@ export function ImagesDataTable({
 
         setHasMore(nextContinuationToken !== undefined);
       } catch (err: any) {
-        handleFetchError(
-          err.message || "An unknown error occurred during fetch",
-        );
+        handleFetchError(err.message || "An unknown error occurred during fetch");
       } finally {
         setIsLoading(false);
       }
@@ -137,9 +131,7 @@ export function ImagesDataTable({
         setError(null);
 
         const tokenForThisPage =
-          currentPageIndex === 0
-            ? undefined
-            : pageTokensRef.current[currentPageIndex - 1];
+          currentPageIndex === 0 ? undefined : pageTokensRef.current[currentPageIndex - 1];
 
         try {
           const listResult = await listR2Files({
@@ -153,8 +145,7 @@ export function ImagesDataTable({
             throw new Error(listResult.error);
           }
 
-          const { files: refetchedFiles, nextContinuationToken } =
-            listResult.data;
+          const { files: refetchedFiles, nextContinuationToken } = listResult.data;
           setFiles(refetchedFiles);
           pageTokensRef.current = {
             ...pageTokensRef.current,
@@ -162,10 +153,7 @@ export function ImagesDataTable({
           };
           setHasMore(nextContinuationToken !== undefined);
         } catch (err: any) {
-          handleFetchError(
-            err.message ||
-              "An unknown error occurred during refetch after delete",
-          );
+          handleFetchError(err.message || "An unknown error occurred during refetch after delete");
         } finally {
           setIsLoading(false);
           setIsDeleting(false);
@@ -180,10 +168,7 @@ export function ImagesDataTable({
     [currentPageIndex, categoryPrefix, debouncedFilter, pageSize],
   );
 
-  const columns = useMemo(
-    () => getColumns(r2PublicUrl, handleDelete),
-    [r2PublicUrl, handleDelete],
-  );
+  const columns = useMemo(() => getColumns(r2PublicUrl, handleDelete), [r2PublicUrl, handleDelete]);
 
   const table = useReactTable({
     data: files,
@@ -249,9 +234,7 @@ export function ImagesDataTable({
         {(isLoading || isDeleting) && (
           <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center z-10">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="ml-2">
-              {isDeleting ? "Deleting..." : "Loading..."}
-            </span>
+            <span className="ml-2">{isDeleting ? "Deleting..." : "Loading..."}</span>
           </div>
         )}
         <Table>
@@ -262,10 +245,7 @@ export function ImagesDataTable({
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -277,10 +257,7 @@ export function ImagesDataTable({
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -288,10 +265,7 @@ export function ImagesDataTable({
               : !isLoading &&
                 !isDeleting && (
                   <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
                       No files found matching the criteria.
                     </TableCell>
                   </TableRow>
@@ -301,9 +275,7 @@ export function ImagesDataTable({
       </div>
 
       <div className="flex items-center justify-between space-x-2 py-4">
-        <div className="text-sm text-muted-foreground">
-          Page {currentPageIndex + 1}
-        </div>
+        <div className="text-sm text-muted-foreground">Page {currentPageIndex + 1}</div>
         <div className="space-x-2">
           <Button
             variant="outline"

@@ -10,6 +10,9 @@
  */
 
 import { env } from "@/lib/env";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger({ module: "ScreenshotStorage" });
 
 // ============================================================================
 // Types
@@ -20,11 +23,7 @@ export interface UploadResult {
 }
 
 interface R2Binding {
-  put(
-    key: string,
-    value: ArrayBuffer | ReadableStream,
-    options?: any,
-  ): Promise<void>;
+  put(key: string, value: ArrayBuffer | ReadableStream, options?: any): Promise<void>;
   get(key: string): Promise<any>;
 }
 
@@ -36,8 +35,7 @@ function isEdgeRuntime(): boolean {
     // @ts-ignore - EdgeRuntime is a global in edge runtime
     typeof EdgeRuntime !== "undefined" ||
     // @ts-ignore - navigator exists in Workers
-    (typeof navigator !== "undefined" &&
-      navigator.userAgent === "Cloudflare-Workers")
+    (typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers")
   );
 }
 
@@ -85,11 +83,7 @@ export class ScreenshotStorage {
   /**
    * Save to Cloudflare R2 (Edge runtime)
    */
-  private async saveToR2(
-    buffer: Buffer,
-    fileName: string,
-    domain: string,
-  ): Promise<UploadResult> {
+  private async saveToR2(buffer: Buffer, fileName: string, domain: string): Promise<UploadResult> {
     try {
       if (!this.r2Bucket) {
         throw new Error("R2 bucket not configured");
@@ -98,10 +92,11 @@ export class ScreenshotStorage {
       // Upload original to R2
       const key = `screenshots/${fileName}`;
       // Convert Buffer to ArrayBuffer for R2
+      // Slice returns ArrayBuffer | SharedArrayBuffer, explicitly cast to ArrayBuffer
       const arrayBuffer = buffer.buffer.slice(
         buffer.byteOffset,
         buffer.byteOffset + buffer.byteLength,
-      );
+      ) as ArrayBuffer;
       await this.r2Bucket.put(key, arrayBuffer, {
         httpMetadata: {
           contentType: `image/${this.format}`,
@@ -120,15 +115,11 @@ export class ScreenshotStorage {
       // Format: /cdn-cgi/image/width=400,height=300,fit=cover,quality=80/<image-url>
       const thumbnailUrl = `/cdn-cgi/image/width=${this.thumbnailWidth},height=${this.thumbnailHeight},fit=cover,quality=${this.quality},format=${this.format}/${fullUrl}`;
 
-      console.log("Screenshot saved to R2:", {
-        domain,
-        fullUrl,
-        thumbnailUrl,
-      });
+      log.info("Screenshot saved to R2", { domain, fullUrl, thumbnailUrl });
 
       return { fullUrl, thumbnailUrl };
     } catch (error) {
-      console.error("R2 upload failed:", { domain }, error);
+      log.error("R2 upload failed", { domain }, error instanceof Error ? error : undefined);
       throw error;
     }
   }
@@ -158,10 +149,7 @@ export class ScreenshotStorage {
           .webp({ quality: this.quality - 10 })
           .toBuffer();
       } catch (error) {
-        console.warn(
-          "⚠️ Sharp not available, skipping thumbnail generation:",
-          error,
-        );
+        log.warn("Sharp not available, skipping thumbnail generation");
       }
 
       // Create directories
@@ -189,15 +177,11 @@ export class ScreenshotStorage {
       const fullUrl = `/screenshots/${fileName}`;
       const thumbnailUrl = `/screenshots/thumbnails/${thumbFileName}`;
 
-      console.log("Screenshot saved locally:", {
-        domain,
-        fullUrl,
-        thumbnailUrl,
-      });
+      log.info("Screenshot saved locally", { domain, fullUrl, thumbnailUrl });
 
       return { fullUrl, thumbnailUrl };
     } catch (error) {
-      console.error("Local save failed:", { domain }, error);
+      log.error("Local save failed", { domain }, error instanceof Error ? error : undefined);
       throw error;
     }
   }

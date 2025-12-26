@@ -9,18 +9,13 @@ interface ContentHeaderProps {
   description: string;
 }
 
-export async function ContentHeader({
-  title,
-  description,
-}: ContentHeaderProps) {
+export async function ContentHeader({ title, description }: ContentHeaderProps) {
   return (
     <div className="mb-4 space-y-2">
       <div className="flex flex-col md:flex-row items-start  md:justify-between gap-2">
         <div className="">
           <h1 className="text-md font-semibold leading-tight">{title}</h1>
-          <p className="text-muted-foreground leading-relaxed max-w-4xl">
-            {description}
-          </p>
+          <p className="text-muted-foreground leading-relaxed max-w-4xl">{description}</p>
         </div>
 
         <Last30DaysStats variant="desktop" />

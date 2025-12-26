@@ -13,9 +13,7 @@ const LOCAL_SCREENSHOT_PREFIX = "/screenshots/thumbnails/";
  * @param url - The original URL (local path or full URL)
  * @returns The R2 CDN URL or the original URL if not a local path
  */
-export function getScreenshotUrl(
-  url: string | null | undefined,
-): string | null {
+export function getScreenshotUrl(url: string | null | undefined): string | null {
   if (!url) return null;
 
   // If it's a local path, convert to R2 CDN URL

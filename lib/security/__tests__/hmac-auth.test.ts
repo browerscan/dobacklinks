@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  generateHMACSignature,
-  verifyHMACSignature,
-  extractHMACSignature,
-} from "../hmac-auth";
+import { generateHMACSignature, verifyHMACSignature, extractHMACSignature } from "../hmac-auth";
 
 const TEST_SECRET = "test-secret-key-for-hmac-testing-12345";
 

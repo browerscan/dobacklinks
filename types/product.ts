@@ -1,11 +1,5 @@
 export const LinkTypeEnum = ["dofollow", "nofollow"] as const;
-export const ProductStatusEnum = [
-  "live",
-  "cancelled",
-  "expired",
-  "pending_payment",
-  "pending_review",
-] as const;
+export const ProductStatusEnum = ["live", "pending_review"] as const;
 export const ProductSubmissionTypeEnum = [
   "free",
   "one_time",
@@ -17,6 +11,34 @@ export const ProductSubmissionTypeEnum = [
 export type LinkType = (typeof LinkTypeEnum)[number];
 export type ProductStatus = (typeof ProductStatusEnum)[number];
 export type ProductSubmissionType = (typeof ProductSubmissionTypeEnum)[number];
+
+/**
+ * Traffic sources breakdown from SimilarWeb
+ */
+export interface TrafficSources {
+  direct?: number;
+  referral?: number;
+  search?: number;
+  social?: number;
+  mail?: number;
+  display?: number;
+}
+
+/**
+ * Raw SimilarWeb API response data
+ * Allows for additional fields from API with index signature
+ */
+export interface SimilarWebRawData {
+  domain?: string;
+  monthly_visits?: number | string | null;
+  global_rank?: number | null;
+  country_rank?: number | null;
+  bounce_rate?: number | string | null;
+  pages_per_visit?: number | string | null;
+  avg_visit_duration?: number | string | null;
+  traffic_sources?: TrafficSources | null;
+  [key: string]: unknown;
+}
 
 export type Product = {
   id: string;
@@ -42,7 +64,7 @@ export type Product = {
   requiredContentSize: number | null;
   sampleUrls: string[] | null;
   // SimilarWeb enrichment fields
-  similarwebData: any | null;
+  similarwebData: SimilarWebRawData | null;
   enrichmentStatus: "pending" | "enriched" | "failed" | null;
   enrichedAt: string | null;
   monthlyVisits: number | null;
@@ -51,14 +73,7 @@ export type Product = {
   bounceRate: string | null;
   pagesPerVisit: string | null;
   avgVisitDuration: number | null;
-  trafficSources: {
-    direct?: number;
-    search?: number;
-    referral?: number;
-    social?: number;
-    mail?: number;
-    display?: number;
-  } | null;
+  trafficSources: TrafficSources | null;
   // Screenshot & SEO metadata fields
   screenshotFullUrl: string | null;
   screenshotThumbnailUrl: string | null;

@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
+import { createDrizzleLogger } from "./performance";
 
 interface DBConfig {
   connectionString: string;
@@ -8,6 +9,7 @@ interface DBConfig {
   enablePrepare?: boolean;
   enableSSL?: boolean | "require";
   debug?: boolean;
+  enablePerformanceTracking?: boolean;
 }
 
 // detect deployment platform
@@ -122,14 +124,28 @@ export function createDatabase(config: DBConfig) {
   const connectionConfig = createDatabaseConfig(config);
   const client = postgres(config.connectionString, connectionConfig);
 
+  // Enable performance tracking if configured
+  const enableTracking =
+    config.enablePerformanceTracking ?? process.env.DB_ENABLE_PERFORMANCE_TRACKING !== "false";
+
+  const drizzleConfig: {
+    schema: typeof schema;
+    logger?: any;
+  } = { schema };
+
+  if (enableTracking) {
+    drizzleConfig.logger = createDrizzleLogger();
+  }
+
   // console.log(`🚀 Database initialized:`);
   // console.log(`   Platform: ${detectPlatform()}`);
   // console.log(`   Database: ${detectDatabase(config.connectionString)}`);
   // console.log(`   Max connections: ${connectionConfig.max}`);
   // console.log(`   Prepare statements: ${connectionConfig.prepare}`);
   // console.log(`   SSL: ${connectionConfig.ssl}`);
+  // console.log(`   Performance tracking: ${enableTracking}`);
 
-  return drizzle(client, { schema });
+  return drizzle(client, drizzleConfig);
 }
 
 export function previewConfig(config: DBConfig) {

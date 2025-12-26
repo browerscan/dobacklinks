@@ -7,7 +7,7 @@ import { getSession, isAdmin } from "@/lib/auth/server";
 import { getErrorMessage } from "@/lib/error-utils";
 import { downloadAndUploadImage } from "@/lib/image-processing";
 import { getFaviconUrl, scrapeWebsite } from "@/lib/scraping";
-import { checkRateLimit, getClientIPFromRequest } from "@/lib/upstash";
+import { checkRateLimit, getClientIPFromRequest, RedisFallbackMode } from "@/lib/upstash";
 import { validateUrl } from "@/lib/url";
 import { type Product } from "@/types/product";
 import { z } from "zod";
@@ -24,13 +24,15 @@ export async function POST(req: Request) {
 
     if (!session || !isAdminUser) {
       const clientIP = getClientIPFromRequest(req);
-      const isAllowed = await checkRateLimit(clientIP, {
-        prefix: `${siteConfig.name.trim()}-auto-fill`,
-        maxRequests: parseInt(
-          process.env.NEXT_PUBLIC_DAILY_AI_AUTO_FILL_LIMIT || "30",
-        ),
-        window: "1 d",
-      });
+      const isAllowed = await checkRateLimit(
+        clientIP,
+        {
+          prefix: `${siteConfig.name.trim()}-auto-fill`,
+          maxRequests: parseInt(process.env.NEXT_PUBLIC_DAILY_AI_AUTO_FILL_LIMIT || "30"),
+          window: "1 d",
+        },
+        RedisFallbackMode.MEMORY_FALLBACK,
+      );
 
       if (!isAllowed) {
         return apiResponse.badRequest(
@@ -73,26 +75,19 @@ export async function POST(req: Request) {
     }
 
     // Prepare screenshot source early (needed for parallel execution)
-    const screenshotSource =
-      scrapedData?.data?.metadata?.ogImage || scrapedData?.metadata?.ogImage;
+    const screenshotSource = scrapedData?.data?.metadata?.ogImage || scrapedData?.metadata?.ogImage;
 
     // Step 2: Parallel - AI generation + logo + screenshot
     const [productInfo, logoUrl, screenshotUrl] = await Promise.all([
       // AI generation
-      generateProductInfo(scrapedData, url, categoriesResult.data).catch(
-        (error) => {
-          console.error("AI generation failed:", error);
-          throw new Error(
-            `Failed to generate product info: ${getErrorMessage(error)}`,
-          );
-        },
-      ),
+      generateProductInfo(scrapedData, url, categoriesResult.data).catch((error) => {
+        console.error("AI generation failed:", error);
+        throw new Error(`Failed to generate product info: ${getErrorMessage(error)}`);
+      }),
       // Logo: get favicon URL then upload
       getFaviconUrl(url)
         .then((logoSource) =>
-          logoSource
-            ? downloadAndUploadImage(logoSource, "logo", "products/logos")
-            : null,
+          logoSource ? downloadAndUploadImage(logoSource, "logo", "products/logos") : null,
         )
         .catch((error) => {
           console.error("Logo processing failed:", error);
@@ -100,14 +95,12 @@ export async function POST(req: Request) {
         }),
       // Screenshot upload
       screenshotSource
-        ? downloadAndUploadImage(
-            screenshotSource,
-            "screenshots",
-            "products/screenshots",
-          ).catch((error) => {
-            console.error("Screenshot processing failed:", error);
-            return null;
-          })
+        ? downloadAndUploadImage(screenshotSource, "screenshots", "products/screenshots").catch(
+            (error) => {
+              console.error("Screenshot processing failed:", error);
+              return null;
+            },
+          )
         : Promise.resolve(null),
     ]);
 
@@ -131,8 +124,6 @@ export async function POST(req: Request) {
 
     return apiResponse.success(result);
   } catch (error) {
-    return apiResponse.serverError(
-      `Auto-fill failed: ${getErrorMessage(error)}`,
-    );
+    return apiResponse.serverError(`Auto-fill failed: ${getErrorMessage(error)}`);
   }
 }

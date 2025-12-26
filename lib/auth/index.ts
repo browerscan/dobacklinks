@@ -8,14 +8,7 @@ import { env } from "@/lib/env";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import {
-  admin,
-  anonymous,
-  captcha,
-  lastLoginMethod,
-  magicLink,
-  oneTap,
-} from "better-auth/plugins";
+import { admin, anonymous, captcha, lastLoginMethod, magicLink, oneTap } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
@@ -83,9 +76,7 @@ export const auth = betterAuth({
                 .where(eq(user.id, createdUser.id));
 
               cookieStore.delete("referral_source");
-              console.log(
-                `User ${createdUser.id} updated with referral: ${referralCookie.value}`,
-              );
+              console.log(`User ${createdUser.id} updated with referral: ${referralCookie.value}`);
             }
           } catch (error) {
             console.error("Failed to update user with referral code:", error);
@@ -94,9 +85,7 @@ export const auth = betterAuth({
           // Send welcome email
           if (createdUser.email) {
             try {
-              const unsubscribeToken = Buffer.from(createdUser.email).toString(
-                "base64",
-              );
+              const unsubscribeToken = Buffer.from(createdUser.email).toString("base64");
               const unsubscribeLink = `${process.env.NEXT_PUBLIC_SITE_URL}/unsubscribe/newsletter?token=${unsubscribeToken}`;
 
               await sendEmail({
@@ -139,7 +128,10 @@ export const auth = betterAuth({
           },
         });
       },
-      expiresIn: 60 * 5,
+      // Security: Reduced from 5 minutes to 2 minutes to minimize magic link hijacking risk
+      // 2 minutes is still sufficient for users to complete the login flow
+      // while significantly reducing the window of opportunity for attackers
+      expiresIn: 60 * 2,
     }),
     lastLoginMethod(),
     admin(),

@@ -9,6 +9,14 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
 
+  // Memory optimization for development
+  onDemandEntries: {
+    // Page kept in memory for 15 seconds (default: 60s)
+    maxInactiveAge: 15 * 1000,
+    // Only 3 pages in memory at once (default: 25)
+    pagesBufferLength: 3,
+  },
+
   // Avoid monorepo/multi-lockfile workspace root inference warnings
   turbopack: {
     root: process.cwd(),
@@ -55,9 +63,14 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://challenges.cloudflare.com https://va.vercel-scripts.com",
+              // Note: 'unsafe-inline' is required for React and other libraries
+              // Many components use inline event handlers and dynamic className generation
+              // 'unsafe-eval' removed - tested and confirmed not needed for fuse.js v7
+              "script-src 'self' 'unsafe-inline' https://accounts.google.com https://challenges.cloudflare.com https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
-              "img-src 'self' data: blob: https: http:",
+              // Removed 'http:' from img-src for better security
+              // All images should be served over HTTPS in production
+              "img-src 'self' data: blob: https:",
               "font-src 'self' data: https://fonts.gstatic.com",
               "connect-src 'self' https://accounts.google.com https://*.google.com https://challenges.cloudflare.com https://region1.google-analytics.com",
               "frame-src 'self' https://accounts.google.com https://challenges.cloudflare.com",

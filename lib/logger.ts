@@ -47,12 +47,7 @@ function formatLogEntry(
   return entry;
 }
 
-function log(
-  level: LogLevel,
-  message: string,
-  context?: LogContext,
-  error?: Error,
-): void {
+function log(level: LogLevel, message: string, context?: LogContext, error?: Error): void {
   const entry = formatLogEntry(level, message, context, error);
   const output = JSON.stringify(entry);
 
@@ -81,12 +76,9 @@ function log(
  * logger.error("Failed to process payment", { orderId: "456" }, error);
  */
 export const logger = {
-  debug: (message: string, context?: LogContext) =>
-    log("debug", message, context),
-  info: (message: string, context?: LogContext) =>
-    log("info", message, context),
-  warn: (message: string, context?: LogContext) =>
-    log("warn", message, context),
+  debug: (message: string, context?: LogContext) => log("debug", message, context),
+  info: (message: string, context?: LogContext) => log("info", message, context),
+  warn: (message: string, context?: LogContext) => log("warn", message, context),
   error: (message: string, context?: LogContext, error?: Error) =>
     log("error", message, context, error),
 };

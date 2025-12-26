@@ -24,9 +24,7 @@ async function UsersTable() {
     <DataTable
       columns={columns}
       initialData={initialData.data?.users || []}
-      initialPageCount={Math.ceil(
-        initialData.data?.totalCount || 0 / PAGE_SIZE,
-      )}
+      initialPageCount={Math.ceil(initialData.data?.totalCount || 0 / PAGE_SIZE)}
       pageSize={PAGE_SIZE}
     />
   );

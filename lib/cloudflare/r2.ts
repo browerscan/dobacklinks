@@ -42,11 +42,7 @@ export const serverUploadFile = async ({
     ? data
     : Buffer.from(data.replace(/^data:.*?;base64,/, ""), "base64");
 
-  const finalKey = path
-    ? path.endsWith("/")
-      ? `${path}${key}`
-      : `${path}/${key}`
-    : key;
+  const finalKey = path ? (path.endsWith("/") ? `${path}${key}` : `${path}/${key}`) : key;
 
   try {
     await s3Client.send(
@@ -107,9 +103,7 @@ export interface ListR2ObjectsResult {
   nextContinuationToken?: string;
   error?: string;
 }
-export const listR2Objects = async (
-  params: ListR2ObjectsParams,
-): Promise<ListR2ObjectsResult> => {
+export const listR2Objects = async (params: ListR2ObjectsParams): Promise<ListR2ObjectsResult> => {
   const bucket = process.env.R2_BUCKET_NAME;
   const publicUrl = process.env.R2_PUBLIC_URL;
 
@@ -140,14 +134,12 @@ export const listR2Objects = async (
 
     const response = await s3Client.send(command);
 
-    const listedObjects: ListedObject[] = (response.Contents || []).map(
-      (obj: _Object) => ({
-        key: obj.Key ?? "unknown-key",
-        url: `${publicUrl}/${obj.Key}`,
-        size: obj.Size ?? 0,
-        lastModified: obj.LastModified ?? new Date(0),
-      }),
-    );
+    const listedObjects: ListedObject[] = (response.Contents || []).map((obj: _Object) => ({
+      key: obj.Key ?? "unknown-key",
+      url: `${publicUrl}/${obj.Key}`,
+      size: obj.Size ?? 0,
+      lastModified: obj.LastModified ?? new Date(0),
+    }));
 
     return {
       objects: listedObjects,
@@ -174,10 +166,7 @@ export const generateR2Key = ({
   const originalFileExtension = fileName.split(".").pop();
   const randomPart = `${Date.now()}-${Math.random()
     .toString(36)
-    .substring(
-      2,
-      8,
-    )}${originalFileExtension ? `.${originalFileExtension}` : ""}`;
+    .substring(2, 8)}${originalFileExtension ? `.${originalFileExtension}` : ""}`;
 
   const finalFileName = prefix ? `${prefix}-${randomPart}` : randomPart;
   const cleanedPath = path.replace(/^\/+|\/+$/g, "");

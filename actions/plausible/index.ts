@@ -69,10 +69,7 @@ async function fetchPlausibleMetric(
     );
     return null;
   } catch (error) {
-    console.error(
-      `Error connecting to Plausible API (${errorContext}):`,
-      error,
-    );
+    console.error(`Error connecting to Plausible API (${errorContext}):`, error);
     return null;
   }
 }
@@ -80,10 +77,7 @@ async function fetchPlausibleMetric(
 export async function getLast24hVisitors(): Promise<number | null> {
   const now = new Date();
   const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  const dateRange: [string, string] = [
-    yesterday.toISOString(),
-    now.toISOString(),
-  ];
+  const dateRange: [string, string] = [yesterday.toISOString(), now.toISOString()];
   return fetchPlausibleMetric("visitors", dateRange, 600, "24h visitors"); // 10 min cache
 }
 

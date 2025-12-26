@@ -89,8 +89,8 @@ export function ProductActions({ product }: ProductActionsProps) {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the site
-            &quot;{product.name}&quot;.
+            This action cannot be undone. This will permanently delete the site &quot;{product.name}
+            &quot;.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

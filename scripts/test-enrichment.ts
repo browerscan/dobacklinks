@@ -28,9 +28,7 @@ async function testEnrichmentService() {
     console.log("✅ Statistics retrieved:");
     console.log(`   Total products: ${stats.total}`);
     console.log(`   Pending: ${stats.pending} (${stats.pendingPercentage}%)`);
-    console.log(
-      `   Enriched: ${stats.enriched} (${stats.enrichedPercentage}%)`,
-    );
+    console.log(`   Enriched: ${stats.enriched} (${stats.enrichedPercentage}%)`);
     console.log(`   Failed: ${stats.failed} (${stats.failedPercentage}%)`);
     console.log(`   Last enriched: ${stats.lastEnrichedAt || "Never"}\n`);
 
@@ -50,9 +48,7 @@ async function testEnrichmentService() {
       limit: 5,
     });
 
-    console.log(
-      `✅ Found ${pendingProducts.length} pending products (showing first 5):`,
-    );
+    console.log(`✅ Found ${pendingProducts.length} pending products (showing first 5):`);
     pendingProducts.forEach((p, i) => {
       console.log(`   ${i + 1}. ${p.name} (${p.url})`);
     });
@@ -82,12 +78,8 @@ async function testEnrichmentService() {
         if (updated) {
           console.log(`   Status: ${updated.enrichmentStatus}`);
           if (updated.enrichmentStatus === "enriched") {
-            console.log(
-              `   Monthly visits: ${updated.monthlyVisits?.toLocaleString() || "N/A"}`,
-            );
-            console.log(
-              `   Global rank: ${updated.globalRank?.toLocaleString() || "N/A"}`,
-            );
+            console.log(`   Monthly visits: ${updated.monthlyVisits?.toLocaleString() || "N/A"}`);
+            console.log(`   Global rank: ${updated.globalRank?.toLocaleString() || "N/A"}`);
           }
         }
       } else {
@@ -117,9 +109,7 @@ async function testEnrichmentService() {
       console.log(`   Failed: ${batchResult.stats.failed}`);
       console.log(`   Duration: ${batchResult.stats.duration}ms`);
       if (batchResult.failedDomains && batchResult.failedDomains.length > 0) {
-        console.log(
-          `   Failed domains: ${batchResult.failedDomains.join(", ")}`,
-        );
+        console.log(`   Failed domains: ${batchResult.failedDomains.join(", ")}`);
       }
     } else {
       console.log(`❌ Batch enrichment failed: ${batchResult.error}`);
@@ -130,15 +120,9 @@ async function testEnrichmentService() {
     console.log("📊 Final statistics after tests:");
     const finalStats = await service.getEnrichmentStats();
     console.log(`   Total products: ${finalStats.total}`);
-    console.log(
-      `   Pending: ${finalStats.pending} (${finalStats.pendingPercentage}%)`,
-    );
-    console.log(
-      `   Enriched: ${finalStats.enriched} (${finalStats.enrichedPercentage}%)`,
-    );
-    console.log(
-      `   Failed: ${finalStats.failed} (${finalStats.failedPercentage}%)`,
-    );
+    console.log(`   Pending: ${finalStats.pending} (${finalStats.pendingPercentage}%)`);
+    console.log(`   Enriched: ${finalStats.enriched} (${finalStats.enrichedPercentage}%)`);
+    console.log(`   Failed: ${finalStats.failed} (${finalStats.failedPercentage}%)`);
     console.log();
 
     console.log("🎉 All tests completed!\n");

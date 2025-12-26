@@ -17,8 +17,7 @@ const getEnvValue = (key) => {
 const ACCOUNT_ID = getEnvValue("CLOUDFLARE_ACCOUNT_ID");
 const API_TOKEN = getEnvValue("CLOUDFLARE_API_TOKEN");
 const BUCKET_NAME = "dobacklinks";
-const SCREENSHOTS_DIR =
-  "/Volumes/SSD/dev/links/dobacklinks/dobacklinks-screenshots/thumbnails";
+const SCREENSHOTS_DIR = "/Volumes/SSD/dev/links/dobacklinks/dobacklinks-screenshots/thumbnails";
 const R2_PREFIX = "screenshots/thumbnails/";
 
 console.log("📤 稳定批量上传到 R2 (低并发模式)");

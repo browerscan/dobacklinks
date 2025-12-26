@@ -1,7 +1,4 @@
-import {
-  getLast30DaysPageviews,
-  getLast30DaysVisitors,
-} from "@/actions/plausible";
+import { getLast30DaysPageviews, getLast30DaysVisitors } from "@/actions/plausible";
 import { cn } from "@/lib/utils";
 
 interface Last30DaysStatsProps {
@@ -9,17 +6,16 @@ interface Last30DaysStatsProps {
   className?: string;
 }
 
-export async function Last30DaysStats({
-  variant = "desktop",
-  className,
-}: Last30DaysStatsProps) {
+export async function Last30DaysStats({ variant = "desktop", className }: Last30DaysStatsProps) {
   let last30DaysVisitors = 0;
   let last30DaysPageviews = 0;
 
   try {
     if (process.env.PLAUSIBLE_API_KEY) {
-      const [last30DaysVisitorsResult, last30DaysPageviewsResult] =
-        await Promise.all([getLast30DaysVisitors(), getLast30DaysPageviews()]);
+      const [last30DaysVisitorsResult, last30DaysPageviewsResult] = await Promise.all([
+        getLast30DaysVisitors(),
+        getLast30DaysPageviews(),
+      ]);
       last30DaysVisitors = last30DaysVisitorsResult ?? 0;
       last30DaysPageviews = last30DaysPageviewsResult ?? 0;
     }
@@ -34,9 +30,7 @@ export async function Last30DaysStats({
   if (variant === "mobile") {
     return (
       <div className={cn("md:hidden rounded-lg border p-3", className)}>
-        <div className="text-xs font-medium text-muted-foreground mb-1">
-          Last 30 Days
-        </div>
+        <div className="text-xs font-medium text-muted-foreground mb-1">Last 30 Days</div>
         <div className="flex items-center gap-6">
           <div className="text-center">
             <div className="text-base font-semibold text-foreground">

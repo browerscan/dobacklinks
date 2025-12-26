@@ -1788,13 +1788,7 @@
     "public.product_status_enum": {
       "name": "product_status_enum",
       "schema": "public",
-      "values": [
-        "live",
-        "cancelled",
-        "expired",
-        "pending_payment",
-        "pending_review"
-      ]
+      "values": ["live", "cancelled", "expired", "pending_payment", "pending_review"]
     },
     "public.product_submission_type_enum": {
       "name": "product_submission_type_enum",

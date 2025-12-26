@@ -9,11 +9,7 @@ interface SearchTrackerProps {
   searchCategory?: string;
 }
 
-export function SearchTracker({
-  searchTerm,
-  resultsCount,
-  searchCategory,
-}: SearchTrackerProps) {
+export function SearchTracker({ searchTerm, resultsCount, searchCategory }: SearchTrackerProps) {
   useEffect(() => {
     // Only track if there's a search term
     if (searchTerm) {

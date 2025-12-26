@@ -1,8 +1,4 @@
-import {
-  getFeaturedProducts,
-  getProductBySlug,
-  getRelatedProducts,
-} from "@/actions/products/user";
+import { getFeaturedProducts, getProductBySlug, getRelatedProducts } from "@/actions/products/user";
 import { ProductDetailContent } from "@/app/(basic-layout)/product/[slug]/ProductDetailContent";
 import { constructMetadata } from "@/lib/metadata";
 import { Metadata } from "next";
@@ -40,9 +36,7 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata({
-  params,
-}: MetadataProps): Promise<Metadata> {
+export async function generateMetadata({ params }: MetadataProps): Promise<Metadata> {
   const { slug } = await params;
   const result = await getProductBySlug(slug);
 
@@ -81,6 +75,7 @@ export async function generateMetadata({
     description: enhancedDescription,
     keywords: pageKeywords,
     path: fullPath,
+    canonicalUrl: fullPath, // Explicit canonical URL
     useDefaultOgImage: false,
   });
 }
@@ -102,14 +97,10 @@ export default async function SitePage({ params }: { params: Params }) {
   ]);
 
   const relatedProducts =
-    relatedResult.success && relatedResult.data
-      ? relatedResult.data.products
-      : [];
+    relatedResult.success && relatedResult.data ? relatedResult.data.products : [];
 
   const featuredProducts =
-    featuredResult.success && featuredResult.data
-      ? featuredResult.data.products
-      : [];
+    featuredResult.success && featuredResult.data ? featuredResult.data.products : [];
 
   return (
     <ProductDetailContent

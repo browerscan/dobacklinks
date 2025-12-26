@@ -24,6 +24,7 @@ export default function robots(): MetadataRoute.Robots {
         "/*/400",
         "/cdn-cgi/",
         "/product/*/opengraph-image-*",
+        "/search", // Prevent search results from being indexed (duplicate content)
       ],
     },
     sitemap: [`${siteUrl}/sitemap.xml`, `${siteUrl}/sitemap-products.xml`],

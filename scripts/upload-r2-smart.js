@@ -17,8 +17,7 @@ const getEnvValue = (key) => {
 const ACCOUNT_ID = getEnvValue("CLOUDFLARE_ACCOUNT_ID");
 const API_TOKEN = getEnvValue("CLOUDFLARE_API_TOKEN");
 const BUCKET_NAME = "dobacklinks";
-const SCREENSHOTS_DIR =
-  "/Volumes/SSD/dev/links/dobacklinks/dobacklinks-screenshots/thumbnails";
+const SCREENSHOTS_DIR = "/Volumes/SSD/dev/links/dobacklinks/dobacklinks-screenshots/thumbnails";
 const R2_PREFIX = "screenshots/thumbnails/";
 
 console.log("📤 智能 R2 批量上传 (检查已存在文件)");
@@ -66,15 +65,8 @@ function listR2Objects(continuationToken = null, allKeys = []) {
           try {
             const data = JSON.parse(body);
             // Debug: 输出第一个结果看看结构
-            if (
-              data.result &&
-              data.result.length > 0 &&
-              !process.env.DEBUGGED
-            ) {
-              console.log(
-                `📋 R2 API 返回示例:`,
-                JSON.stringify(data.result[0]).substring(0, 200),
-              );
+            if (data.result && data.result.length > 0 && !process.env.DEBUGGED) {
+              console.log(`📋 R2 API 返回示例:`, JSON.stringify(data.result[0]).substring(0, 200));
               process.env.DEBUGGED = "1";
             }
             const keys = (data.result || [])
@@ -93,9 +85,7 @@ function listR2Objects(continuationToken = null, allKeys = []) {
 
             // 检查是否有更多结果
             if (data.result_info && data.result_info.cursor) {
-              listR2Objects(data.result_info.cursor, allKeys)
-                .then(resolve)
-                .catch(reject);
+              listR2Objects(data.result_info.cursor, allKeys).then(resolve).catch(reject);
             } else {
               resolve(allKeys);
             }
@@ -182,9 +172,7 @@ async function smartUpload() {
     // 找出需要上传的文件
     const filesToUpload = [...localFiles].filter((f) => !existingFiles.has(f));
     console.log(`📤 需要上传: ${filesToUpload.length} 个新文件`);
-    console.log(
-      `⏭️  将跳过: ${localFiles.size - filesToUpload.length} 个已存在文件\n`,
-    );
+    console.log(`⏭️  将跳过: ${localFiles.size - filesToUpload.length} 个已存在文件\n`);
 
     if (filesToUpload.length === 0) {
       console.log("✅ 所有文件已存在，无需上传！");

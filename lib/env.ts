@@ -12,11 +12,13 @@ import { z } from "zod";
 const envSchema = z.object({
   // Database
   DATABASE_URL: z.string().url().min(1, "DATABASE_URL is required"),
+  DB_SLOW_QUERY_THRESHOLD: z.coerce.number().optional().default(1000),
+  DB_MAX_SLOW_QUERIES: z.coerce.number().optional().default(100),
+  DB_ENABLE_QUERY_LOGGING: z.enum(["true", "false"]).optional().default("false"),
+  DB_ENABLE_PERFORMANCE_TRACKING: z.enum(["true", "false"]).optional().default("true"),
 
   // Authentication
-  BETTER_AUTH_SECRET: z
-    .string()
-    .min(32, "BETTER_AUTH_SECRET must be at least 32 characters"),
+  BETTER_AUTH_SECRET: z.string().min(32, "BETTER_AUTH_SECRET must be at least 32 characters"),
   BETTER_AUTH_URL: z.string().url().optional(),
 
   // OAuth Providers (optional)
@@ -30,9 +32,7 @@ const envSchema = z.object({
   SIMILARWEB_API_KEY: z.string().optional(),
 
   // Cron/Scheduled Tasks
-  CRON_SECRET: z
-    .string()
-    .min(32, "CRON_SECRET must be at least 32 characters for security"),
+  CRON_SECRET: z.string().min(32, "CRON_SECRET must be at least 32 characters for security"),
 
   // Email (Resend)
   RESEND_API_KEY: z.string().optional(),
@@ -73,9 +73,7 @@ const envSchema = z.object({
   SENTRY_PROJECT: z.string().optional(),
 
   // Node Environment
-  NODE_ENV: z
-    .enum(["development", "production", "test"])
-    .default("development"),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 
   // Next.js
   NEXT_PUBLIC_APP_URL: z.string().url().optional(),
@@ -135,14 +133,15 @@ function parseEnv(): Env {
     const buildTimeEnv: Env = {
       // Required fields - use cryptographically random build-time placeholders
       DATABASE_URL:
-        process.env.DATABASE_URL ||
-        generateBuildTimePlaceholder("build-db-placeholder", 16),
+        process.env.DATABASE_URL || generateBuildTimePlaceholder("build-db-placeholder", 16),
+      DB_SLOW_QUERY_THRESHOLD: parseInt(process.env.DB_SLOW_QUERY_THRESHOLD || "1000", 10),
+      DB_MAX_SLOW_QUERIES: parseInt(process.env.DB_MAX_SLOW_QUERIES || "100", 10),
+      DB_ENABLE_QUERY_LOGGING: (process.env.DB_ENABLE_QUERY_LOGGING as "true" | "false") || "false",
+      DB_ENABLE_PERFORMANCE_TRACKING:
+        (process.env.DB_ENABLE_PERFORMANCE_TRACKING as "true" | "false") || "true",
       BETTER_AUTH_SECRET:
-        process.env.BETTER_AUTH_SECRET ||
-        generateBuildTimePlaceholder("build-auth-secret", 32),
-      CRON_SECRET:
-        process.env.CRON_SECRET ||
-        generateBuildTimePlaceholder("build-cron-secret", 32),
+        process.env.BETTER_AUTH_SECRET || generateBuildTimePlaceholder("build-auth-secret", 32),
+      CRON_SECRET: process.env.CRON_SECRET || generateBuildTimePlaceholder("build-cron-secret", 32),
 
       // Optional fields - pass through if present
       BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
@@ -162,27 +161,13 @@ function parseEnv(): Env {
       CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID,
       CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN,
       CLOUDFLARE_BROWSER_RENDERING_URL:
-        process.env.CLOUDFLARE_BROWSER_RENDERING_URL ||
-        "https://api.cloudflare.com/client/v4",
+        process.env.CLOUDFLARE_BROWSER_RENDERING_URL || "https://api.cloudflare.com/client/v4",
       // Convert string to number for numeric fields
-      SCREENSHOT_VIEWPORT_WIDTH: parseInt(
-        process.env.SCREENSHOT_VIEWPORT_WIDTH || "1920",
-        10,
-      ),
-      SCREENSHOT_VIEWPORT_HEIGHT: parseInt(
-        process.env.SCREENSHOT_VIEWPORT_HEIGHT || "1080",
-        10,
-      ),
-      SCREENSHOT_THUMBNAIL_WIDTH: parseInt(
-        process.env.SCREENSHOT_THUMBNAIL_WIDTH || "400",
-        10,
-      ),
-      SCREENSHOT_THUMBNAIL_HEIGHT: parseInt(
-        process.env.SCREENSHOT_THUMBNAIL_HEIGHT || "300",
-        10,
-      ),
-      SCREENSHOT_FORMAT:
-        (process.env.SCREENSHOT_FORMAT as "webp" | "png" | "jpeg") || "webp",
+      SCREENSHOT_VIEWPORT_WIDTH: parseInt(process.env.SCREENSHOT_VIEWPORT_WIDTH || "1920", 10),
+      SCREENSHOT_VIEWPORT_HEIGHT: parseInt(process.env.SCREENSHOT_VIEWPORT_HEIGHT || "1080", 10),
+      SCREENSHOT_THUMBNAIL_WIDTH: parseInt(process.env.SCREENSHOT_THUMBNAIL_WIDTH || "400", 10),
+      SCREENSHOT_THUMBNAIL_HEIGHT: parseInt(process.env.SCREENSHOT_THUMBNAIL_HEIGHT || "300", 10),
+      SCREENSHOT_FORMAT: (process.env.SCREENSHOT_FORMAT as "webp" | "png" | "jpeg") || "webp",
       SCREENSHOT_QUALITY: parseInt(process.env.SCREENSHOT_QUALITY || "80", 10),
       UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
       UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
@@ -190,21 +175,22 @@ function parseEnv(): Env {
       SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
       SENTRY_ORG: process.env.SENTRY_ORG,
       SENTRY_PROJECT: process.env.SENTRY_PROJECT,
-      NODE_ENV:
-        (process.env.NODE_ENV as "development" | "production" | "test") ||
-        "development",
+      NODE_ENV: (process.env.NODE_ENV as "development" | "production" | "test") || "development",
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     };
 
-    console.log(
-      "⚠️  Build mode detected - using placeholder environment variables",
-    );
+    console.log("⚠️  Build mode detected - using placeholder environment variables");
     return buildTimeEnv;
   }
 
   // Runtime: strict validation
   try {
     const parsedEnv = envSchema.parse(process.env);
+
+    // Convert string enum to boolean for easier use
+    (parsedEnv as any).DB_ENABLE_QUERY_LOGGING_BOOL = parsedEnv.DB_ENABLE_QUERY_LOGGING === "true";
+    (parsedEnv as any).DB_ENABLE_PERFORMANCE_TRACKING_BOOL =
+      parsedEnv.DB_ENABLE_PERFORMANCE_TRACKING === "true";
 
     // Security check: Ensure we're not using build-time placeholders in production
     if (parsedEnv.NODE_ENV === "production") {
@@ -235,13 +221,9 @@ function parseEnv(): Env {
     if (error instanceof z.ZodError) {
       console.error("❌ Environment variable validation failed:");
       console.error(
-        error.errors
-          .map((err) => `  - ${err.path.join(".")}: ${err.message}`)
-          .join("\n"),
+        error.errors.map((err) => `  - ${err.path.join(".")}: ${err.message}`).join("\n"),
       );
-      throw new Error(
-        "Invalid environment variables. Please check your .env.local file.",
-      );
+      throw new Error("Invalid environment variables. Please check your .env.local file.");
     }
     throw error;
   }

@@ -13,10 +13,7 @@ import { LanguageModel } from "ai";
  * @returns LanguageModel instance
  * @throws Error if provider is invalid or API key is missing
  */
-export function createAIModel(
-  provider: string,
-  modelId: string,
-): LanguageModel {
+export function createAIModel(provider: string, modelId: string): LanguageModel {
   switch (provider) {
     case "openai":
       if (!process.env.OPENAI_API_KEY) {
@@ -26,9 +23,7 @@ export function createAIModel(
 
     case "anthropic":
       if (!process.env.ANTHROPIC_API_KEY) {
-        throw new Error(
-          "Server configuration error: Missing Anthropic API Key.",
-        );
+        throw new Error("Server configuration error: Missing Anthropic API Key.");
       }
       return anthropic(modelId);
 
@@ -40,9 +35,7 @@ export function createAIModel(
 
     case "deepseek":
       if (!process.env.DEEPSEEK_API_KEY) {
-        throw new Error(
-          "Server configuration error: Missing DeepSeek API Key.",
-        );
+        throw new Error("Server configuration error: Missing DeepSeek API Key.");
       }
       return deepseek(modelId);
 
@@ -54,9 +47,7 @@ export function createAIModel(
 
     case "openrouter":
       if (!process.env.OPENROUTER_API_KEY) {
-        throw new Error(
-          "Server configuration error: Missing OpenRouter API Key.",
-        );
+        throw new Error("Server configuration error: Missing OpenRouter API Key.");
       }
       const openrouterProvider = createOpenRouter({
         apiKey: process.env.OPENROUTER_API_KEY,

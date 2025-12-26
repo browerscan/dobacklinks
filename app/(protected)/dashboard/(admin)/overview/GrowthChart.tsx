@@ -1,13 +1,7 @@
 "use client";
 
 import { getDailyGrowthStats, IDailyGrowthStats } from "@/actions/overview";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -73,24 +67,14 @@ export const GrowthChart = () => {
   };
   const [period, setPeriod] = useState<Period>("30d");
 
-  const { data, error, isLoading } = useSWR(
-    ["daily-growth-stats", period],
-    () => fetcher(period),
-    {
-      dedupingInterval: 300000, // 5 minutes
-    },
-  );
+  const { data, error, isLoading } = useSWR(["daily-growth-stats", period], () => fetcher(period), {
+    dedupingInterval: 300000, // 5 minutes
+  });
 
   const chartData = data ?? [];
 
-  const totalUsers = chartData.reduce(
-    (sum, item) => sum + item.newUsersCount,
-    0,
-  );
-  const totalSubmissions = chartData.reduce(
-    (sum, item) => sum + item.newSubmissionsCount,
-    0,
-  );
+  const totalUsers = chartData.reduce((sum, item) => sum + item.newUsersCount, 0);
+  const totalSubmissions = chartData.reduce((sum, item) => sum + item.newSubmissionsCount, 0);
 
   return (
     <Card>
@@ -98,8 +82,7 @@ export const GrowthChart = () => {
         <div>
           <CardTitle>{t("growthTrend")}</CardTitle>
           <CardDescription>
-            {t("totalUsers")}: {totalUsers} | {t("totalSubmissions")}:{" "}
-            {totalSubmissions}
+            {t("totalUsers")}: {totalUsers} | {t("totalSubmissions")}: {totalSubmissions}
           </CardDescription>
         </div>
         <Select value={period} onValueChange={(v) => setPeriod(v as Period)}>
@@ -125,34 +108,12 @@ export const GrowthChart = () => {
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="hsl(var(--chart-2))"
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="hsl(var(--chart-2))"
-                    stopOpacity={0}
-                  />
+                  <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="hsl(var(--chart-2))" stopOpacity={0} />
                 </linearGradient>
-                <linearGradient
-                  id="colorSubmissions"
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop
-                    offset="5%"
-                    stopColor="hsl(var(--chart-1))"
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="hsl(var(--chart-1))"
-                    stopOpacity={0}
-                  />
+                <linearGradient id="colorSubmissions" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />

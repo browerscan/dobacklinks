@@ -23,10 +23,7 @@ export function obfuscateEmail(email: string): string {
  * @param displayText - Optional display text (defaults to email)
  * @returns HTML string with obfuscated mailto link
  */
-export function createObfuscatedMailtoLink(
-  email: string,
-  displayText?: string,
-): string {
+export function createObfuscatedMailtoLink(email: string, displayText?: string): string {
   const obfuscatedEmail = obfuscateEmail(email);
   const obfuscatedDisplay = obfuscateEmail(displayText || email);
 

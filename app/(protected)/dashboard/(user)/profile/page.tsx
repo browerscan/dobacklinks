@@ -25,9 +25,7 @@ export default async function ProfilePage() {
   }
 
   const productsResult = await getMyProducts();
-  const initialProducts = productsResult.success
-    ? productsResult.data?.products
-    : [];
+  const initialProducts = productsResult.success ? productsResult.data?.products : [];
   const totalCount = productsResult.success ? productsResult.data?.count : 0;
 
   return (

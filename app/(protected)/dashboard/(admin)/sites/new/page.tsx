@@ -20,9 +20,7 @@ export default async function CreateProductPage() {
       <div className="space-y-4 p-4 md:p-8">
         <h1 className="text-2xl font-semibold">Create New Site</h1>
         <p className="text-destructive">
-          {`Error: ${
-            !categoriesResult.success ? categoriesResult.error : "Unknown error"
-          }`}
+          {`Error: ${!categoriesResult.success ? categoriesResult.error : "Unknown error"}`}
         </p>
       </div>
     );
@@ -31,9 +29,7 @@ export default async function CreateProductPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Create New Site
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Create New Site</h1>
       </div>
 
       <CreateProductClient categories={categoriesResult.data as Category[]} />

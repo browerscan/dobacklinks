@@ -9,11 +9,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
 import { Clock, Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -35,9 +31,7 @@ export function SearchInput({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const [query, setQuery] = useState(
-    defaultValue || searchParams.get("q") || "",
-  );
+  const [query, setQuery] = useState(defaultValue || searchParams.get("q") || "");
   const [isOpen, setIsOpen] = useState(false);
   const { history, addToHistory, removeFromHistory } = useSearchHistory();
 
@@ -137,10 +131,7 @@ export function SearchInput({
           </div>
         </PopoverTrigger>
         {history.length > 0 && (
-          <PopoverContent
-            className="w-[var(--radix-popover-trigger-width)] p-0"
-            align="start"
-          >
+          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
             <Command>
               <CommandList>
                 <CommandEmpty>No search history</CommandEmpty>
@@ -172,12 +163,7 @@ export function SearchInput({
           </PopoverContent>
         )}
       </Popover>
-      <Button
-        onClick={handleSearch}
-        disabled={isPending}
-        className="ml-2"
-        size="default"
-      >
+      <Button onClick={handleSearch} disabled={isPending} className="ml-2" size="default">
         {isPending ? "Searching..." : "Search"}
       </Button>
     </div>

@@ -9,14 +9,12 @@ interface QuickLinksProps {
 const QUICK_LINKS = [
   {
     name: "Archive",
-    getUrl: (hostname: string, _url: string) =>
-      `https://web.archive.org/web/${hostname}`,
+    getUrl: (hostname: string, _url: string) => `https://web.archive.org/web/${hostname}`,
     icon: "archive",
   },
   {
     name: "Similarweb",
-    getUrl: (hostname: string, _url: string) =>
-      `https://www.similarweb.com/website/${hostname}`,
+    getUrl: (hostname: string, _url: string) => `https://www.similarweb.com/website/${hostname}`,
     icon: "chart",
   },
   {
@@ -42,9 +40,7 @@ const QUICK_LINKS = [
 export function QuickLinks({ url, hostname }: QuickLinksProps) {
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-semibold text-muted-foreground">
-        Quick Links
-      </h3>
+      <h3 className="text-sm font-semibold text-muted-foreground">Quick Links</h3>
       <div className="flex flex-wrap gap-2">
         {QUICK_LINKS.map((link) => (
           <Link

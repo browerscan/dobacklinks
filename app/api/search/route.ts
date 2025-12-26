@@ -1,8 +1,8 @@
 import { db } from "@/lib/db";
 import { products, productCategories, categories } from "@/lib/db/schema";
 import { and, desc, eq, ilike, or, sql, asc } from "drizzle-orm";
-import { NextRequest, NextResponse } from "next/server";
-import { checkRateLimit, getClientIPFromRequest } from "@/lib/upstash";
+import { withGetHandler, apiSuccessResponse, DatabaseError } from "@/lib/api-wrapper";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 const RATE_LIMIT_CONFIG = {
   prefix: "search-api",
   maxRequests: 60,
-  window: "1 m",
+  window: "1 m" as const,
 };
 
 interface SearchParams {
@@ -46,22 +46,17 @@ function parseBooleanFlag(value: string | null): boolean | undefined {
   return undefined;
 }
 
-export async function GET(request: NextRequest) {
-  try {
-    // Rate limiting check
-    const clientIP = getClientIPFromRequest(request);
-    const isAllowed = await checkRateLimit(clientIP, RATE_LIMIT_CONFIG);
-
-    if (!isAllowed) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Rate limit exceeded. Please try again later.",
-        },
-        { status: 429 },
-      );
-    }
-
+/**
+ * GET /api/search - Search products with filters
+ *
+ * Public endpoint with rate limiting
+ */
+export const GET = withGetHandler(
+  {
+    log: false, // Don't log every search request
+  },
+  async (request, { requestId }) => {
+    // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
     const linkTypeParam = searchParams.get("linkType");
 
@@ -73,9 +68,7 @@ export async function GET(request: NextRequest) {
       q: searchParams.get("q") || undefined,
       niche: searchParams.get("niche") || undefined,
       linkType:
-        linkTypeParam === "dofollow" || linkTypeParam === "nofollow"
-          ? linkTypeParam
-          : undefined,
+        linkTypeParam === "dofollow" || linkTypeParam === "nofollow" ? linkTypeParam : undefined,
       minDr: parseOptionalInt(searchParams.get("minDr")),
       maxDr: parseOptionalInt(searchParams.get("maxDr")),
       minDa: parseOptionalInt(searchParams.get("minDa")),
@@ -86,147 +79,149 @@ export async function GET(request: NextRequest) {
       googleNews: googleNewsFlag === true ? true : undefined,
       isFeatured: featuredFlag === true ? true : undefined,
       isVerified: verifiedFlag === true ? true : undefined,
-      sortBy:
-        (searchParams.get("sortBy") as SearchParams["sortBy"]) || "relevance",
-      sortOrder:
-        (searchParams.get("sortOrder") as SearchParams["sortOrder"]) || "desc",
+      sortBy: (searchParams.get("sortBy") as SearchParams["sortBy"]) || "relevance",
+      sortOrder: (searchParams.get("sortOrder") as SearchParams["sortOrder"]) || "desc",
       page: Math.max(parseOptionalInt(searchParams.get("page")) || 1, 1),
       limit: Math.min(Math.max(parseOptionalInt(searchParams.get("limit")) || 20, 1), 50),
     };
 
-    // Build WHERE conditions
-    const conditions = [eq(products.status, "live")];
+    try {
+      // Build WHERE conditions
+      const conditions = [eq(products.status, "live")];
 
-    // Text search on name, tagline, description, url, niche
-    if (params.q && params.q.trim()) {
-      const searchTerm = `%${params.q.trim()}%`;
-      conditions.push(
-        or(
-          ilike(products.name, searchTerm),
-          ilike(products.tagline, searchTerm),
-          ilike(products.description, searchTerm),
-          ilike(products.url, searchTerm),
-          ilike(products.niche, searchTerm),
-        )!,
-      );
-    }
+      // Text search on name, tagline, description, url, niche
+      if (params.q && params.q.trim()) {
+        const searchTerm = `%${params.q.trim()}%`;
+        conditions.push(
+          or(
+            ilike(products.name, searchTerm),
+            ilike(products.tagline, searchTerm),
+            ilike(products.description, searchTerm),
+            ilike(products.url, searchTerm),
+            ilike(products.niche, searchTerm),
+          )!,
+        );
+      }
 
-    // Niche filter
-    if (params.niche) {
-      conditions.push(ilike(products.niche, `%${params.niche}%`));
-    }
+      // Niche filter
+      if (params.niche) {
+        conditions.push(ilike(products.niche, `%${params.niche}%`));
+      }
 
-    // Link type filter
-    if (params.linkType) {
-      conditions.push(eq(products.linkType, params.linkType));
-    }
+      // Link type filter
+      if (params.linkType) {
+        conditions.push(eq(products.linkType, params.linkType));
+      }
 
-    // Verified / Featured / Google News filters (logged-in UX)
-    if (params.googleNews) {
-      conditions.push(eq(products.googleNews, true));
-    }
-    if (params.isFeatured) {
-      conditions.push(eq(products.isFeatured, true));
-    }
-    if (params.isVerified) {
-      conditions.push(eq(products.isVerified, true));
-    }
+      // Verified / Featured / Google News filters (logged-in UX)
+      if (params.googleNews) {
+        conditions.push(eq(products.googleNews, true));
+      }
+      if (params.isFeatured) {
+        conditions.push(eq(products.isFeatured, true));
+      }
+      if (params.isVerified) {
+        conditions.push(eq(products.isVerified, true));
+      }
 
-    // DR range filter
-    if (params.minDr !== undefined) {
-      conditions.push(sql`${products.dr} >= ${params.minDr}`);
-    }
-    if (params.maxDr !== undefined) {
-      conditions.push(sql`${products.dr} <= ${params.maxDr}`);
-    }
+      // DR range filter
+      if (params.minDr !== undefined) {
+        conditions.push(sql`${products.dr} >= ${params.minDr}`);
+      }
+      if (params.maxDr !== undefined) {
+        conditions.push(sql`${products.dr} <= ${params.maxDr}`);
+      }
 
-    // DA range filter
-    if (params.minDa !== undefined) {
-      conditions.push(sql`${products.da} >= ${params.minDa}`);
-    }
-    if (params.maxDa !== undefined) {
-      conditions.push(sql`${products.da} <= ${params.maxDa}`);
-    }
+      // DA range filter
+      if (params.minDa !== undefined) {
+        conditions.push(sql`${products.da} >= ${params.minDa}`);
+      }
+      if (params.maxDa !== undefined) {
+        conditions.push(sql`${products.da} <= ${params.maxDa}`);
+      }
 
-    // Monthly visits range filter
-    if (params.minTraffic !== undefined) {
-      conditions.push(sql`${products.monthlyVisits} >= ${params.minTraffic}`);
-    }
-    if (params.maxTraffic !== undefined) {
-      conditions.push(sql`${products.monthlyVisits} <= ${params.maxTraffic}`);
-    }
+      // Monthly visits range filter
+      if (params.minTraffic !== undefined) {
+        conditions.push(sql`${products.monthlyVisits} >= ${params.minTraffic}`);
+      }
+      if (params.maxTraffic !== undefined) {
+        conditions.push(sql`${products.monthlyVisits} <= ${params.maxTraffic}`);
+      }
 
-    // Spam score filter (include NULL as "unknown")
-    if (params.maxSpamScore !== undefined) {
-      conditions.push(
-        or(
-          sql`${products.spamScore} <= ${params.maxSpamScore}`,
-          sql`${products.spamScore} is null`,
-        )!,
-      );
-    }
+      // Spam score filter (include NULL as "unknown")
+      if (params.maxSpamScore !== undefined) {
+        conditions.push(
+          or(
+            sql`${products.spamScore} <= ${params.maxSpamScore}`,
+            sql`${products.spamScore} is null`,
+          )!,
+        );
+      }
 
-    const whereClause = and(...conditions);
+      const whereClause = and(...conditions);
 
-    // Build ORDER BY
-    let orderBy;
-    const direction = params.sortOrder === "asc" ? asc : desc;
-    switch (params.sortBy) {
-      case "dr":
-        orderBy = [direction(products.dr), desc(products.monthlyVisits)];
-        break;
-      case "da":
-        orderBy = [direction(products.da), desc(products.monthlyVisits)];
-        break;
-      case "traffic":
-        orderBy = [direction(products.monthlyVisits), desc(products.dr)];
-        break;
-      default:
-        // Relevance: prioritize featured, then by DR
-        orderBy = [
-          desc(products.isFeatured),
-          desc(products.dr),
-          desc(products.monthlyVisits),
-        ];
-    }
+      // Build ORDER BY
+      let orderBy;
+      const direction = params.sortOrder === "asc" ? asc : desc;
+      switch (params.sortBy) {
+        case "dr":
+          orderBy = [direction(products.dr), desc(products.monthlyVisits)];
+          break;
+        case "da":
+          orderBy = [direction(products.da), desc(products.monthlyVisits)];
+          break;
+        case "traffic":
+          orderBy = [direction(products.monthlyVisits), desc(products.dr)];
+          break;
+        default:
+          // Relevance: prioritize featured, then by DR
+          orderBy = [desc(products.isFeatured), desc(products.dr), desc(products.monthlyVisits)];
+      }
 
-    // Count total results
-    const [countResult] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(products)
-      .where(whereClause);
+      // Count total results
+      const [countResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(products)
+        .where(whereClause);
 
-    const total = Number(countResult?.count || 0);
+      const total = Number(countResult?.count || 0);
 
-    // Get paginated results
-    const offset = (params.page! - 1) * params.limit!;
+      // Get paginated results
+      const offset = (params.page! - 1) * params.limit!;
 
-    const results = await db
-      .select({
-        id: products.id,
-        name: products.name,
-        slug: products.slug,
-        tagline: products.tagline,
-        url: products.url,
-        logoUrl: products.logoUrl,
-        niche: products.niche,
-        dr: products.dr,
-        da: products.da,
-        monthlyVisits: products.monthlyVisits,
-        linkType: products.linkType,
-        googleNews: products.googleNews,
-        isFeatured: products.isFeatured,
-        isVerified: products.isVerified,
-      })
-      .from(products)
-      .where(whereClause)
-      .orderBy(...orderBy)
-      .limit(params.limit!)
-      .offset(offset);
+      const results = await db
+        .select({
+          id: products.id,
+          name: products.name,
+          slug: products.slug,
+          tagline: products.tagline,
+          url: products.url,
+          logoUrl: products.logoUrl,
+          niche: products.niche,
+          dr: products.dr,
+          da: products.da,
+          monthlyVisits: products.monthlyVisits,
+          linkType: products.linkType,
+          googleNews: products.googleNews,
+          isFeatured: products.isFeatured,
+          isVerified: products.isVerified,
+        })
+        .from(products)
+        .where(whereClause)
+        .orderBy(...orderBy)
+        .limit(params.limit!)
+        .offset(offset);
 
-    return NextResponse.json({
-      success: true,
-      data: {
+      // Log slow queries
+      logger.debug("[Search API] Query completed", {
+        requestId,
+        query: params.q,
+        resultsCount: results.length,
+        total,
+        page: params.page,
+      });
+
+      return apiSuccessResponse({
         results,
         pagination: {
           total,
@@ -249,13 +244,22 @@ export async function GET(request: NextRequest) {
           featured: params.isFeatured,
           verified: params.isVerified,
         },
-      },
-    });
-  } catch (error) {
-    console.error("[Search API] Error:", error);
-    return NextResponse.json(
-      { success: false, error: "Search failed" },
-      { status: 500 },
-    );
-  }
-}
+      });
+    } catch (error) {
+      logger.error(
+        "[Search API] Query failed",
+        {
+          requestId,
+          params,
+        },
+        error instanceof Error ? error : undefined,
+      );
+
+      throw new DatabaseError(
+        "Search failed. Please try again.",
+        "search query",
+        error instanceof Error ? error : undefined,
+      );
+    }
+  },
+);

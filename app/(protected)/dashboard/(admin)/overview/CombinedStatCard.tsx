@@ -16,18 +16,11 @@ interface CombinedStatCardProps {
   t: (key: string) => string;
 }
 
-export function CombinedStatCard({
-  title,
-  count,
-  revenue,
-  t,
-}: CombinedStatCardProps) {
+export function CombinedStatCard({ title, count, revenue, t }: CombinedStatCardProps) {
   return (
     <Card className="bg-gradient-to-b from-background to-muted dark:to-muted/50">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-normal text-muted-foreground">
-          {title}
-        </CardTitle>
+        <CardTitle className="text-sm font-normal text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex items-center justify-between">
@@ -46,9 +39,7 @@ export function CombinedStatCard({
 
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-lg font-semibold">
-              {formatValue(revenue.today, "revenue")}
-            </div>
+            <div className="text-lg font-semibold">{formatValue(revenue.today, "revenue")}</div>
             <p className="text-xs text-muted-foreground">
               {t("yesterday")}: {formatValue(revenue.yesterday, "revenue")}
             </p>

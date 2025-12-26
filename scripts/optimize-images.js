@@ -36,10 +36,9 @@ async function optimizeImage() {
     // Get new file size
     const newStats = fs.statSync(outputFile);
     const newSizeMB = (newStats.size / 1024 / 1024).toFixed(2);
-    const reduction = (
-      ((originalStats.size - newStats.size) / originalStats.size) *
-      100
-    ).toFixed(1);
+    const reduction = (((originalStats.size - newStats.size) / originalStats.size) * 100).toFixed(
+      1,
+    );
 
     console.log(`✓ Optimized file size: ${newSizeMB} MB`);
     console.log(`✓ Size reduction: ${reduction}%`);

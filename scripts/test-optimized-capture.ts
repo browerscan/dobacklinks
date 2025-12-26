@@ -49,9 +49,7 @@ async function main() {
   console.log(`   Captured: ${result.stats.captured}`);
   console.log(`   Failed: ${result.stats.failed}`);
   console.log(`   Duration: ${duration.toFixed(1)}s`);
-  console.log(
-    `   Speed: ${((result.stats.captured / duration) * 60).toFixed(1)} captures/minute`,
-  );
+  console.log(`   Speed: ${((result.stats.captured / duration) * 60).toFixed(1)} captures/minute`);
 
   if (result.failedDomains && result.failedDomains.length > 0) {
     console.log("\n❌ Failed domains:");

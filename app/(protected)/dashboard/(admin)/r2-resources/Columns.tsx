@@ -42,11 +42,7 @@ const getFileType = (key: string): "image" | "video" | "other" => {
   ) {
     return "image";
   }
-  if (
-    extension?.includes("mp4") ||
-    extension?.includes("webm") ||
-    extension?.includes("mov")
-  ) {
+  if (extension?.includes("mp4") || extension?.includes("webm") || extension?.includes("mov")) {
     return "video";
   }
   return "other";
@@ -67,11 +63,7 @@ interface ActionsCellProps {
   onDelete: (key: string) => void;
 }
 
-const ActionsCell: React.FC<ActionsCellProps> = ({
-  file,
-  r2PublicUrl,
-  onDelete,
-}) => {
+const ActionsCell: React.FC<ActionsCellProps> = ({ file, r2PublicUrl, onDelete }) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(`${r2PublicUrl}/${file.key}`);
     toast.success("Filename copied to clipboard");
@@ -135,8 +127,7 @@ export const getColumns = (
       const fileType = getFileType(file.key);
       const previewUrl = r2PublicUrl ? `${r2PublicUrl}/${file.key}` : undefined;
 
-      if (!previewUrl)
-        return <span className="text-xs text-muted-foreground">N/A</span>;
+      if (!previewUrl) return <span className="text-xs text-muted-foreground">N/A</span>;
 
       if (fileType === "image") {
         return (
@@ -165,9 +156,7 @@ export const getColumns = (
           </video>
         );
       } else {
-        return (
-          <span className="text-xs text-muted-foreground">No Preview</span>
-        );
+        return <span className="text-xs text-muted-foreground">No Preview</span>;
       }
     },
     enableSorting: false,
@@ -194,11 +183,7 @@ export const getColumns = (
     id: "actions",
     header: "Actions",
     cell: ({ row }) => (
-      <ActionsCell
-        file={row.original}
-        r2PublicUrl={r2PublicUrl}
-        onDelete={onDelete}
-      />
+      <ActionsCell file={row.original} r2PublicUrl={r2PublicUrl} onDelete={onDelete} />
     ),
     enableSorting: false,
     enableHiding: false,
