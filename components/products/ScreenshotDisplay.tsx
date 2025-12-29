@@ -36,32 +36,34 @@ export function ScreenshotDisplay({
 
   return (
     <div
-      className={`rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 ${className}`}
+      className={`relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 ${className}`}
     >
-      {isLoading && (
-        <div className="w-full h-64 bg-gray-100 dark:bg-gray-800 animate-pulse flex items-center justify-center">
-          <span className="text-gray-400 text-sm">Loading screenshot...</span>
-        </div>
-      )}
-
       {hasError ? (
         <div className="w-full h-64 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <span className="text-gray-400 text-sm">Screenshot unavailable</span>
         </div>
       ) : (
-        <Image
-          src={imageUrl}
-          alt={`${name} screenshot`}
-          width={1920}
-          height={1080}
-          className={`w-full h-auto ${isLoading ? "hidden" : "block"}`}
-          onLoadingComplete={() => setIsLoading(false)}
-          onError={() => {
-            setIsLoading(false);
-            setHasError(true);
-          }}
-          priority={false}
-        />
+        <>
+          <Image
+            src={imageUrl}
+            alt={`${name} screenshot`}
+            width={400}
+            height={300}
+            className={`w-full h-auto transition-opacity duration-300 ${isLoading ? "opacity-0" : "opacity-100"}`}
+            onLoad={() => setIsLoading(false)}
+            onError={() => {
+              setIsLoading(false);
+              setHasError(true);
+            }}
+            priority={false}
+            unoptimized
+          />
+          {isLoading && (
+            <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800 animate-pulse flex items-center justify-center">
+              <span className="text-gray-400 text-sm">Loading screenshot...</span>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -95,6 +97,7 @@ export function ScreenshotThumbnail({
         height={300}
         className="w-full h-auto"
         onError={() => setHasError(true)}
+        unoptimized
       />
     </div>
   );
