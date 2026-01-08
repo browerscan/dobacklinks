@@ -1,4 +1,5 @@
 import { GoogleOneTap } from "@/components/auth/GoogleOneTap";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { TailwindIndicator } from "@/components/TailwindIndicator";
 import GoogleAdsense from "@/components/tracking/GoogleAdsense";
 import UmamiAnalytics from "@/components/tracking/UmamiAnalytics";
@@ -53,6 +54,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {children}
         </ThemeProvider>
         <GoogleOneTap />
+        <ChatWidget />
         <Toaster richColors />
         <TailwindIndicator />
         {process.env.NODE_ENV === "development" ? null : (
