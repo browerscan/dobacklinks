@@ -4,8 +4,8 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 // Free models with fallbacks (ordered by preference)
 const FREE_MODELS = [
-  process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-exp:free",
-  "meta-llama/llama-3.3-70b-instruct:free",
+  process.env.OPENROUTER_MODEL || "meta-llama/llama-3.3-70b-instruct:free",
+  "google/gemini-2.0-flash-exp:free",
   "qwen/qwen3-coder:free",
   "mistralai/mistral-small-3.1-24b-instruct:free",
   "google/gemma-3-27b-it:free",
