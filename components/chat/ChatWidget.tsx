@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { X, Send, MessageCircle, Sparkles } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -333,9 +334,9 @@ export function ChatWidget() {
               </div>
               <p className="text-xs text-muted-foreground mt-2 text-center">
                 Powered by AI | Browse{" "}
-                <a href="/" className="text-primary hover:underline">
+                <Link href="/" className="text-primary hover:underline">
                   9,700+ vetted sites
-                </a>
+                </Link>
               </p>
             </form>
           </div>
